@@ -1,0 +1,12 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "d:\\uth\\giai thuat\\n3_ctdlgt\\n3_ctdlgt\\codenote_n3.cpp",
+        "ProvidedModule": "",
+        "Includes": [
+            "d:\\uth\\giai thuat\\n3_ctdlgt\\n3_ctdlgt\\codenote_n3.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

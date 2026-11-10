@@ -1,0 +1,3 @@
+D:\UTH\GIAI THUAT\N3_CTDLGT\N3_CTDLGT\x64\Debug\N3_CTDLGT.vcxproj.AssemblyReference.cache
+D:\UTH\GIAI THUAT\N3_CTDLGT\N3_CTDLGT\x64\Debug\N3CTDLGT.CodeNote_N3.resources
+D:\UTH\GIAI THUAT\N3_CTDLGT\N3_CTDLGT\x64\Debug\N3_CTDLGT.vcxproj.GenerateResource.cache
