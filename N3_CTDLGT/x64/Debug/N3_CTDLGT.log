@@ -1,3 +1,5 @@
 ﻿  CodeNote_N3.cpp
+  .NETFramework,Version=v4.7.2.AssemblyAttributes.cpp
+  Generating Code...
   CodeNote_N3.obj : MSIL module encountered; incremental linking is disabled for MSIL; performing full link
-  N3_CTDLGT.vcxproj -> D:\UTH\GIAI THUAT\N3_CTDLGT\x64\Debug\N3_CTDLGT.exe
+  N3_CTDLGT.vcxproj -> D:\UTH\CTDL-GT\BTL\N3_CTDLGT\x64\Debug\N3_CTDLGT.exe

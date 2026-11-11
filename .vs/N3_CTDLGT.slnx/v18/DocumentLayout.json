@@ -1,9 +1,9 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\UTH\\GIAI THUAT\\N3_CTDLGT\\",
+  "WorkspaceRootPath": "D:\\UTH\\CTDL-GT\\BTL\\N3_CTDLGT\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{BBE1CD98-8FC1-13E6-291F-6972D38ADF0B}|N3_CTDLGT\\N3_CTDLGT.vcxproj|D:\\UTH\\GIAI THUAT\\N3_CTDLGT\\N3_CTDLGT\\CodeNote_N3.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{BBE1CD98-8FC1-13E6-291F-6972D38ADF0B}|N3_CTDLGT\\N3_CTDLGT.vcxproj|D:\\UTH\\CTDL-GT\\BTL\\N3_CTDLGT\\N3_CTDLGT\\CodeNote_N3.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{BBE1CD98-8FC1-13E6-291F-6972D38ADF0B}|N3_CTDLGT\\N3_CTDLGT.vcxproj|solutionrelative:N3_CTDLGT\\CodeNote_N3.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
@@ -20,9 +20,9 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "CodeNote_N3.h",
-              "DocumentMoniker": "D:\\UTH\\GIAI THUAT\\N3_CTDLGT\\N3_CTDLGT\\CodeNote_N3.h",
+              "DocumentMoniker": "D:\\UTH\\CTDL-GT\\BTL\\N3_CTDLGT\\N3_CTDLGT\\CodeNote_N3.h",
               "RelativeDocumentMoniker": "N3_CTDLGT\\CodeNote_N3.h",
-              "ToolTip": "D:\\UTH\\GIAI THUAT\\N3_CTDLGT\\N3_CTDLGT\\CodeNote_N3.h",
+              "ToolTip": "D:\\UTH\\CTDL-GT\\BTL\\N3_CTDLGT\\N3_CTDLGT\\CodeNote_N3.h",
               "RelativeToolTip": "N3_CTDLGT\\CodeNote_N3.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
