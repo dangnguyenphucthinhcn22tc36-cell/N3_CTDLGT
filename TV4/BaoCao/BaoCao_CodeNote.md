@@ -555,8 +555,7 @@ phiên bản mã nguồn và ảnh minh chứng.
 | Kiểm tra số dòng | Kết quả wc -l trên Terminal | Đúng số dòng của ba tệp lớn |
 | Biên dịch độc lập DoublyLinkedList | Lệnh clang++ trên Mac không báo lỗi | Phần lõi biên dịch được trong môi trường đó |
 | Chạy giao diện và các chức năng | Chưa có bộ kết quả kiểm thử | Chưa kết luận |
-| Đo thời gian thuật toán | Chưa có CSV hoàn tất | Chưa kết luận |
-
+| Đo thời gian bốn thao tác lõi | Hai CSV gồm 120 lượt đo và 12 giá trị trung bình | Đã có kết quả; phân tích tại mục 5.7 và 5.8 |
 Biên dịch thành công không chứng minh thuật toán đúng
 trong mọi trường hợp hoặc không có rò rỉ bộ nhớ.
 
@@ -611,37 +610,90 @@ không phải thời gian đáp ứng toàn bộ giao diện Windows.
 
 ## 5.7. Kết quả thực nghiệm
 
-Chưa có bộ số liệu đo hoàn tất để đưa vào báo cáo.
+Hai tệp kết quả được lưu tại TV4/KetQua:
 
-Sau khi chạy thành công, bổ sung:
+- ket_qua_chi_tiet.csv.
+- ket_qua_trung_binh.csv.
 
-- ket_qua_chi_tiet.csv: kết quả từng lần chạy.
-- ket_qua_trung_binh.csv: giá trị trung bình.
-- Bảng tổng hợp bốn phép đo theo ba kích thước.
-- Biểu đồ thời gian theo số dòng.
-- Ảnh Terminal xác nhận chương trình hoàn tất.
+Dữ liệu gồm 120 lượt đo: bốn phép đo, ba kích thước
+và 10 lần ghi nhận cho mỗi tổ hợp.
 
-Không điền số liệu minh họa vào bảng như kết quả thực tế.
+Đã đối chiếu lại trung bình từ các lượt đo chi tiết.
+Các giá trị khớp với tệp tổng hợp sau khi làm tròn
+đến ba chữ số thập phân.
 
-## 5.8. Phương pháp phân tích kết quả
+### Bảng thời gian trung bình
 
-Khi có số liệu, so sánh cùng một phép đo giữa các kích thước.
-Không so sánh trực tiếp hai phép đo khác bản chất để kết luận
-thuật toán nào tốt hơn.
+Đơn vị: micro giây (µs). Một mili giây bằng 1.000 µs.
 
-Với dữ liệu có độ dài dòng gần tương đương, số dòng tăng
-cũng làm tổng lượng nội dung tăng.
+| Phép đo | 10.000 dòng | 20.000 dòng | 50.000 dòng |
+|---|---:|---:|---:|
+| Nạp tệp — loadFromFile | 591.712 | 797.412 | 1903.350 |
+| Tìm từ không tồn tại — findFirst | 247.533 | 375.721 | 1020.213 |
+| Tìm tất cả int — findAll | 555.654 | 827.029 | 1960.696 |
+| Thay int bằng long — replaceAll | 631.258 | 849.704 | 2040.383 |
 
-Các yếu tố cần xem xét:
+Dấu chấm trong bảng là dấu thập phân, theo định dạng CSV.
+Ví dụ, 1903.350 µs tương đương khoảng 1.903 ms.
 
-- Thuật toán so khớp và độ dài từ khóa.
-- Số lần xuất hiện cần lưu hoặc thay thế.
-- Chi phí cấp phát bộ nhớ.
-- Chi phí thay đổi nội dung chuỗi.
-- Bộ nhớ đệm và tải của hệ thống.
+## 5.8. Phân tích kết quả
 
-Xu hướng thực nghiệm cần được đối chiếu với phân tích
-mã nguồn; không dùng một phép đo để chứng minh độ phức tạp.
+### Xu hướng theo kích thước
+
+Trong cả bốn phép đo, thời gian trung bình tăng khi dữ liệu
+tăng từ 10.000 lên 20.000 và 50.000 dòng.
+
+Khi số dòng tăng từ 20.000 lên 50.000, tức 2,5 lần,
+thời gian tăng lần lượt:
+
+- Nạp tệp: khoảng 2,39 lần.
+- Tìm từ không tồn tại: khoảng 2,72 lần.
+- Tìm tất cả int: khoảng 2,37 lần.
+- Thay int bằng long: khoảng 2,40 lần.
+
+Với dữ liệu có độ dài dòng gần tương đương và từ khóa
+cố định, xu hướng này phù hợp với việc các hàm phải xử lý
+lượng nội dung lớn hơn.
+
+Kết quả trên không chứng minh mọi trường hợp đều có
+độ phức tạp tuyến tính. Độ dài từ khóa, nội dung dòng
+và số kết quả vẫn ảnh hưởng đến chi phí xử lý.
+
+### Nhận xét từng phép đo
+
+findFirst được đo với từ khóa không tồn tại nên cần duyệt
+qua toàn bộ văn bản để kết luận không tìm thấy.
+Đây không phải thời gian tìm từ xuất hiện ngay đầu tệp.
+
+findAll vừa so khớp vừa cấp phát các nút SearchResult.
+Trong dữ liệu sử dụng, mỗi dòng có một từ int nên số
+kết quả bằng số dòng.
+
+replaceAll thực hiện tìm kiếm và thay đổi chuỗi.
+Mỗi lượt bắt đầu từ bản sao dữ liệu gốc; thời gian tạo
+bản sao không nằm trong khoảng đo.
+
+loadFromFile gồm đọc nội dung và xây dựng danh sách.
+Kết quả có thể chịu ảnh hưởng bộ nhớ đệm của hệ điều hành,
+không được xem là tốc độ đọc đĩa thuần túy.
+
+### Mức dao động
+
+Nhóm 10.000 dòng có dao động đáng kể giữa các lượt.
+Ví dụ, thời gian nạp tệp nằm trong khoảng 365.709 đến
+1184.333 µs, trong khi trung bình là 591.712 µs.
+
+Vì vậy, không kỳ vọng thời gian tăng chính xác theo
+tỷ lệ số dòng. Các lượt đo được giữ nguyên, không loại bỏ
+chỉ vì có giá trị cao hơn các lượt còn lại.
+
+### Phạm vi kết luận
+
+Bộ số liệu đánh giá bốn thao tác của phần lõi DoublyLinkedList
+trên dữ liệu tổng hợp trong môi trường máy thực hiện.
+
+Kết quả không thay thế kiểm thử giao diện, Undo/Redo,
+kiểm tra ngoặc hoặc kiểm tra rò rỉ bộ nhớ.
 
 
 # CHƯƠNG 6. KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN
@@ -667,7 +719,7 @@ mọi yêu cầu hoặc đã đạt toàn bộ ca kiểm thử.
 - Đối chiếu mã Undo/Redo và kiểm tra ngoặc.
 - Hoàn thiện và xác nhận kết nối giao diện với tầng lõi.
 - Chạy kiểm thử chức năng trên Windows.
-- Hoàn thành phép đo thời gian và phân tích số liệu.
+- Bổ sung phép đo cho các thành phần khác khi có mã tích hợp.
 - Kiểm tra quản lý bộ nhớ bằng công cụ phù hợp.
 - Kiểm tra vị trí con trỏ và xử lý văn bản tiếng Việt.
 - Bổ sung kiểm tra lỗi đọc/ghi tệp.
