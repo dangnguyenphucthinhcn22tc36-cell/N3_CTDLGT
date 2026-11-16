@@ -886,25 +886,43 @@ nhưng không tính thời gian giải phóng danh sách kết quả.
 
 Phép đo loadFromFile có thể chịu ảnh hưởng bộ nhớ đệm.
 Không gọi đây là phép đo tốc độ đọc đĩa thuần túy.
-
 ## 5.6. Môi trường thực nghiệm
 
-Thông tin đã quan sát:
+Các phép đo phần lõi và bộ kiểm thử tự động được thực hiện
+trên môi trường sau:
 
-- Kiến trúc trình biên dịch: arm64.
-- Trình biên dịch trên máy thực hiện: Apple clang 21.0.0.
-- Chuẩn biên dịch dự kiến: C++17.
-- Cờ tối ưu dự kiến cho chương trình đo: -O2.
+| Thành phần | Thông tin |
+|---|---|
+| Máy tính | MacBook Air |
+| Bộ xử lý | Apple M4 |
+| Bộ nhớ RAM | 16 GB |
+| Hệ điều hành | macOS 26.6.2 |
+| Kiến trúc | arm64 |
+| Trình biên dịch | Apple clang 21.0.0 |
+| Chuẩn ngôn ngữ | C++17 |
+| Cờ biên dịch | -O2 -Wall -Wextra |
+| Đồng hồ đo | std::chrono::steady_clock |
+| Đơn vị thời gian | Micro giây (µs) |
+| Số lượt làm nóng | 1 lượt cho mỗi phép đo trên mỗi kích thước |
+| Số lượt ghi nhận | 10 lượt cho mỗi phép đo trên mỗi kích thước |
 
-Cần bổ sung trước khi công bố kết quả:
+Hai tệp DoublyLinkedList.h và DoublyLinkedList.cpp
+được tải từ phiên bản c5b3a48 của kho mã nhóm.
 
-- Tên CPU và dung lượng RAM.
-- Phiên bản macOS.
-- Phiên bản mã nguồn được đo.
-- Xác nhận lệnh biên dịch và chạy thực tế.
+Chương trình đo được biên dịch bằng:
 
-Số liệu thu trên Mac chỉ phản ánh phần lõi trong môi trường đó,
-không phải thời gian đáp ứng toàn bộ giao diện Windows.
+clang++ -std=c++17 -O2 -Wall -Wextra DoThoiGian.cpp DoublyLinkedList.cpp -o do_thoi_gian
+
+Bộ kiểm thử lõi được biên dịch bằng:
+
+clang++ -std=c++17 -O2 -Wall -Wextra KiemThuCore.cpp DoublyLinkedList.cpp -o kiem_thu_core
+
+Các phép đo gọi trực tiếp hàm của DoublyLinkedList,
+không chạy qua giao diện Windows Forms.
+
+Vì vậy, kết quả phản ánh phần lõi trong môi trường Mac
+được mô tả ở trên, không phải thời gian đáp ứng của
+toàn bộ ứng dụng trên Windows.
 
 ## 5.7. Kết quả thực nghiệm
 
