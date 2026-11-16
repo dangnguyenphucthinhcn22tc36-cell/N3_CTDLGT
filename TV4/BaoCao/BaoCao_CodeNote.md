@@ -209,3 +209,220 @@ một lời gọi hàm, sau đó tính hiệu hai thời điểm.
 
 Không suy ra độ phức tạp chỉ từ một lần chạy. Cần kết hợp
 phân tích mã nguồn với xu hướng số liệu thực nghiệm.
+
+
+# CHƯƠNG 3. PHÂN TÍCH VÀ THIẾT KẾ
+
+## 3.1. Phân tích yêu cầu chức năng
+
+Theo kế hoạch của nhóm, CodeNote hướng đến các chức năng sau:
+
+| Nhóm chức năng | Yêu cầu |
+|---|---|
+| Quản lý tệp | Mở nội dung từ tệp và lưu nội dung ra tệp |
+| Chỉnh sửa | Chèn, xóa ký tự; thêm, xóa, tách và gộp dòng |
+| Tìm kiếm | Tìm lần xuất hiện đầu tiên, tiếp theo và tất cả vị trí |
+| Thay thế | Thay nội dung tại vị trí cụ thể hoặc thay thế tất cả |
+| Lịch sử | Hoàn tác, làm lại và giới hạn số thao tác được lưu |
+| Kiểm tra ngoặc | Phát hiện ngoặc thiếu, thừa hoặc đóng sai thứ tự |
+| Thống kê | Thống kê số dòng, số từ và số ký tự |
+| Trực quan hóa | Minh họa cấu trúc danh sách và lịch sử thao tác |
+
+Bảng trên mô tả yêu cầu thiết kế. Kết quả hoàn thành của từng
+chức năng phải được xác nhận bằng quá trình tích hợp và kiểm thử.
+
+## 3.2. Kiến trúc chương trình
+
+Chương trình được định hướng tách thành tầng giao diện
+và tầng lõi.
+
+### 3.2.1. Tầng giao diện
+
+Giao diện sử dụng Windows Forms C++/CLI, có nhiệm vụ:
+
+- Hiển thị và tiếp nhận nội dung người dùng nhập.
+- Nhận sự kiện từ menu, nút bấm và phím tắt.
+- Chuyển yêu cầu xử lý xuống tầng lõi.
+- Hiển thị kết quả và trạng thái thao tác.
+- Vẽ phần trực quan hóa theo dữ liệu của tầng lõi.
+
+### 3.2.2. Tầng lõi
+
+Tầng lõi chịu trách nhiệm quản lý dữ liệu và thực hiện thuật toán.
+
+Trong mã nguồn đã được xem xét, lớp DoublyLinkedList
+được cài đặt bằng C++ thuần trong hai tệp:
+
+- DoublyLinkedList.h
+- DoublyLinkedList.cpp
+
+Các thành phần lịch sử và kiểm tra ngoặc sẽ được mô tả
+chi tiết sau khi đối chiếu mã nguồn của thành viên phụ trách.
+
+Sơ đồ dưới đây thể hiện kiến trúc dự kiến, không dùng để
+khẳng định mọi kết nối đã được tích hợp:
+
+```mermaid
+flowchart TD
+    A[Người dùng] --> B[Giao diện Windows Forms]
+    B --> C[Quản lý văn bản: DoublyLinkedList]
+    B --> D[Quản lý lịch sử Undo/Redo]
+    B --> E[Kiểm tra ngoặc]
+    C --> F[Dữ liệu các dòng văn bản]
+    D --> C
+    C --> B
+    D --> B
+    E --> B
+```
+
+Việc tách tầng giúp kiểm thử các hàm quản lý văn bản
+độc lập với giao diện. Điều này cũng hỗ trợ đo thời gian
+xử lý mà không gộp thêm chi phí vẽ giao diện.
+
+## 3.3. Thiết kế dữ liệu quản lý văn bản
+
+### 3.3.1. Cấu trúc Node
+
+Mỗi Node đại diện cho một dòng văn bản:
+
+```cpp
+struct Node {
+    std::string lineData;
+    Node* prev;
+    Node* next;
+};
+```
+
+Trong đó:
+
+- lineData lưu nội dung của dòng.
+- prev trỏ đến dòng trước, hoặc nullptr nếu là dòng đầu.
+- next trỏ đến dòng sau, hoặc nullptr nếu là dòng cuối.
+
+Ví dụ:
+
+```text
+head                                    tail
+ ↓                                       ↓
+[Dòng 1] ⇄ [Dòng 2] ⇄ [Dòng 3] ⇄ [Dòng 4]
+```
+
+### 3.3.2. Lớp DoublyLinkedList
+
+Lớp quản lý ba thuộc tính chính:
+
+| Thuộc tính | Vai trò |
+|---|---|
+| head | Trỏ đến nút đầu danh sách |
+| tail | Trỏ đến nút cuối danh sách |
+| size | Lưu số dòng hiện tại |
+
+Các điều kiện cần duy trì:
+
+- Khi danh sách rỗng, head và tail bằng nullptr, size bằng 0.
+- Khi không rỗng, head->prev và tail->next bằng nullptr.
+- Với hai nút liên tiếp, liên kết next và prev phải tương ứng.
+- Số nút khi duyệt phải bằng size.
+
+Lớp có hàm hủy, hàm tạo sao chép và toán tử gán sao chép.
+Việc sao chép tạo các nút riêng để tránh hai danh sách
+cùng sở hữu một vùng nhớ.
+
+Đây là đặc điểm của thiết kế và mã cài đặt; việc xác nhận
+không rò rỉ bộ nhớ vẫn cần kiểm tra thực tế.
+
+### 3.3.3. Vị trí trong văn bản
+
+Cấu trúc TextPosition lưu:
+
+- line: chỉ số dòng.
+- col: chỉ số cột.
+
+Chỉ số bắt đầu từ 0. Ví dụ, vị trí dòng đầu và cột đầu
+được biểu diễn bằng (0, 0).
+
+Các hàm thao tác trên std::string sử dụng chỉ số phần tử
+của chuỗi. Với dữ liệu UTF-8, chỉ số byte không nhất thiết
+trùng với số ký tự người dùng nhìn thấy. Vì vậy, việc ánh xạ
+vị trí giữa giao diện và tầng lõi cần được kiểm thử riêng
+với văn bản tiếng Việt.
+
+### 3.3.4. Kết quả tìm kiếm
+
+Mỗi SearchResult lưu:
+
+- line: dòng chứa kết quả.
+- col: vị trí bắt đầu kết quả.
+- length: độ dài đoạn khớp.
+- next: kết quả tiếp theo.
+
+Hàm findAll trả về danh sách liên kết đơn các kết quả.
+Sau khi sử dụng, bên gọi cần giải phóng danh sách bằng
+freeSearchResults để tránh giữ lại bộ nhớ đã cấp phát.
+
+## 3.4. Thiết kế các nhóm thao tác
+
+Các hàm được khai báo trong mã nguồn DoublyLinkedList gồm:
+
+| Nhóm thao tác | Hàm tiêu biểu |
+|---|---|
+| Truy xuất | getSize, getNodeAt, getLine, setLine |
+| Quản lý dòng | appendLine, prependLine, insertLine, deleteLine |
+| Tách và gộp | splitLine, mergeLines |
+| Chỉnh sửa ký tự | insertChar, deleteChar, backspaceChar |
+| Chỉnh sửa đoạn | insertTextAt, deleteRange |
+| Sao chép, cắt, dán | copyRange, cutRange, pasteText |
+| Tìm kiếm | customStringFind, findFirst, findNext, findAll |
+| Thay thế | replaceAt, replaceAll |
+| Thống kê | getStatistics, getWordCount, getLineCount, getCharCount |
+| Đọc và ghi | loadFromFile, saveToFile, loadFromText, getAllText |
+| Trực quan hóa | getNodeVisualInfo |
+
+Việc có hàm trong tầng lõi chưa đồng nghĩa nút hoặc menu
+tương ứng trên giao diện đã kết nối và hoạt động đúng.
+
+## 3.5. Thiết kế lịch sử thao tác
+
+Theo kế hoạch, một bản ghi hành động cần chứa đủ thông tin
+để thực hiện lại và đảo ngược thao tác.
+
+Thông tin có thể gồm:
+
+- Loại thao tác.
+- Vị trí bắt đầu.
+- Nội dung bị xóa.
+- Nội dung được chèn.
+
+UndoStack lưu các thao tác có thể hoàn tác.
+RedoStack lưu các thao tác đã hoàn tác và có thể làm lại.
+
+Trong lúc áp dụng Undo hoặc Redo, chương trình cần tránh
+ghi chính thao tác phục hồi thành một thao tác chỉnh sửa mới.
+
+Cấu trúc bản ghi, tên lớp và cách điều phối cụ thể cần
+được cập nhật theo mã thực tế của TV3.
+
+## 3.6. Thiết kế kiểm thử
+
+Kiểm thử được chia thành hai nhóm:
+
+### Kiểm thử chức năng
+
+Dùng các trường hợp nhỏ với kết quả mong đợi rõ ràng:
+chèn, xóa, xuống dòng, tìm kiếm, thay thế, Undo/Redo,
+giới hạn lịch sử và kiểm tra ngoặc.
+
+Danh sách ca kiểm thử được lưu tại:
+
+TV4/KiemThu/KeHoachKiemThu.md
+
+### Thực nghiệm hiệu năng
+
+Dùng dữ liệu 10.000, 20.000 và 50.000 dòng để khảo sát
+thời gian của các hàm xử lý.
+
+Mỗi phép đo cần kiểm tra kết quả đầu ra, xác định phần công việc
+được tính thời gian và giữ điều kiện chạy nhất quán.
+
+Phần thực nghiệm chưa hoàn thành sẽ được ghi rõ ở Chương 5;
+không dùng kết quả mong đợi thay cho số liệu thực tế.
