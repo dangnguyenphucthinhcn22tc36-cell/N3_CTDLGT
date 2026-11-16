@@ -1,0 +1,11 @@
+id,test,result
+C01,Them_xoa_dong,PASS
+C02,Tach_gop_dong,PASS
+C03,Chen_Delete_Backspace,PASS
+C04,Chen_xoa_nhieu_dong,PASS
+C05,Sao_chep_doc_lap,PASS
+C06,Tim_kiem_hoa_thuong_ASCII,PASS
+C07,Tim_tat_ca_khong_chong_lan,PASS
+C08,Thay_the_tat_ca,PASS
+C09,Ranh_gioi_dong,PASS
+C10,Luu_mo_lai_UTF8,PASS
