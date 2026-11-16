@@ -116,6 +116,11 @@ namespace N3CTDLGT {
     private: System::Windows::Forms::Label^ label4;
     private: System::Windows::Forms::GroupBox^ groupBox2;
     private: System::Windows::Forms::Label^ label28;
+private: System::Windows::Forms::Label^ label36;
+private: System::Windows::Forms::Label^ label37;
+private: System::Windows::Forms::Label^ label38;
+private: System::Windows::Forms::Label^ label39;
+private: System::Windows::Forms::Label^ label40;
 
 	private:
 		/// <summary>
@@ -130,6 +135,7 @@ namespace N3CTDLGT {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+            System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(CodeNote_N3::typeid));
             this->label35 = (gcnew System::Windows::Forms::Label());
             this->label34 = (gcnew System::Windows::Forms::Label());
             this->panel6 = (gcnew System::Windows::Forms::Panel());
@@ -211,6 +217,11 @@ namespace N3CTDLGT {
             this->label4 = (gcnew System::Windows::Forms::Label());
             this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
             this->label28 = (gcnew System::Windows::Forms::Label());
+            this->label36 = (gcnew System::Windows::Forms::Label());
+            this->label37 = (gcnew System::Windows::Forms::Label());
+            this->label38 = (gcnew System::Windows::Forms::Label());
+            this->label39 = (gcnew System::Windows::Forms::Label());
+            this->label40 = (gcnew System::Windows::Forms::Label());
             this->panel1->SuspendLayout();
             this->panel2->SuspendLayout();
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox2))->BeginInit();
@@ -375,6 +386,7 @@ namespace N3CTDLGT {
             // 
             this->label3->Font = (gcnew System::Drawing::Font(L"Times New Roman", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
+            this->label3->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"label3.Image")));
             this->label3->ImageAlign = System::Drawing::ContentAlignment::MiddleLeft;
             this->label3->Location = System::Drawing::Point(23, 22);
             this->label3->Name = L"label3";
@@ -426,9 +438,9 @@ namespace N3CTDLGT {
                     this->toolStripButton2, this->toolStripButton3, this->toolStripButton4, this->toolStripButton5, this->toolStripButton6, this->toolStripButton7,
                     this->toolStripButton8
             });
-            this->toolStrip1->Location = System::Drawing::Point(0, 33);
+            this->toolStrip1->Location = System::Drawing::Point(0, 36);
             this->toolStrip1->Name = L"toolStrip1";
-            this->toolStrip1->Size = System::Drawing::Size(1520, 34);
+            this->toolStrip1->Size = System::Drawing::Size(1520, 58);
             this->toolStrip1->TabIndex = 76;
             this->toolStrip1->Text = L"toolStrip1";
             // 
@@ -436,9 +448,10 @@ namespace N3CTDLGT {
             // 
             this->toolStripButton1->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
+            this->toolStripButton1->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"toolStripButton1.Image")));
             this->toolStripButton1->ImageTransparentColor = System::Drawing::Color::Magenta;
             this->toolStripButton1->Name = L"toolStripButton1";
-            this->toolStripButton1->Size = System::Drawing::Size(48, 29);
+            this->toolStripButton1->Size = System::Drawing::Size(48, 53);
             this->toolStripButton1->Text = L"Mở";
             this->toolStripButton1->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageAboveText;
             // 
@@ -446,9 +459,10 @@ namespace N3CTDLGT {
             // 
             this->toolStripButton2->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
+            this->toolStripButton2->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"toolStripButton2.Image")));
             this->toolStripButton2->ImageTransparentColor = System::Drawing::Color::Magenta;
             this->toolStripButton2->Name = L"toolStripButton2";
-            this->toolStripButton2->Size = System::Drawing::Size(56, 29);
+            this->toolStripButton2->Size = System::Drawing::Size(56, 53);
             this->toolStripButton2->Text = L"Lưu";
             this->toolStripButton2->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageAboveText;
             // 
@@ -456,9 +470,10 @@ namespace N3CTDLGT {
             // 
             this->toolStripButton3->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
+            this->toolStripButton3->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"toolStripButton3.Image")));
             this->toolStripButton3->ImageTransparentColor = System::Drawing::Color::Magenta;
             this->toolStripButton3->Name = L"toolStripButton3";
-            this->toolStripButton3->Size = System::Drawing::Size(217, 29);
+            this->toolStripButton3->Size = System::Drawing::Size(217, 53);
             this->toolStripButton3->Text = L"Hoàn Tác (CTRL+Z)";
             this->toolStripButton3->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageAboveText;
             // 
@@ -466,9 +481,10 @@ namespace N3CTDLGT {
             // 
             this->toolStripButton4->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
+            this->toolStripButton4->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"toolStripButton4.Image")));
             this->toolStripButton4->ImageTransparentColor = System::Drawing::Color::Magenta;
             this->toolStripButton4->Name = L"toolStripButton4";
-            this->toolStripButton4->Size = System::Drawing::Size(207, 29);
+            this->toolStripButton4->Size = System::Drawing::Size(207, 53);
             this->toolStripButton4->Text = L"Làm Lại (CTRL+Y)";
             this->toolStripButton4->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageAboveText;
             // 
@@ -476,9 +492,10 @@ namespace N3CTDLGT {
             // 
             this->toolStripButton5->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
+            this->toolStripButton5->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"toolStripButton5.Image")));
             this->toolStripButton5->ImageTransparentColor = System::Drawing::Color::Magenta;
             this->toolStripButton5->Name = L"toolStripButton5";
-            this->toolStripButton5->Size = System::Drawing::Size(113, 29);
+            this->toolStripButton5->Size = System::Drawing::Size(113, 53);
             this->toolStripButton5->Text = L"Tìm Kiếm";
             this->toolStripButton5->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageAboveText;
             // 
@@ -486,9 +503,10 @@ namespace N3CTDLGT {
             // 
             this->toolStripButton6->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
+            this->toolStripButton6->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"toolStripButton6.Image")));
             this->toolStripButton6->ImageTransparentColor = System::Drawing::Color::Magenta;
             this->toolStripButton6->Name = L"toolStripButton6";
-            this->toolStripButton6->Size = System::Drawing::Size(107, 29);
+            this->toolStripButton6->Size = System::Drawing::Size(107, 53);
             this->toolStripButton6->Text = L"Thay Thế";
             this->toolStripButton6->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageAboveText;
             // 
@@ -496,9 +514,10 @@ namespace N3CTDLGT {
             // 
             this->toolStripButton7->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
+            this->toolStripButton7->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"toolStripButton7.Image")));
             this->toolStripButton7->ImageTransparentColor = System::Drawing::Color::Magenta;
             this->toolStripButton7->Name = L"toolStripButton7";
-            this->toolStripButton7->Size = System::Drawing::Size(111, 29);
+            this->toolStripButton7->Size = System::Drawing::Size(111, 53);
             this->toolStripButton7->Text = L"Thống Kê";
             this->toolStripButton7->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageAboveText;
             // 
@@ -506,9 +525,10 @@ namespace N3CTDLGT {
             // 
             this->toolStripButton8->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
+            this->toolStripButton8->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"toolStripButton8.Image")));
             this->toolStripButton8->ImageTransparentColor = System::Drawing::Color::Magenta;
             this->toolStripButton8->Name = L"toolStripButton8";
-            this->toolStripButton8->Size = System::Drawing::Size(162, 29);
+            this->toolStripButton8->Size = System::Drawing::Size(162, 53);
             this->toolStripButton8->Text = L"Kiểm tra ngoặc";
             this->toolStripButton8->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageAboveText;
             // 
@@ -517,12 +537,12 @@ namespace N3CTDLGT {
             this->thêmToolStripMenuItem->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
             this->thêmToolStripMenuItem->Name = L"thêmToolStripMenuItem";
-            this->thêmToolStripMenuItem->Size = System::Drawing::Size(65, 29);
+            this->thêmToolStripMenuItem->Size = System::Drawing::Size(65, 32);
             this->thêmToolStripMenuItem->Text = L"Tệp";
             // 
             // textBox2
             // 
-            this->textBox2->BackColor = System::Drawing::Color::Beige;
+            this->textBox2->BackColor = System::Drawing::SystemColors::ActiveCaption;
             this->textBox2->Location = System::Drawing::Point(10, 282);
             this->textBox2->Multiline = true;
             this->textBox2->Name = L"textBox2";
@@ -534,7 +554,7 @@ namespace N3CTDLGT {
             this->chỉnhSửaToolStripMenuItem->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
             this->chỉnhSửaToolStripMenuItem->Name = L"chỉnhSửaToolStripMenuItem";
-            this->chỉnhSửaToolStripMenuItem->Size = System::Drawing::Size(128, 29);
+            this->chỉnhSửaToolStripMenuItem->Size = System::Drawing::Size(128, 32);
             this->chỉnhSửaToolStripMenuItem->Text = L"Chỉnh Sửa";
             // 
             // côngCụToolStripMenuItem
@@ -542,7 +562,7 @@ namespace N3CTDLGT {
             this->côngCụToolStripMenuItem->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
             this->côngCụToolStripMenuItem->Name = L"côngCụToolStripMenuItem";
-            this->côngCụToolStripMenuItem->Size = System::Drawing::Size(112, 29);
+            this->côngCụToolStripMenuItem->Size = System::Drawing::Size(112, 32);
             this->côngCụToolStripMenuItem->Text = L"Công Cụ";
             // 
             // trợGiúpToolStripMenuItem
@@ -550,7 +570,7 @@ namespace N3CTDLGT {
             this->trợGiúpToolStripMenuItem->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
             this->trợGiúpToolStripMenuItem->Name = L"trợGiúpToolStripMenuItem";
-            this->trợGiúpToolStripMenuItem->Size = System::Drawing::Size(115, 29);
+            this->trợGiúpToolStripMenuItem->Size = System::Drawing::Size(115, 32);
             this->trợGiúpToolStripMenuItem->Text = L"Trợ Giúp";
             // 
             // richTextBox1
@@ -572,7 +592,7 @@ namespace N3CTDLGT {
             });
             this->menuStrip1->Location = System::Drawing::Point(0, 0);
             this->menuStrip1->Name = L"menuStrip1";
-            this->menuStrip1->Size = System::Drawing::Size(1520, 33);
+            this->menuStrip1->Size = System::Drawing::Size(1520, 36);
             this->menuStrip1->TabIndex = 75;
             this->menuStrip1->Text = L"menuStrip1";
             // 
@@ -580,6 +600,7 @@ namespace N3CTDLGT {
             // 
             this->label5->Font = (gcnew System::Drawing::Font(L"Times New Roman", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
+            this->label5->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"label5.Image")));
             this->label5->ImageAlign = System::Drawing::ContentAlignment::MiddleLeft;
             this->label5->Location = System::Drawing::Point(21, 70);
             this->label5->Name = L"label5";
@@ -737,6 +758,7 @@ namespace N3CTDLGT {
             this->btn_timkiem->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
             this->btn_timkiem->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
+            this->btn_timkiem->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"btn_timkiem.Image")));
             this->btn_timkiem->Location = System::Drawing::Point(22, 263);
             this->btn_timkiem->Name = L"btn_timkiem";
             this->btn_timkiem->Size = System::Drawing::Size(226, 46);
@@ -879,6 +901,7 @@ namespace N3CTDLGT {
             this->button1->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
             this->button1->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
+            this->button1->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"button1.Image")));
             this->button1->Location = System::Drawing::Point(22, 73);
             this->button1->Name = L"button1";
             this->button1->Size = System::Drawing::Size(226, 46);
@@ -1042,6 +1065,7 @@ namespace N3CTDLGT {
             this->label22->Font = (gcnew System::Drawing::Font(L"Times New Roman", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
             this->label22->ForeColor = System::Drawing::Color::Green;
+            this->label22->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"label22.Image")));
             this->label22->ImageAlign = System::Drawing::ContentAlignment::MiddleLeft;
             this->label22->Location = System::Drawing::Point(18, 44);
             this->label22->Name = L"label22";
@@ -1100,11 +1124,85 @@ namespace N3CTDLGT {
             this->label28->Size = System::Drawing::Size(0, 26);
             this->label28->TabIndex = 9;
             // 
+            // label36
+            // 
+            this->label36->BackColor = System::Drawing::SystemColors::ActiveCaption;
+            this->label36->Font = (gcnew System::Drawing::Font(L"Times New Roman", 14, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+                static_cast<System::Byte>(0)));
+            this->label36->ForeColor = System::Drawing::SystemColors::ButtonHighlight;
+            this->label36->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"label36.Image")));
+            this->label36->ImageAlign = System::Drawing::ContentAlignment::MiddleLeft;
+            this->label36->Location = System::Drawing::Point(35, 118);
+            this->label36->Name = L"label36";
+            this->label36->Size = System::Drawing::Size(210, 32);
+            this->label36->TabIndex = 103;
+            this->label36->Text = L"Thống Kê";
+            this->label36->TextAlign = System::Drawing::ContentAlignment::TopCenter;
+            // 
+            // label37
+            // 
+            this->label37->AutoSize = true;
+            this->label37->BackColor = System::Drawing::SystemColors::ActiveCaption;
+            this->label37->Font = (gcnew System::Drawing::Font(L"Times New Roman", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+                static_cast<System::Byte>(0)));
+            this->label37->ForeColor = System::Drawing::SystemColors::ButtonHighlight;
+            this->label37->Location = System::Drawing::Point(1248, 674);
+            this->label37->Name = L"label37";
+            this->label37->Size = System::Drawing::Size(234, 26);
+            this->label37->TabIndex = 104;
+            this->label37->Text = L"Giới hạn Undo / Redo";
+            // 
+            // label38
+            // 
+            this->label38->AutoSize = true;
+            this->label38->BackColor = System::Drawing::SystemColors::ActiveCaption;
+            this->label38->Font = (gcnew System::Drawing::Font(L"Times New Roman", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+                static_cast<System::Byte>(0)));
+            this->label38->ForeColor = System::Drawing::SystemColors::ButtonHighlight;
+            this->label38->Location = System::Drawing::Point(40, 889);
+            this->label38->Name = L"label38";
+            this->label38->Size = System::Drawing::Size(214, 26);
+            this->label38->TabIndex = 105;
+            this->label38->Text = L"Kết quả / thông báo";
+            // 
+            // label39
+            // 
+            this->label39->BackColor = System::Drawing::SystemColors::Control;
+            this->label39->Font = (gcnew System::Drawing::Font(L"Times New Roman", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+                static_cast<System::Byte>(0)));
+            this->label39->ForeColor = System::Drawing::Color::Green;
+            this->label39->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"label39.Image")));
+            this->label39->ImageAlign = System::Drawing::ContentAlignment::MiddleLeft;
+            this->label39->Location = System::Drawing::Point(40, 959);
+            this->label39->Name = L"label39";
+            this->label39->Size = System::Drawing::Size(410, 26);
+            this->label39->TabIndex = 19;
+            this->label39->Text = L"Kiểm tra cú pháp thành công!";
+            this->label39->TextAlign = System::Drawing::ContentAlignment::TopCenter;
+            // 
+            // label40
+            // 
+            this->label40->AutoSize = true;
+            this->label40->BackColor = System::Drawing::SystemColors::ActiveCaption;
+            this->label40->Font = (gcnew System::Drawing::Font(L"Times New Roman", 14, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+                static_cast<System::Byte>(0)));
+            this->label40->ForeColor = System::Drawing::SystemColors::ButtonHighlight;
+            this->label40->Location = System::Drawing::Point(29, 304);
+            this->label40->Name = L"label40";
+            this->label40->Size = System::Drawing::Size(198, 32);
+            this->label40->TabIndex = 106;
+            this->label40->Text = L"Kiểm tra ngoặc";
+            // 
             // CodeNote_N3
             // 
             this->AutoScaleDimensions = System::Drawing::SizeF(9, 20);
             this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
             this->ClientSize = System::Drawing::Size(1520, 1063);
+            this->Controls->Add(this->label40);
+            this->Controls->Add(this->label39);
+            this->Controls->Add(this->label38);
+            this->Controls->Add(this->label37);
+            this->Controls->Add(this->label36);
             this->Controls->Add(this->label35);
             this->Controls->Add(this->label34);
             this->Controls->Add(this->panel6);
