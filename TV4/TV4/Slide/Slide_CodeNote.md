@@ -114,42 +114,65 @@ Không dùng nhãn thông báo đặt sẵn làm minh chứng chức năng đún
 
 ---
 
-## Slide 10. Dữ liệu và kiểm thử
+## Slide 10. Dữ liệu và kết quả kiểm thử
 
+**Dữ liệu chuẩn bị:**
 - Mẫu 30 dòng.
-- Dữ liệu 10.000, 20.000, 50.000 dòng.
-- Đã xác nhận số dòng ba tệp lớn bằng wc -l.
-- Đã xây dựng 17 ca kiểm thử chức năng.
+- Các tệp 10.000, 20.000 và 50.000 dòng.
+- Số dòng ba tệp lớn đã được kiểm tra bằng wc -l.
 
-Kết quả chạy chức năng:
-Chưa ghi nhận đầy đủ, cần cập nhật trước khi nộp.
+**Kiểm thử tự động phần lõi:**
+- 10 ca C01–C10.
+- Kết quả: 10 PASS, 0 FAIL.
+- Kiểm tra chỉnh sửa, sao chép, tìm kiếm, thay thế
+  và lưu/mở lại văn bản.
+
+**Phạm vi:**
+Chưa bao gồm Undo/Redo, kiểm tra ngoặc và giao diện Windows.
 
 ---
 
-## Slide 11. Thực nghiệm hiệu năng
+## Slide 11. Kết quả thực nghiệm hiệu năng
 
-Thiết kế phép đo:
-- Công cụ: std::chrono::steady_clock.
-- Một lượt làm nóng, 10 lượt ghi nhận.
-- Đơn vị: micro giây.
-- Đo nạp tệp, tìm kiếm và thay thế.
+**Phương pháp:**
+- std::chrono::steady_clock.
+- Một lượt làm nóng trước khi ghi nhận.
+- 10 lần đo cho mỗi phép đo trên mỗi kích thước.
+- Tổng cộng 120 lượt đo được ghi nhận.
 
-Chưa có số liệu hoàn tất.
-Sau khi chạy: thêm bảng trung bình và biểu đồ.
-Không đưa số liệu giả vào slide.
+**Thời gian trung bình — đơn vị µs:**
+
+| Phép đo | 10.000 dòng | 20.000 dòng | 50.000 dòng |
+|---|---:|---:|---:|
+| Nạp tệp | 591.712 | 797.412 | 1903.350 |
+| Tìm từ không tồn tại | 247.533 | 375.721 | 1020.213 |
+| Tìm tất cả int | 555.654 | 827.029 | 1960.696 |
+| Thay int bằng long | 631.258 | 849.704 | 2040.383 |
+
+Dấu chấm là dấu thập phân. 1.000 µs bằng 1 ms.
+
+**Nhận xét:**
+- Thời gian tăng khi kích thước dữ liệu tăng.
+- Từ 20.000 lên 50.000 dòng, thời gian tăng khoảng
+  2,37–2,72 lần, khi số dòng tăng 2,5 lần.
+- Nhóm 10.000 dòng có dao động lớn giữa các lượt.
+- Kết quả thuộc phần lõi trên Mac, chưa phải toàn ứng dụng.
 
 ---
 
 ## Slide 12. Kết luận và hỏi đáp
 
-Hiện có:
-- Thiết kế giao diện.
-- Mã lõi danh sách liên kết kép.
-- Dữ liệu và kế hoạch kiểm thử.
+**Kết quả đã ghi nhận:**
+- Có dữ liệu mẫu và ba bộ dữ liệu lớn.
+- Đã xây dựng kế hoạch kiểm thử toàn ứng dụng.
+- Bộ kiểm thử lõi: 10/10 ca đạt.
+- Có 120 lượt đo và 12 giá trị thời gian trung bình.
+- Đã phân tích kết quả theo mã nguồn và dữ liệu thực tế.
 
-Cần hoàn thiện:
-- Tích hợp và kiểm thử các chức năng.
-- Kết quả đo và phân tích.
-- Minh chứng cho các kết luận.
+**Nội dung còn cần phối hợp với nhóm:**
+- Đối chiếu và kiểm thử Undo/Redo, giới hạn lịch sử,
+  kiểm tra ngoặc.
+- Kiểm thử tích hợp trên giao diện Windows.
+- Bổ sung thông tin môi trường và hoàn thiện bản trình chiếu.
 
 Cảm ơn thầy/cô và các bạn.
