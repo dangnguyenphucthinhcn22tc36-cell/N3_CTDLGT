@@ -1066,9 +1066,28 @@ ghi rõ tên tài liệu, tác giả hoặc địa chỉ nguồn.
 
 # PHỤ LỤC VÀ MINH CHỨNG
 
-- Dữ liệu: TV4/DuLieuTest.
+## A. Dữ liệu và chương trình
+
+- Dữ liệu mẫu và dữ liệu lớn: TV4/DuLieuTest.
+- Chương trình sinh dữ liệu: TV4/CongCu/sinh_du_lieu.cpp.
+- Chương trình đo thời gian: TV4/CongCu/DoThoiGian.cpp.
 - Kế hoạch kiểm thử: TV4/KiemThu/KeHoachKiemThu.md.
-- Ảnh kiểm tra số dòng: cần đưa vào kho mã.
-- Chương trình đo thời gian: cần đưa bản đã kiểm tra vào kho mã.
-- CSV kết quả và ảnh chạy hoàn tất: chờ thực hiện.
-- Ảnh giao diện và kết quả kiểm thử: chờ bổ sung.
+- Mã kiểm thử lõi:
+  TV4/KiemThu/TV4/KiemThu/KiemThuCore.cpp.
+
+## B. Kết quả thực tế
+
+Các tệp được lưu tại TV4/KetQua:
+
+- ket_qua_chi_tiet.csv: 120 lượt đo thời gian.
+- ket_qua_trung_binh.csv: 12 giá trị trung bình.
+- ket_qua_kiem_thu_core.csv: kết quả 10 ca kiểm thử lõi.
+
+Mã nguồn và CSV là tài liệu dùng để kiểm tra, chạy lại
+và đối chiếu các kết quả trình bày trong báo cáo.
+
+## C. Nội dung thuyết trình
+
+Bản nội dung 12 slide được lưu tại:
+
+TV4/TV4/Slide/Slide_CodeNote.md
