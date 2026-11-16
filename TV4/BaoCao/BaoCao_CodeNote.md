@@ -426,3 +426,292 @@ Mỗi phép đo cần kiểm tra kết quả đầu ra, xác định phần côn
 
 Phần thực nghiệm chưa hoàn thành sẽ được ghi rõ ở Chương 5;
 không dùng kết quả mong đợi thay cho số liệu thực tế.
+
+
+## 4.12. Giao diện và quá trình khởi chạy
+
+### Giao diện Windows Forms
+
+Giao diện được thiết kế trong CodeNote_N3.h.
+Tệp CodeNote_N3.resx lưu tài nguyên liên quan đến Form.
+
+Các thành phần giao diện đã được quan sát gồm:
+
+- Vùng soạn thảo RichTextBox.
+- Menu Tệp, Chỉnh sửa, Công cụ và Trợ giúp.
+- Thanh công cụ mở, lưu, hoàn tác và làm lại.
+- Khu vực tìm kiếm và thay thế.
+- Khu vực thống kê văn bản.
+- Khu vực hiển thị kết quả kiểm tra ngoặc.
+- Điều khiển giới hạn số bước Undo/Redo.
+- Các nhãn thông tin dòng, cột và trạng thái.
+
+Việc có nút hoặc nhãn trên giao diện chưa chứng minh chức năng
+đã kết nối với tầng lõi. Trong phiên bản mã đã kiểm tra,
+chưa thấy phần xử lý sự kiện gọi các thuật toán tương ứng.
+
+Các dòng thông báo đặt sẵn, chẳng hạn “Ngoặc cân bằng!”,
+không được sử dụng làm kết quả kiểm thử.
+
+### Quá trình khởi chạy
+
+CodeNote_N3.cpp chứa hàm main của ứng dụng.
+
+Chương trình bật kiểu hiển thị Windows Forms, thiết lập
+cách hiển thị văn bản và gọi Application::Run để khởi tạo
+cửa sổ CodeNote_N3.
+
+Cấu hình dự án được quản lý trong N3_CTDLGT.vcxproj.
+Phiên bản được xem xét sử dụng C++/CLI và .NET Framework 4.7.2.
+Dự án đã liệt kê mã nguồn DoublyLinkedList trong danh sách
+các tệp cần biên dịch.
+
+Việc đưa mã lõi vào dự án chưa đồng nghĩa mọi sự kiện giao diện
+đã được kết nối với các hàm xử lý.
+
+### Môi trường chạy
+
+Ứng dụng Windows Forms C++/CLI cần môi trường Windows phù hợp.
+
+Phần DoublyLinkedList là C++ thuần và đã được biên dịch
+độc lập trên Mac. Kết quả này không thay thế việc chạy
+kiểm thử toàn bộ giao diện trên Windows.
+
+
+# CHƯƠNG 5. KIỂM THỬ VÀ THỰC NGHIỆM
+
+## 5.1. Mục tiêu kiểm thử
+
+Quá trình kiểm thử nhằm:
+
+- Xác định các thao tác chỉnh sửa có cho kết quả đúng không.
+- Kiểm tra tính đúng đắn của tìm kiếm và thay thế.
+- Kiểm tra Undo/Redo và giới hạn lịch sử khi được tích hợp.
+- Kiểm tra thuật toán ngoặc với trường hợp đúng và sai.
+- Đánh giá thời gian xử lý trên nhiều kích thước dữ liệu.
+
+Kết quả mong đợi và kết quả chạy thực tế được ghi riêng.
+Các chức năng chưa chạy không được đánh dấu Đạt.
+
+## 5.2. Chuẩn bị dữ liệu
+
+Dữ liệu được lưu trong TV4/DuLieuTest.
+
+| Tệp | Số dòng | Mục đích |
+|---|---:|---|
+| mau_30_dong.cpp | 30 | Kiểm thử thủ công với dữ liệu nhỏ |
+| mau_10000_dong.cpp | 10.000 | Thực nghiệm dữ liệu lớn |
+| mau_20000_dong.cpp | 20.000 | Khảo sát khi tăng số dòng |
+| mau_50000_dong.cpp | 50.000 | Khảo sát kích thước lớn hơn |
+
+Ba tệp lớn được tạo bằng chương trình sinh_du_lieu.cpp.
+
+Dòng thứ i có nội dung dạng:
+
+void ham_i() { int a[3] = {1, 2, 3}; }
+
+Tên hàm thay đổi theo số thứ tự, còn cấu trúc dòng gần giống nhau.
+Mỗi dòng có đủ ba loại ngoặc và các ngoặc cân bằng.
+
+Lệnh wc -l đã được sử dụng để xác nhận ba tệp lớn lần lượt
+có 10.000, 20.000 và 50.000 dòng, tổng cộng 80.000 dòng.
+
+Dữ liệu này thuận tiện để kiểm tra số kết quả:
+mỗi dòng có một lần xuất hiện của từ khóa int.
+
+Đây là dữ liệu tổng hợp, chưa đại diện đầy đủ cho mọi loại
+mã nguồn thực tế, đặc biệt là dòng rất dài, Unicode,
+chuỗi ký tự và chú thích phức tạp.
+
+## 5.3. Kế hoạch kiểm thử chức năng
+
+Chi tiết các ca kiểm thử được lưu tại:
+
+TV4/KiemThu/KeHoachKiemThu.md
+
+Các nhóm kiểm thử gồm:
+
+| Nhóm | Nội dung |
+|---|---|
+| Quản lý văn bản | Mở tệp, chèn và xóa nội dung, tách dòng |
+| Lịch sử | Undo, Redo, lịch sử rỗng, thao tác mới sau Undo |
+| Giới hạn | Chỉ giữ k thao tác mới nhất |
+| Tìm kiếm | Có kết quả và không có kết quả |
+| Thay thế | Đối chiếu nội dung sau thay thế |
+| Kiểm tra ngoặc | Cân bằng, sai thứ tự và thiếu ngoặc |
+| Tệp và mã hóa | Lưu/mở lại văn bản nhiều dòng có tiếng Việt |
+
+Trạng thái hiện tại: chưa ghi nhận kết quả chạy đầy đủ
+của các ca trên ứng dụng Windows.
+
+Khi thực hiện, cần bổ sung kết quả thực tế, trạng thái,
+phiên bản mã nguồn và ảnh minh chứng.
+
+## 5.4. Các bước chuẩn bị đã xác nhận
+
+| Nội dung | Bằng chứng | Kết luận trong phạm vi kiểm tra |
+|---|---|---|
+| Sinh ba tệp dữ liệu lớn | Thông báo chương trình sinh dữ liệu | Đã tạo được các tệp |
+| Kiểm tra số dòng | Kết quả wc -l trên Terminal | Đúng số dòng của ba tệp lớn |
+| Biên dịch độc lập DoublyLinkedList | Lệnh clang++ trên Mac không báo lỗi | Phần lõi biên dịch được trong môi trường đó |
+| Chạy giao diện và các chức năng | Chưa có bộ kết quả kiểm thử | Chưa kết luận |
+| Đo thời gian thuật toán | Chưa có CSV hoàn tất | Chưa kết luận |
+
+Biên dịch thành công không chứng minh thuật toán đúng
+trong mọi trường hợp hoặc không có rò rỉ bộ nhớ.
+
+## 5.5. Thiết kế phép đo thời gian
+
+Chương trình DoThoiGian.cpp được chuẩn bị để gọi trực tiếp
+các hàm của DoublyLinkedList.
+
+Bốn phép đo gồm:
+
+| Phép đo | Công việc | Kết quả cần kiểm tra |
+|---|---|---|
+| loadFromFile | Nạp tệp vào danh sách mới | Đúng số dòng và nội dung |
+| findFirst_missing | Tìm từ khóa không tồn tại | Trả về không tìm thấy |
+| findAll_int | Tìm tất cả int | Có đúng một kết quả trên mỗi dòng |
+| replaceAll_int_long | Thay int bằng long | Đúng số lần thay và nội dung sau thay |
+
+Phép đo sử dụng std::chrono::steady_clock.
+Đơn vị kết quả là micro giây, ký hiệu µs.
+
+Với mỗi kích thước, thực hiện một lượt làm nóng,
+sau đó ghi nhận 10 lượt chạy.
+
+Kiểm tra kết quả và ghi CSV nằm ngoài khoảng đo.
+Việc sao chép dữ liệu trước replaceAll cũng nằm ngoài
+khoảng đo, giúp mỗi lần thay thế bắt đầu từ dữ liệu gốc.
+
+Phép đo findAll có tính thời gian tạo các nút kết quả,
+nhưng không tính thời gian giải phóng danh sách kết quả.
+
+Phép đo loadFromFile có thể chịu ảnh hưởng bộ nhớ đệm.
+Không gọi đây là phép đo tốc độ đọc đĩa thuần túy.
+
+## 5.6. Môi trường thực nghiệm
+
+Thông tin đã quan sát:
+
+- Kiến trúc trình biên dịch: arm64.
+- Trình biên dịch trên máy thực hiện: Apple clang 21.0.0.
+- Chuẩn biên dịch dự kiến: C++17.
+- Cờ tối ưu dự kiến cho chương trình đo: -O2.
+
+Cần bổ sung trước khi công bố kết quả:
+
+- Tên CPU và dung lượng RAM.
+- Phiên bản macOS.
+- Phiên bản mã nguồn được đo.
+- Xác nhận lệnh biên dịch và chạy thực tế.
+
+Số liệu thu trên Mac chỉ phản ánh phần lõi trong môi trường đó,
+không phải thời gian đáp ứng toàn bộ giao diện Windows.
+
+## 5.7. Kết quả thực nghiệm
+
+Chưa có bộ số liệu đo hoàn tất để đưa vào báo cáo.
+
+Sau khi chạy thành công, bổ sung:
+
+- ket_qua_chi_tiet.csv: kết quả từng lần chạy.
+- ket_qua_trung_binh.csv: giá trị trung bình.
+- Bảng tổng hợp bốn phép đo theo ba kích thước.
+- Biểu đồ thời gian theo số dòng.
+- Ảnh Terminal xác nhận chương trình hoàn tất.
+
+Không điền số liệu minh họa vào bảng như kết quả thực tế.
+
+## 5.8. Phương pháp phân tích kết quả
+
+Khi có số liệu, so sánh cùng một phép đo giữa các kích thước.
+Không so sánh trực tiếp hai phép đo khác bản chất để kết luận
+thuật toán nào tốt hơn.
+
+Với dữ liệu có độ dài dòng gần tương đương, số dòng tăng
+cũng làm tổng lượng nội dung tăng.
+
+Các yếu tố cần xem xét:
+
+- Thuật toán so khớp và độ dài từ khóa.
+- Số lần xuất hiện cần lưu hoặc thay thế.
+- Chi phí cấp phát bộ nhớ.
+- Chi phí thay đổi nội dung chuỗi.
+- Bộ nhớ đệm và tải của hệ thống.
+
+Xu hướng thực nghiệm cần được đối chiếu với phân tích
+mã nguồn; không dùng một phép đo để chứng minh độ phức tạp.
+
+
+# CHƯƠNG 6. KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN
+
+## 6.1. Kết quả hiện có
+
+Tại thời điểm lập bản thảo, dự án đã có thiết kế giao diện
+Windows Forms và mã lõi quản lý văn bản bằng danh sách
+liên kết kép.
+
+Mã DoublyLinkedList cung cấp các nhóm thao tác quản lý dòng,
+chỉnh sửa, tìm kiếm, thay thế, thống kê và đọc/ghi tệp.
+
+Phần chuẩn bị kiểm thử đã có dữ liệu mẫu, dữ liệu lớn
+và danh sách ca kiểm thử. Phần lõi đã được biên dịch độc lập
+trên Mac.
+
+Các kết quả này chưa đủ để khẳng định ứng dụng đã hoàn thành
+mọi yêu cầu hoặc đã đạt toàn bộ ca kiểm thử.
+
+## 6.2. Nội dung còn cần hoàn thiện
+
+- Đối chiếu mã Undo/Redo và kiểm tra ngoặc.
+- Hoàn thiện và xác nhận kết nối giao diện với tầng lõi.
+- Chạy kiểm thử chức năng trên Windows.
+- Hoàn thành phép đo thời gian và phân tích số liệu.
+- Kiểm tra quản lý bộ nhớ bằng công cụ phù hợp.
+- Kiểm tra vị trí con trỏ và xử lý văn bản tiếng Việt.
+- Bổ sung kiểm tra lỗi đọc/ghi tệp.
+
+Mục này cần cập nhật theo tình trạng thực tế trước khi nộp.
+
+## 6.3. Hướng phát triển
+
+Sau khi hoàn thiện phạm vi hiện tại, có thể xem xét:
+
+- Cải thiện khả năng xử lý Unicode.
+- Xử lý ngoặc trong chuỗi và chú thích mã nguồn.
+- Tối ưu việc cập nhật văn bản lớn từ giao diện.
+- Lưu thêm trạng thái con trỏ khi Undo/Redo.
+- Mở rộng bộ dữ liệu thực nghiệm với mã nguồn thực tế.
+
+## 6.4. Kiến thức vận dụng
+
+Đề tài giúp vận dụng danh sách liên kết kép, ngăn xếp,
+quản lý bộ nhớ động và phân tích độ phức tạp.
+
+Quá trình kiểm thử giúp phân biệt giữa việc có mã nguồn,
+biên dịch được và hoạt động đúng. Thực nghiệm hiệu năng
+cần có điều kiện chạy rõ ràng và dữ liệu đo có thể kiểm tra.
+
+
+# TÀI LIỆU VÀ NGUỒN ĐỐI CHIẾU
+
+1. Kế hoạch dự án và bảng phân công nhóm do nhóm cung cấp.
+2. Mã nguồn CodeNote_N3.h và CodeNote_N3.cpp.
+3. Tài nguyên CodeNote_N3.resx và cấu hình N3_CTDLGT.vcxproj.
+4. Mã nguồn DoublyLinkedList.h và DoublyLinkedList.cpp.
+5. TV4/CongCu/sinh_du_lieu.cpp.
+6. TV4/KiemThu/KeHoachKiemThu.md.
+
+Bổ sung tài liệu lý thuyết mà nhóm thực tế sử dụng,
+ghi rõ tên tài liệu, tác giả hoặc địa chỉ nguồn.
+
+
+# PHỤ LỤC VÀ MINH CHỨNG
+
+- Dữ liệu: TV4/DuLieuTest.
+- Kế hoạch kiểm thử: TV4/KiemThu/KeHoachKiemThu.md.
+- Ảnh kiểm tra số dòng: cần đưa vào kho mã.
+- Chương trình đo thời gian: cần đưa bản đã kiểm tra vào kho mã.
+- CSV kết quả và ảnh chạy hoàn tất: chờ thực hiện.
+- Ảnh giao diện và kết quả kiểm thử: chờ bổ sung.
