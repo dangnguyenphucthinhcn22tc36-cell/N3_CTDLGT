@@ -785,30 +785,66 @@ mỗi dòng có một lần xuất hiện của từ khóa int.
 mã nguồn thực tế, đặc biệt là dòng rất dài, Unicode,
 chuỗi ký tự và chú thích phức tạp.
 
-## 5.3. Kế hoạch kiểm thử chức năng
+## 5.3. Kiểm thử chức năng
 
-Chi tiết các ca kiểm thử được lưu tại:
+### 5.3.1. Kế hoạch kiểm thử toàn ứng dụng
+
+Các ca kiểm thử của toàn ứng dụng được lưu tại:
 
 TV4/KiemThu/KeHoachKiemThu.md
 
-Các nhóm kiểm thử gồm:
+Các ca này bao gồm giao diện, chỉnh sửa, Undo/Redo,
+giới hạn lịch sử, tìm kiếm, thay thế và kiểm tra ngoặc.
 
-| Nhóm | Nội dung |
-|---|---|
-| Quản lý văn bản | Mở tệp, chèn và xóa nội dung, tách dòng |
-| Lịch sử | Undo, Redo, lịch sử rỗng, thao tác mới sau Undo |
-| Giới hạn | Chỉ giữ k thao tác mới nhất |
-| Tìm kiếm | Có kết quả và không có kết quả |
-| Thay thế | Đối chiếu nội dung sau thay thế |
-| Kiểm tra ngoặc | Cân bằng, sai thứ tự và thiếu ngoặc |
-| Tệp và mã hóa | Lưu/mở lại văn bản nhiều dòng có tiếng Việt |
+Chưa có bộ kết quả chạy đầy đủ trên giao diện Windows.
+Không dùng kết quả kiểm thử phần lõi để đánh dấu toàn bộ
+các ca kiểm thử tích hợp là đã đạt.
 
-Trạng thái hiện tại: chưa ghi nhận kết quả chạy đầy đủ
-của các ca trên ứng dụng Windows.
+### 5.3.2. Kết quả kiểm thử tự động phần lõi
 
-Khi thực hiện, cần bổ sung kết quả thực tế, trạng thái,
-phiên bản mã nguồn và ảnh minh chứng.
+Chương trình KiemThuCore.cpp gọi trực tiếp các hàm
+của DoublyLinkedList, độc lập với Windows Forms.
 
+Bộ kiểm thử đã chạy trên Mac bằng clang++ với C++17,
+cờ -O2, -Wall và -Wextra.
+
+| Mã | Nội dung kiểm thử | Kết quả thực tế |
+|---|---|---|
+| C01 | Thêm, chèn, xóa dòng và kiểm tra liên kết hai chiều | PASS |
+| C02 | Tách dòng rồi gộp lại | PASS |
+| C03 | Chèn ký tự, Delete và Backspace trong dòng | PASS |
+| C04 | Chèn đoạn nhiều dòng rồi xóa đoạn đó | PASS |
+| C05 | Sao chép và gán danh sách; thay đổi một bản không làm đổi bản khác | PASS |
+| C06 | Tìm kiếm phân biệt và không phân biệt hoa/thường với ASCII | PASS |
+| C07 | Tìm tất cả các kết quả không chồng lấn | PASS |
+| C08 | Thay thế tất cả và xử lý từ khóa không xuất hiện | PASS |
+| C09 | Delete cuối dòng, Backspace đầu dòng và xóa nút duy nhất | PASS |
+| C10 | Lưu rồi mở lại văn bản UTF-8 nhiều dòng | PASS |
+
+Tổng số: 10 ca.
+Đạt: 10 ca.
+Không đạt: 0 ca.
+
+Kết quả được ghi tại:
+
+TV4/KetQua/ket_qua_kiem_thu_core.csv
+
+### 5.3.3. Phạm vi kết luận
+
+Kết quả xác nhận các tình huống C01–C10 cho đầu ra
+đúng với mong đợi trong lần chạy được ghi nhận.
+
+Bộ kiểm thử chưa bao gồm:
+
+- Giao diện Windows Forms.
+- Undo/Redo và giới hạn lịch sử.
+- Kiểm tra ngoặc.
+- Toàn bộ tình huống biên và lỗi đọc/ghi tệp.
+- Kiểm tra rò rỉ bộ nhớ bằng công cụ chuyên dụng.
+
+C10 xác nhận việc giữ nội dung UTF-8 khi lưu/mở lại.
+Ca này không chứng minh các thao tác vị trí con trỏ
+hoặc chuyển đổi hoa/thường Unicode đều đúng.
 ## 5.4. Các bước chuẩn bị đã xác nhận
 
 | Nội dung | Bằng chứng | Kết luận trong phạm vi kiểm tra |
@@ -975,7 +1011,14 @@ trên Mac.
 
 Các kết quả này chưa đủ để khẳng định ứng dụng đã hoàn thành
 mọi yêu cầu hoặc đã đạt toàn bộ ca kiểm thử.
+Phần thực nghiệm đã thu được 120 lượt đo cho bốn thao tác
+quản lý văn bản trên ba kích thước dữ liệu, cùng 12 giá trị
+thời gian trung bình đã được đối chiếu.
 
+Bộ kiểm thử tự động phần lõi đã chạy trên Mac với kết quả
+10/10 ca đạt. Các kết quả này cung cấp minh chứng cho
+phần lõi trong phạm vi đã kiểm thử, chưa thay thế kết quả
+kiểm thử tích hợp của toàn ứng dụng.
 ## 6.2. Nội dung còn cần hoàn thiện
 
 - Đối chiếu mã Undo/Redo và kiểm tra ngoặc.
