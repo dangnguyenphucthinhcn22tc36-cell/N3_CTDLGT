@@ -427,7 +427,269 @@ Mỗi phép đo cần kiểm tra kết quả đầu ra, xác định phần côn
 Phần thực nghiệm chưa hoàn thành sẽ được ghi rõ ở Chương 5;
 không dùng kết quả mong đợi thay cho số liệu thực tế.
 
+# CHƯƠNG 4. CÀI ĐẶT VÀ PHÂN TÍCH THUẬT TOÁN
 
+## 4.1. Tổ chức mã nguồn
+
+Phần quản lý văn bản được tổ chức trong hai tệp:
+
+- DoublyLinkedList.h: khai báo các cấu trúc và giao diện hàm.
+- DoublyLinkedList.cpp: cài đặt các thao tác xử lý.
+
+Các cấu trúc được sử dụng gồm Node, TextPosition,
+SearchResult, TextStatistics và lớp DoublyLinkedList.
+
+Các thao tác được chia thành nhóm: quản lý bộ nhớ,
+quản lý dòng, chỉnh sửa văn bản, tìm kiếm, thay thế,
+thống kê, đọc/ghi tệp và hỗ trợ trực quan hóa.
+
+Quy ước phân tích:
+
+- n: số dòng.
+- N: tổng số byte nội dung.
+- L: độ dài một dòng.
+- m: độ dài từ khóa.
+- r: số kết quả tìm kiếm.
+
+Các chỉ số chuỗi được tính theo std::string.
+Với UTF-8, số byte không nhất thiết bằng số ký tự hiển thị.
+
+## 4.2. Khởi tạo, sao chép và giải phóng bộ nhớ
+
+Hàm tạo khởi tạo danh sách rỗng:
+head và tail bằng nullptr, size bằng 0.
+
+Hàm clear duyệt lần lượt các nút. Trước khi xóa nút hiện tại,
+chương trình lưu địa chỉ nút tiếp theo để tiếp tục duyệt.
+Kết thúc, các con trỏ đầu/cuối và số lượng nút được đặt lại.
+
+Hàm hủy gọi clear để giải phóng các nút thuộc danh sách.
+
+Lớp có hàm tạo sao chép và toán tử gán sao chép.
+Các nút mới được tạo từ nội dung danh sách nguồn,
+thay vì chỉ sao chép con trỏ.
+
+Toán tử gán kiểm tra trường hợp tự gán trước khi xóa dữ liệu cũ.
+Sao chép sâu giúp hai đối tượng quản lý các nút riêng biệt.
+
+Việc có các hàm giải phóng chưa đủ để kết luận không rò rỉ
+bộ nhớ trong mọi tình huống; vẫn cần kiểm tra thực tế.
+
+## 4.3. Truy xuất dòng bằng getNodeAt
+
+Hàm getNodeAt nhận chỉ số dòng bắt đầu từ 0.
+
+Nếu chỉ số không hợp lệ, hàm trả về nullptr.
+Nếu hợp lệ, chương trình chọn hướng duyệt:
+
+- Nửa đầu danh sách: duyệt từ head theo next.
+- Nửa sau danh sách: duyệt từ tail theo prev.
+
+Truy xuất nút đầu hoặc cuối có chi phí O(1).
+Trường hợp xấu nhất gần giữa danh sách có chi phí O(n).
+
+Cách chọn đầu gần hơn giảm số bước duyệt nhưng không
+làm truy xuất theo chỉ số trở thành O(1).
+
+## 4.4. Thêm và xóa dòng
+
+### 4.4.1. Thêm đầu và cuối
+
+appendLine tạo nút mới, nối sau tail, cập nhật tail và tăng size.
+prependLine thực hiện tương tự ở đầu danh sách.
+
+Nếu danh sách rỗng, head và tail cùng trỏ đến nút mới.
+
+Phần cập nhật liên kết có chi phí O(1).
+Việc sao chép nội dung dòng mới có thêm chi phí O(L).
+
+### 4.4.2. Chèn theo chỉ số
+
+insertLine chia thành ba trường hợp:
+
+- Chỉ số nhỏ hơn hoặc bằng 0: thêm đầu.
+- Chỉ số lớn hơn hoặc bằng size: thêm cuối.
+- Vị trí ở giữa: tìm nút rồi chèn trước nút đó.
+
+Khi chèn giữa, chương trình cập nhật cả prev và next.
+Trường hợp xấu nhất có chi phí O(n + L), gồm tìm vị trí
+và sao chép nội dung.
+
+### 4.4.3. Xóa dòng
+
+deleteLine tìm nút và phân biệt các trường hợp:
+nút duy nhất, nút đầu, nút cuối hoặc nút giữa.
+
+Sau khi nối lại các nút còn lại, chương trình giải phóng nút
+và giảm size. Chỉ số không hợp lệ không làm thay đổi danh sách.
+
+Chi phí tìm vị trí là O(n) trong trường hợp xấu nhất.
+Phần cập nhật liên kết khi đã có nút là O(1).
+
+## 4.5. Tách dòng và gộp dòng
+
+### 4.5.1. Tách bằng splitLine
+
+Hàm tìm dòng, điều chỉnh vị trí cột về phạm vi hợp lệ
+và chia chuỗi thành hai phần.
+
+Phần trước vị trí tách được giữ lại trong nút hiện tại.
+Phần sau được đưa vào nút mới nối ngay phía sau.
+Nếu cần, tail được cập nhật; size tăng một.
+
+Ví dụ, tách abcdef tại cột 3 tạo hai dòng abc và def.
+
+Tổng chi phí trường hợp xấu nhất là O(n + L).
+Chỉ riêng việc nối nút mới có chi phí O(1).
+
+### 4.5.2. Gộp bằng mergeLines
+
+Hàm nối nội dung dòng được chỉ định vào cuối dòng trước.
+Sau đó loại nút của dòng hiện tại, cập nhật các liên kết,
+giải phóng nút và giảm size.
+
+Dòng đầu và chỉ số ngoài phạm vi không được gộp.
+
+Với hai dòng có độ dài L1 và L2, cận trên thông thường
+là O(n + L1 + L2), gồm tìm vị trí và xử lý chuỗi.
+
+## 4.6. Chỉnh sửa ký tự và đoạn văn bản
+
+insertChar tìm dòng bằng getNodeAt rồi chèn ký tự bằng
+std::string::insert. Nếu danh sách rỗng, hàm tạo dòng mới
+chứa ký tự đó.
+
+Khi chèn trong chuỗi, các ký tự phía sau có thể phải dịch chuyển.
+Chi phí trường hợp xấu nhất là O(n + L).
+
+Các hàm deleteChar và backspaceChar hỗ trợ xóa ký tự.
+Khi kiểm thử, cần phân biệt xóa trong dòng với thao tác
+ở cuối dòng hoặc đầu dòng có thể dẫn tới gộp dòng.
+
+Các hàm insertTextAt và deleteRange xử lý đoạn văn bản.
+copyRange, cutRange và pasteText cung cấp thao tác sao chép,
+cắt và dán ở tầng lõi.
+
+Việc giao diện có gọi đúng các hàm này hay không phải
+được kiểm tra riêng khi tích hợp.
+
+## 4.7. Thuật toán tìm kiếm
+
+### 4.7.1. customStringFind
+
+Hàm dùng phương pháp so khớp trực tiếp:
+
+1. Xét từng vị trí bắt đầu có thể của từ khóa.
+2. So sánh lần lượt các phần tử.
+3. Nếu khác nhau, chuyển sang vị trí bắt đầu tiếp theo.
+4. Trả về vị trí đầu tiên khớp hoàn toàn.
+5. Trả về -1 nếu không tìm thấy.
+
+Với dòng dài L và từ khóa dài m,
+cận trên trường hợp xấu nhất là O(L × m).
+
+Chế độ không phân biệt hoa/thường sử dụng std::tolower
+trên các byte. Đây không phải cơ chế chuyển đổi
+hoa/thường Unicode đầy đủ.
+
+### 4.7.2. findFirst
+
+Hàm duyệt các dòng từ head, gọi customStringFind trên mỗi dòng
+và dừng khi có kết quả.
+
+Nếu tìm thấy, hàm trả về true và ghi lại dòng, cột.
+Nếu không tìm thấy, hàm trả về false.
+Từ khóa rỗng bị từ chối.
+
+Cận trên cho toàn văn bản là O(n + N × m).
+Thời gian thực tế phụ thuộc vị trí kết quả đầu tiên.
+
+### 4.7.3. findAll
+
+Hàm tìm trên từng dòng và cấp phát một SearchResult
+cho mỗi lần xuất hiện.
+
+Sau khi khớp, vị trí tìm tiếp tăng bằng độ dài từ khóa.
+Vì vậy, kết quả không chồng lấn.
+
+Ví dụ, tìm aa trong aaa chỉ trả về một kết quả tại cột 0.
+
+Bộ nhớ phụ cho r kết quả là O(r).
+Bên gọi cần giải phóng danh sách bằng freeSearchResults.
+
+## 4.8. Thuật toán thay thế
+
+replaceAt thay một đoạn tại vị trí cụ thể.
+replaceAll duyệt từng dòng, tìm các đoạn khớp rồi thay
+bằng nội dung mới.
+
+Sau mỗi lần thay, vị trí tìm tiếp được đặt sau đoạn
+vừa chèn. Hàm trả về tổng số lần thay thế.
+
+Chi phí phụ thuộc:
+
+- Độ dài và nội dung từ khóa.
+- Số lần xuất hiện.
+- Độ dài chuỗi thay thế.
+- Số ký tự cần dịch chuyển.
+
+Không mặc định mọi trường hợp replaceAll đều có thời gian O(N).
+
+Trong thực nghiệm, mỗi lượt thay thế sử dụng bản sao
+của dữ liệu gốc để các lượt có đầu vào tương đương.
+
+## 4.9. Đọc, ghi và trao đổi văn bản
+
+loadFromFile mở tệp bằng std::ifstream.
+Nếu không mở được, hàm trả về false.
+
+Sau khi mở, hàm xóa danh sách cũ, đọc từng dòng bằng
+std::getline và thêm dòng bằng appendLine.
+Ký tự carriage return ở cuối dòng được loại bỏ nếu có.
+Tệp không có dòng nào được biểu diễn bằng một dòng rỗng.
+
+saveToFile duyệt danh sách và ghi nội dung từng dòng,
+chèn ký tự xuống dòng giữa các dòng.
+
+Phiên bản được xem xét kiểm tra khả năng mở tệp,
+nhưng chưa kiểm tra đầy đủ trạng thái luồng sau đọc/ghi.
+Đây là điểm cần bổ sung khi xử lý lỗi I/O.
+
+getAllText nối các dòng bằng CRLF để cung cấp nội dung
+cho giao diện. loadFromText xây dựng lại danh sách
+từ chuỗi được truyền vào.
+
+Nếu giao diện xây dựng lại toàn bộ danh sách sau mỗi
+thay đổi nhỏ, cần đánh giá chi phí trên văn bản lớn.
+
+## 4.10. Thống kê và hỗ trợ trực quan hóa
+
+TextStatistics lưu số dòng, số từ, số ký tự
+và số ký tự không tính khoảng trắng.
+
+Các hàm thống kê cung cấp thông tin cho giao diện.
+Cách đếm cần được kiểm thử với dòng trống, nhiều khoảng trắng
+và nội dung tiếng Việt.
+
+getNodeVisualInfo cung cấp nội dung cùng địa chỉ nút hiện tại,
+nút trước và nút sau để hỗ trợ vẽ cấu trúc liên kết.
+
+Địa chỉ chỉ có ý nghĩa trong lần chạy hiện tại,
+không dùng làm giá trị cố định giữa các máy.
+
+## 4.11. Phạm vi cài đặt đã đối chiếu
+
+Phần phân tích trên dựa vào mã DoublyLinkedList của nhóm.
+
+Mã cụ thể của ActionStack, bộ điều phối Undo/Redo,
+giới hạn k bước và kiểm tra ngoặc chưa được cung cấp
+để đối chiếu trong bản phân tích này.
+
+Các phần đó cần được cập nhật theo mã thực tế,
+không dùng mô tả nguyên lý thay cho bằng chứng cài đặt.
+
+Kết quả biên dịch và thực nghiệm phần lõi không thay thế
+việc kiểm thử các chức năng tích hợp trên giao diện.
 ## 4.12. Giao diện và quá trình khởi chạy
 
 ### Giao diện Windows Forms
