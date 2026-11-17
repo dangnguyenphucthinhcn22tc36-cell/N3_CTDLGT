@@ -1,5 +1,8 @@
 ﻿#pragma once
 
+#include "DoublyLinkedList.h"
+#include <msclr/marshal_cppstd.h>
+
 namespace N3CTDLGT {
 
 	using namespace System;
@@ -14,23 +17,36 @@ namespace N3CTDLGT {
 	/// </summary>
 	public ref class CodeNote_N3 : public System::Windows::Forms::Form
 	{
+	private:
+		DoublyLinkedList* coreDoc;
+
+		std::string ToStdString(System::String^ s) {
+			if (System::String::IsNullOrEmpty(s)) return "";
+			return msclr::interop::marshal_as<std::string>(s);
+		}
+		System::String^ ToSysString(const std::string& s) {
+			return gcnew System::String(s.c_str());
+		}
+
 	public:
 		CodeNote_N3(void)
 		{
 			InitializeComponent();
-			//
-			//TODO: Add the constructor code here
-			//
+			coreDoc = new DoublyLinkedList();
+			coreDoc->appendLine("");
+			this->pictureBox1->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &CodeNote_N3::pictureBox1_Paint);
+			this->richTextBox_code->SelectionChanged += gcnew System::EventHandler(this, &CodeNote_N3::richTextBox_code_SelectionChanged);
 		}
-#pragma region code_thua_thiet_ke_form_thien
-
+#pragma region code_thua_thiet_ke_form
 
 	protected:
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
 		~CodeNote_N3()
 		{
+			if (coreDoc != nullptr) {
+				delete coreDoc;
+				coreDoc = nullptr;
+			}
+
 			if (components)
 			{
 				delete components;
@@ -1324,111 +1340,316 @@ private: System::Windows::Forms::Label^ label40;
         }
 #pragma endregion
 
-#pragma region code_toolstripbutton_open_save_undo_redo_vv
-
-
-
+#pragma region code_toolstripbutton_open_save (Thiện)
     private: System::Void tsb_open_Click(System::Object^ sender, System::EventArgs^ e) {
-
+        if (coreDoc == nullptr) return;
+        OpenFileDialog^ ofd = gcnew OpenFileDialog();
+        ofd->Filter = L"Tệp văn bản (*.txt)|*.txt|Tệp mã nguồn C/C++ (*.cpp;*.h)|*.cpp;*.h|Tất cả tệp (*.*)|*.*";
+        ofd->Title = L"Mở tệp vào CodeNote";
+        if (ofd->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
+            std::string filePath = ToStdString(ofd->FileName);
+            if (coreDoc->loadFromFile(filePath)) {
+                this->richTextBox_code->Text = ToSysString(coreDoc->getAllText());
+                this->lb_check->Text = L"Đã mở tệp: " + System::IO::Path::GetFileName(ofd->FileName);
+                this->lb_dong_n->Text = L"Dòng: 1";
+                this->lb_cot_n->Text = L"Cột: 1";
+                UpdateStatisticsUI();
+                this->pictureBox1->Invalidate();
+            } else {
+                MessageBox::Show(L"Không thể mở tệp này!", L"Lỗi", MessageBoxButtons::OK, MessageBoxIcon::Error);
+            }
+        }
     }
-private: System::Void tsb_luu_save_Click(System::Object^ sender, System::EventArgs^ e) {
 
-}
-private: System::Void btn_undo_Click(System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void btn_redo_Click(System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void tsb_find_Click(System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void tsb_thaythe_Click(System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void tsb_thongke_Click(System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void tsb_check_Click(System::Object^ sender, System::EventArgs^ e) {
+    private: System::Void tsb_luu_save_Click(System::Object^ sender, System::EventArgs^ e) {
+        if (coreDoc == nullptr) return;
+        SaveFileDialog^ sfd = gcnew SaveFileDialog();
+        sfd->Filter = L"Tệp văn bản (*.txt)|*.txt|Tệp mã nguồn C/C++ (*.cpp;*.h)|*.cpp;*.h|Tất cả tệp (*.*)|*.*";
+        sfd->Title = L"Lưu tệp từ CodeNote";
+        if (sfd->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
+            std::string filePath = ToStdString(sfd->FileName);
+            coreDoc->loadFromText(ToStdString(this->richTextBox_code->Text));
+            if (coreDoc->saveToFile(filePath)) {
+                this->lb_check->Text = L"Đã lưu tệp: " + System::IO::Path::GetFileName(sfd->FileName);
+                MessageBox::Show(L"Đã lưu tệp thành công!", L"Thông báo", MessageBoxButtons::OK, MessageBoxIcon::Information);
+            } else {
+                MessageBox::Show(L"Không thể lưu tệp!", L"Lỗi", MessageBoxButtons::OK, MessageBoxIcon::Error);
+            }
+        }
+    }
 
-}
+    private: System::Void tsb_find_Click(System::Object^ sender, System::EventArgs^ e) {
+        this->txt_tukhoa->Focus();
+        btn_timkiem_Click(sender, e);
+    }
+
+    private: System::Void tsb_thaythe_Click(System::Object^ sender, System::EventArgs^ e) {
+        this->txt_thaythe->Focus();
+        btn_thaythe_Click(sender, e);
+    }
+
+    private: System::Void tsb_thongke_Click(System::Object^ sender, System::EventArgs^ e) {
+        UpdateStatisticsUI();
+        if (coreDoc != nullptr) {
+            TextStatistics st = coreDoc->getStatistics();
+            MessageBox::Show(L"KẾT QUẢ THỐNG KÊ VĂN BẢN:\n\n" +
+                L"- Tổng số dòng: " + st.lineCount.ToString() + L"\n" +
+                L"- Tổng số từ: " + st.wordCount.ToString() + L"\n" +
+                L"- Tổng số ký tự (cả khoảng trắng): " + st.charCount.ToString() + L"\n" +
+                L"- Tổng số ký tự (không tính khoảng trắng): " + st.charNoSpaceCount.ToString(),
+                L"Thống kê CodeNote", MessageBoxButtons::OK, MessageBoxIcon::Information);
+        }
+    }
 #pragma endregion
 
-#pragma region Thong_ke_cac_tu
+#pragma region Thong_ke_cac_tu (Thiện)
+    private: System::Void lb_Words_Click(System::Object^ sender, System::EventArgs^ e) {
+        UpdateStatisticsUI();
+    }
 
-
-
-private: System::Void lb_Words_Click(System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void lb_dong_Click(System::Object^ sender, System::EventArgs^ e) {
-}
+    private: System::Void lb_dong_Click(System::Object^ sender, System::EventArgs^ e) {
+        UpdateStatisticsUI();
+    }
 #pragma endregion
 
 #pragma region Kiem_tra_ngoac
-
-
-
-private: System::Void lb_check_ngoac_Click(System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void lb_ngoac_tron_Click(System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void lb_ngoac_nhon_Click(System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void lb_ngoac_vuong_Click(System::Object^ sender, System::EventArgs^ e) {
-}
+    private: System::Void tsb_check_Click(System::Object^ sender, System::EventArgs^ e) {
+    }
+    private: System::Void lb_check_ngoac_Click(System::Object^ sender, System::EventArgs^ e) {
+    }
+    private: System::Void lb_ngoac_tron_Click(System::Object^ sender, System::EventArgs^ e) {
+    }
+    private: System::Void lb_ngoac_nhon_Click(System::Object^ sender, System::EventArgs^ e) {
+    }
+    private: System::Void lb_ngoac_vuong_Click(System::Object^ sender, System::EventArgs^ e) {
+    }
 #pragma endregion
 
-#pragma region code_Tim_kiem_thay_the
+#pragma region code_Tim_kiem_thay_the (Thiện)
+    private: System::Void txt_tukhoa_TextChanged(System::Object^ sender, System::EventArgs^ e) {
+    }
+    private: System::Void rb_tu_thuong_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
+    }
+    private: System::Void rb_hoa_thuong_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
+    }
+    private: System::Void checkbox_findall_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
+    }
 
+    private: System::Void btn_timkiem_Click(System::Object^ sender, System::EventArgs^ e) {
+        if (coreDoc == nullptr || String::IsNullOrEmpty(this->txt_tukhoa->Text)) {
+            this->lb_check->Text = L"Vui lòng nhập từ khóa tìm kiếm!";
+            return;
+        }
 
+        std::string keyword = ToStdString(this->txt_tukhoa->Text);
+        bool matchCase = this->rb_hoa_thuong->Checked;
+        bool findAllMatches = this->checkbox_findall->Checked;
 
-private: System::Void txt_tukhoa_TextChanged(System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void rb_tu_thuong_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void rb_hoa_thuong_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void checkbox_findall_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void btn_timkiem_Click(System::Object^ sender, System::EventArgs^ e) {
-}
+        if (findAllMatches) {
+            int totalCount = 0;
+            SearchResult* results = coreDoc->findAll(keyword, totalCount, matchCase);
 
-private: System::Void txt_thaythe_TextChanged(System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void btn_thaythe_Click(System::Object^ sender, System::EventArgs^ e) {
-}
+            if (totalCount > 0 && results != nullptr) {
+                int currentSel = this->richTextBox_code->SelectionStart;
+                int currentLen = this->richTextBox_code->SelectionLength;
+
+                this->richTextBox_code->SelectAll();
+                this->richTextBox_code->SelectionBackColor = Color::White;
+                this->richTextBox_code->SelectionColor = Color::Black;
+
+                SearchResult* curRes = results;
+                while (curRes != nullptr) {
+                    int charIdx = this->richTextBox_code->GetFirstCharIndexFromLine(curRes->line) + curRes->col;
+                    if (charIdx >= 0) {
+                        this->richTextBox_code->Select(charIdx, curRes->length);
+                        this->richTextBox_code->SelectionBackColor = Color::Yellow;
+                        this->richTextBox_code->SelectionColor = Color::Black;
+                    }
+                    curRes = curRes->next;
+                }
+
+                DoublyLinkedList::freeSearchResults(results);
+
+                this->lb_check->Text = L"Tìm thấy tất cả " + totalCount.ToString() + L" vị trí chứa '" + this->txt_tukhoa->Text + L"'";
+                this->richTextBox_code->Select(currentSel, currentLen);
+            } else {
+                this->lb_check->Text = L"Không tìm thấy từ khóa: '" + this->txt_tukhoa->Text + L"'";
+            }
+        } else {
+            int selStart = this->richTextBox_code->SelectionStart;
+            int curLine = this->richTextBox_code->GetLineFromCharIndex(selStart);
+            int curCol = selStart - this->richTextBox_code->GetFirstCharIndexFromLine(curLine);
+
+            int foundLine = -1;
+            int foundCol = -1;
+            bool found = coreDoc->findNext(keyword, curLine, curCol, foundLine, foundCol, matchCase);
+
+            if (found) {
+                int charIdx = this->richTextBox_code->GetFirstCharIndexFromLine(foundLine) + foundCol;
+                this->richTextBox_code->Select(charIdx, (int)keyword.length());
+                this->richTextBox_code->Focus();
+                this->lb_check->Text = L"Tìm thấy tại: Dòng " + (foundLine + 1).ToString() + L", Cột " + (foundCol + 1).ToString();
+                this->lb_dong_n->Text = L"Dòng: " + (foundLine + 1).ToString();
+                this->lb_cot_n->Text = L"Cột: " + (foundCol + 1).ToString();
+            } else {
+                this->lb_check->Text = L"Không tìm thấy từ khóa: '" + this->txt_tukhoa->Text + L"'";
+            }
+        }
+    }
+
+    private: System::Void txt_thaythe_TextChanged(System::Object^ sender, System::EventArgs^ e) {
+    }
+
+    private: System::Void btn_thaythe_Click(System::Object^ sender, System::EventArgs^ e) {
+        if (coreDoc == nullptr || String::IsNullOrEmpty(this->txt_tukhoa->Text)) {
+            this->lb_check->Text = L"Vui lòng nhập từ khóa cần thay thế!";
+            return;
+        }
+
+        std::string target = ToStdString(this->txt_tukhoa->Text);
+        std::string replacement = ToStdString(this->txt_thaythe->Text);
+        bool matchCase = this->rb_hoa_thuong->Checked;
+
+        int count = coreDoc->replaceAll(target, replacement, matchCase);
+
+        if (count > 0) {
+            int selStart = this->richTextBox_code->SelectionStart;
+            this->richTextBox_code->Text = ToSysString(coreDoc->getAllText());
+            this->richTextBox_code->SelectionStart = Math::Min(selStart, this->richTextBox_code->Text->Length);
+            this->lb_check->Text = L"Đã thay thế thành công " + count.ToString() + L" vị trí!";
+            UpdateStatisticsUI();
+            this->pictureBox1->Invalidate();
+        } else {
+            this->lb_check->Text = L"Không tìm thấy từ khóa '" + this->txt_tukhoa->Text + L"' để thay thế!";
+        }
+    }
 #pragma endregion
-
 
 #pragma region gioi_han_undo/redo
-
-
-
-private: System::Void numericUpDown_K_step_ValueChanged(System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void lb_trangthai_Click(System::Object^ sender, System::EventArgs^ e) {
-}
+    private: System::Void btn_undo_Click(System::Object^ sender, System::EventArgs^ e) {
+    }
+    private: System::Void btn_redo_Click(System::Object^ sender, System::EventArgs^ e) {
+    }
+    private: System::Void numericUpDown_K_step_ValueChanged(System::Object^ sender, System::EventArgs^ e) {
+    }
+    private: System::Void lb_trangthai_Click(System::Object^ sender, System::EventArgs^ e) {
+    }
 #pragma endregion
 
 #pragma region Ketqua_thongbao
-
-
-
-private: System::Void lb_check_Click(System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void lb_kiem_tra_Click(System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void lb_dong_n_Click(System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void lb_cot_n_Click(System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void lb_che_do_Click(System::Object^ sender, System::EventArgs^ e) {
-}
-private: System::Void lb_limit_undo_Click(System::Object^ sender, System::EventArgs^ e) {
-}
+    private: System::Void lb_check_Click(System::Object^ sender, System::EventArgs^ e) {
+    }
+    private: System::Void lb_kiem_tra_Click(System::Object^ sender, System::EventArgs^ e) {
+    }
+    private: System::Void lb_dong_n_Click(System::Object^ sender, System::EventArgs^ e) {
+    }
+    private: System::Void lb_cot_n_Click(System::Object^ sender, System::EventArgs^ e) {
+    }
+    private: System::Void lb_che_do_Click(System::Object^ sender, System::EventArgs^ e) {
+    }
+    private: System::Void lb_limit_undo_Click(System::Object^ sender, System::EventArgs^ e) {
+    }
 #pragma endregion
 
-#pragma region Vung_bo_code
+#pragma region Vung_bo_code (Thiện)
+    private: System::Void richTextBox_code_TextChanged(System::Object^ sender, System::EventArgs^ e) {
+        if (coreDoc == nullptr) return;
 
+        std::string fullText = ToStdString(this->richTextBox_code->Text);
+        coreDoc->loadFromText(fullText);
 
+        UpdateStatisticsUI();
+        this->pictureBox1->Invalidate();
+    }
 
-private: System::Void richTextBox_code_TextChanged(System::Object^ sender, System::EventArgs^ e) {
-}
+    private: System::Void richTextBox_code_SelectionChanged(System::Object^ sender, System::EventArgs^ e) {
+        if (this->richTextBox_code == nullptr) return;
+        int sel = this->richTextBox_code->SelectionStart;
+        int line = this->richTextBox_code->GetLineFromCharIndex(sel);
+        int col = sel - this->richTextBox_code->GetFirstCharIndexFromLine(line);
+        this->lb_dong_n->Text = L"Dòng: " + (line + 1).ToString();
+        this->lb_cot_n->Text = L"Cột: " + (col + 1).ToString();
+    }
+
+    private: System::Void UpdateStatisticsUI() {
+        if (coreDoc == nullptr) return;
+        TextStatistics st = coreDoc->getStatistics();
+        this->lb_Words->Text = st.wordCount.ToString();
+        this->lb_dong->Text = st.lineCount.ToString() + L" dòng";
+        this->label28->Text = st.charCount.ToString() + L" ký tự (" + st.charNoSpaceCount.ToString() + L" ký tự không cách)";
+    }
+#pragma endregion
+
+#pragma region Truc_quan_hoa_DSLK (Thiện)
+    private: System::Void pictureBox1_Paint(System::Object^ sender, System::Windows::Forms::PaintEventArgs^ e) {
+        if (coreDoc == nullptr) return;
+        Graphics^ g = e->Graphics;
+        g->SmoothingMode = System::Drawing::Drawing2D::SmoothingMode::AntiAlias;
+
+        int totalLines = coreDoc->getSize();
+        if (totalLines == 0) {
+            System::Drawing::Font^ f = gcnew System::Drawing::Font(L"Segoe UI", 10, FontStyle::Italic);
+            g->DrawString(L"Danh sách liên kết kép rỗng (head = tail = NULL)", f, Brushes::Gray, 10, 18);
+            return;
+        }
+
+        int nodeW = 110;
+        int nodeH = 36;
+        int startX = 20;
+        int startY = 11;
+        int gap = 45;
+
+        System::Drawing::Font^ fontNode = gcnew System::Drawing::Font(L"Consolas", 8, FontStyle::Bold);
+        System::Drawing::Font^ fontText = gcnew System::Drawing::Font(L"Segoe UI", 8, FontStyle::Regular);
+        Pen^ penBox = gcnew Pen(Color::FromArgb(37, 99, 235), 1.5f);
+        Pen^ penArrow = gcnew Pen(Color::FromArgb(234, 88, 12), 2.0f);
+        penArrow->CustomEndCap = gcnew System::Drawing::Drawing2D::AdjustableArrowCap(4, 4);
+        penArrow->CustomStartCap = gcnew System::Drawing::Drawing2D::AdjustableArrowCap(4, 4);
+
+        int maxDraw = Math::Min(totalLines, 8);
+        Node* curr = coreDoc->getHead();
+
+        for (int i = 0; i < maxDraw && curr != nullptr; ++i) {
+            int x = startX + i * (nodeW + gap);
+
+            System::Drawing::Rectangle rect(x, startY, nodeW, nodeH);
+            g->FillRectangle(Brushes::AliceBlue, rect);
+            g->DrawRectangle(penBox, rect);
+
+            g->DrawLine(Pens::LightSlateGray, x + 24, startY, x + 24, startY + nodeH);
+            g->DrawLine(Pens::LightSlateGray, x + nodeW - 24, startY, x + nodeW - 24, startY + nodeH);
+
+            g->DrawString(L"P", fontNode, Brushes::DarkSlateGray, (float)(x + 6), (float)(startY + 10));
+            g->DrawString(L"N", fontNode, Brushes::DarkSlateGray, (float)(x + nodeW - 18), (float)(startY + 10));
+
+            std::string lineStr = curr->lineData;
+            if (lineStr.length() > 6) lineStr = lineStr.substr(0, 5) + "..";
+            if (lineStr.empty()) lineStr = "(rong)";
+            String^ displayText = gcnew String(lineStr.c_str());
+            g->DrawString(displayText, fontText, Brushes::DarkBlue, (float)(x + 27), (float)(startY + 10));
+
+            if (i == 0) {
+                g->DrawString(L"[HEAD]", fontNode, Brushes::Crimson, (float)(x + 30), (float)(startY - 11));
+            }
+            if (curr == coreDoc->getTail() || i == totalLines - 1) {
+                g->DrawString(L"[TAIL]", fontNode, Brushes::Crimson, (float)(x + 30), (float)(startY + nodeH + 1));
+            }
+
+            if (i < maxDraw - 1 && curr->next != nullptr) {
+                int arrowStartX = x + nodeW;
+                int arrowEndX = arrowStartX + gap;
+                int arrowY = startY + nodeH / 2;
+                g->DrawLine(penArrow, arrowStartX + 2, arrowY, arrowEndX - 2, arrowY);
+            }
+
+            curr = curr->next;
+        }
+
+        if (totalLines > maxDraw) {
+            int moreX = startX + maxDraw * (nodeW + gap) - 20;
+            g->DrawString(L"... (" + (totalLines - maxDraw) + L" dòng nữa)", fontText, Brushes::DarkGray, (float)moreX, (float)(startY + 10));
+        }
+    }
 #pragma endregion
 };
 }

@@ -30,3 +30,30 @@
 *.exe
 *.out
 *.app
+
+# Visual Studio files
+.vs/
+*.ipch
+*.db
+*.suo
+*.user
+*.vsidx
+*.VC.db
+
+# Build outputs
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa]rm/
+[Aa]rm64/
+*.pdb
+*.ilk
+*.tlog
+*.recipe
+*.metagen
+*.resources
+*.lastbuildstate
+*.log
+*.idb
+*.cache
