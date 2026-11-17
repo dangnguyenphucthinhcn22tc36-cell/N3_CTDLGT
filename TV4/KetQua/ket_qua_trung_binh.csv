@@ -1,0 +1,13 @@
+operation,lines,runs,mean_us
+loadFromFile,10000,10,591.712
+findFirst_missing,10000,10,247.533
+findAll_int,10000,10,555.654
+replaceAll_int_long,10000,10,631.258
+loadFromFile,20000,10,797.412
+findFirst_missing,20000,10,375.721
+findAll_int,20000,10,827.029
+replaceAll_int_long,20000,10,849.704
+loadFromFile,50000,10,1903.350
+findFirst_missing,50000,10,1020.213
+findAll_int,50000,10,1960.696
+replaceAll_int_long,50000,10,2040.383
