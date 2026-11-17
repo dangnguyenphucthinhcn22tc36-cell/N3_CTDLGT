@@ -1,0 +1,273 @@
+name: Xuat bao cao va slide TV4
+
+on:
+  push:
+    branches:
+      - tv4-kiem-thu
+    paths:
+      - "TV4/**"
+      - ".github/workflows/xuat-tv4.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  xuat-pdf:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Lay cac tep cua nhom
+        uses: actions/checkout@v4
+
+      - name: Chuan bi Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Cai cong cu xuat PDF
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0 fonts-dejavu-core
+          python -m pip install Markdown==3.11.3 weasyprint==70.0 pypdf==6.21.4 matplotlib==3.10.8
+
+      - name: Tao bao cao slide va bieu do
+        run: |
+          python - <<'PY'
+          import csv
+          import re
+          import statistics
+          from pathlib import Path
+          import markdown
+          import matplotlib
+          matplotlib.use("Agg")
+          import matplotlib.pyplot as plt
+          from matplotlib.patches import FancyBboxPatch
+          from pypdf import PdfReader
+          from weasyprint import HTML
+
+          root = Path("TV4")
+          out = Path("output")
+          out.mkdir(exist_ok=True)
+          report = root / "BaoCao" / "BaoCao_CodeNote.md"
+          slides = list(root.rglob("Slide_CodeNote.md"))
+          assert len(slides) == 1, "Can dung mot tep Slide_CodeNote.md"
+
+          raw = list(csv.DictReader(
+              (root / "KetQua" / "ket_qua_chi_tiet.csv").open()
+          ))
+          assert len(raw) == 120, "Can du 120 luot do"
+
+          operations = {
+              "loadFromFile": "Nạp tệp",
+              "findFirst_missing": "Tìm từ không tồn tại",
+              "findAll_int": "Tìm tất cả int",
+              "replaceAll_int_long": "Thay int bằng long",
+          }
+          sizes = [10000, 20000, 50000]
+          plt.rcParams.update({
+              "font.family": "DejaVu Sans",
+              "font.size": 10,
+          })
+
+          fig, ax = plt.subplots(figsize=(8.3, 5.2))
+          for key, label in operations.items():
+              values = [
+                  [float(r["time_us"]) for r in raw
+                   if r["operation"] == key and int(r["lines"]) == n]
+                  for n in sizes
+              ]
+              assert all(len(v) == 10 for v in values)
+              ax.errorbar(
+                  sizes,
+                  [statistics.mean(v) for v in values],
+                  yerr=[statistics.stdev(v) for v in values],
+                  marker="o", capsize=4, label=label,
+              )
+          ax.set(
+              xlabel="Số dòng",
+              ylabel="Thời gian trung bình (µs)",
+              ylim=(0, None),
+              xticks=sizes,
+          )
+          ax.grid(alpha=.25)
+          ax.legend(loc="upper left")
+          fig.suptitle("Thời gian xử lý phần lõi CodeNote")
+          fig.text(
+              .5, .01,
+              "Trung bình 10 lượt; thanh sai số: độ lệch chuẩn mẫu.",
+              ha="center", fontsize=9,
+          )
+          fig.tight_layout(rect=(0, .04, 1, .96))
+          fig.savefig(out / "BieuDo_ThoiGian.png", dpi=220)
+          fig.savefig(out / "BieuDo_ThoiGian.pdf")
+          plt.close(fig)
+
+          fig, ax = plt.subplots(figsize=(8, 4.5))
+          ax.set(xlim=(0, 10), ylim=(0, 6))
+          ax.axis("off")
+          nodes = {
+              "user": (5, 5.5, "Người dùng"),
+              "gui": (5, 4, "Windows Forms"),
+              "text": (1.8, 2.3, "DoublyLinkedList"),
+              "undo": (5, 2.3, "Undo / Redo"),
+              "check": (8.2, 2.3, "Kiểm tra ngoặc"),
+              "data": (1.8, .65, "Các dòng văn bản"),
+          }
+          for x, y, label in nodes.values():
+              ax.add_patch(FancyBboxPatch(
+                  (x-1.25, y-.35), 2.5, .7,
+                  boxstyle="round,pad=0.08",
+                  facecolor="#edf3ff", edgecolor="#3159a7",
+              ))
+              ax.text(x, y, label, ha="center", va="center", fontsize=10)
+
+          edges = [
+              ("user", "gui"), ("gui", "text"),
+              ("gui", "undo"), ("gui", "check"),
+              ("text", "data"), ("undo", "text"),
+          ]
+          for a, b in edges:
+              x1, y1, _ = nodes[a]
+              x2, y2, _ = nodes[b]
+              if a == "undo":
+                  start, end = (x1-1.35, y1), (x2+1.35, y2)
+              else:
+                  start, end = (x1, y1-.45), (x2, y2+.45)
+              ax.annotate(
+                  "", xy=end, xytext=start,
+                  arrowprops={"arrowstyle": "->", "color": "#526078"},
+              )
+          fig.tight_layout()
+          fig.savefig(out / "KienTruc_DuKien.png", dpi=200)
+          plt.close(fig)
+
+          def convert(text):
+              text = re.sub(r"(?m)([^\n])\n(?=- )", r"\1\n\n", text)
+              text = re.sub(
+                  r"(?m)(\|[^\n]*\|)\n(?=[^\n|])",
+                  r"\1\n\n", text,
+              )
+              return markdown.markdown(
+                  text,
+                  extensions=["tables", "fenced_code", "sane_lists"],
+              )
+
+          text = report.read_text(encoding="utf-8-sig")
+          members = []
+          lines = text.splitlines()
+          for i, line in enumerate(lines):
+              if re.match(r"^\|\s*TV[1-4]\s*\|", line):
+                  cells = line.split("|")
+                  for j in (2, 3):
+                      cells[j] = " " + cells[j].strip().strip("[]").strip() + " "
+                  members.append(cells[2].strip())
+                  lines[i] = "|".join(cells)
+          text = "\n".join(lines)
+          text = re.sub(
+              r"```mermaid.*?```",
+              "![Kiến trúc dự kiến](KienTruc_DuKien.png)",
+              text, flags=re.S,
+          )
+          text = re.sub(
+              r"(?m)^## 5\.8\.",
+              "![Thời gian trung bình và độ lệch chuẩn]"
+              "(BieuDo_ThoiGian.png)\n\n## 5.8.",
+              text, count=1,
+          )
+
+          base_css = """
+          body {font-family:"DejaVu Serif",serif;color:#16243b;line-height:1.4}
+          h1,h2,h3 {font-family:"DejaVu Sans",sans-serif;color:#234b8e;break-after:avoid}
+          h1 {font-size:1.4em;break-before:page}
+          h1:first-child {break-before:auto}
+          h2 {font-size:1.12em}
+          h3 {font-size:1em}
+          p {text-align:justify;margin:.55em 0}
+          table {width:100%;border-collapse:collapse;font-size:.8em;margin:1em 0}
+          th,td {border:1px solid #bac6d9;padding:6px;vertical-align:top;overflow-wrap:anywhere}
+          th {background:#edf3ff}
+          tr {break-inside:avoid}
+          thead {display:table-header-group}
+          body>table:first-of-type th:nth-child(1) {width:8%}
+          body>table:first-of-type th:nth-child(2) {width:23%}
+          body>table:first-of-type th:nth-child(3) {width:18%}
+          img {max-width:100%;max-height:140mm;object-fit:contain}
+          pre {white-space:pre-wrap;overflow-wrap:anywhere;font-size:.75em;padding:8px;background:#f1f4f8}
+          a {color:#234b8e;overflow-wrap:anywhere}
+          """
+
+          counts = []
+          for size in [13, 13.5, 14, 12.5, 12, 11.5]:
+              css = base_css + """
+              @page {size:A4;margin:20mm;
+                @bottom-center {content:counter(page);font-size:10pt}}
+              """ + f"body {{font-size:{size}pt}}"
+              doc = (
+                  '<html lang="vi"><meta charset="utf-8"><style>'
+                  + css + "</style><body>"
+                  + convert(text) + "</body></html>"
+              )
+              HTML(string=doc, base_url=str(out.resolve())).write_pdf(
+                  out / "BaoCao_CodeNote.pdf"
+              )
+              pages = len(PdfReader(out / "BaoCao_CodeNote.pdf").pages)
+              if 15 <= pages <= 30:
+                  break
+          assert 15 <= pages <= 30, f"Bao cao co {pages} trang, can dieu chinh"
+          counts.append(f"Bao cao: {pages} trang (yeu cau 15-30).")
+
+          s = slides[0].read_text(encoding="utf-8-sig")
+          if len(members) == 4:
+              s = s.replace(
+                  "- Thành viên và giảng viên: bổ sung thông tin thật.",
+                  "- Thành viên: " + "; ".join(members) + ".",
+              )
+          s = s.replace(
+              "- Bổ sung thông tin môi trường và hoàn thiện bản trình chiếu.",
+              "- Hoàn thiện bản tích hợp và bổ sung minh chứng chức năng.",
+          )
+          parts = re.split(r"(?m)(?=^## Slide\s+\d+\.)", s)[1:]
+          assert len(parts) == 12, f"Tim thay {len(parts)} slide, can 12"
+          body = "".join(
+              "<section>"
+              + convert(re.sub(r"(?m)^---\s*$", "", p))
+              + "</section>"
+              for p in parts
+          )
+          for size in [15, 14, 13, 12, 11]:
+              css = base_css + """
+              @page {size:A4 landscape;margin:13mm;
+                @bottom-right {content:counter(page) " / 12";font-size:10pt}}
+              body {font-family:"DejaVu Sans",sans-serif;line-height:1.2}
+              section {break-after:page}
+              section:last-child {break-after:auto}
+              h2 {font-size:1.4em;margin:0 0 .7em;border-bottom:2px solid #234b8e;padding-bottom:.3em}
+              p {text-align:left;margin:.45em 0}
+              ul {margin:.4em 0;padding-left:1.3em}
+              li {margin:.15em 0}
+              table {font-size:.85em;margin:.6em 0}
+              """ + f"body {{font-size:{size}pt}}"
+              doc = (
+                  '<html lang="vi"><meta charset="utf-8"><style>'
+                  + css + "</style><body>" + body + "</body></html>"
+              )
+              HTML(string=doc, base_url=str(out.resolve())).write_pdf(
+                  out / "Slide_CodeNote.pdf"
+              )
+              pages = len(PdfReader(out / "Slide_CodeNote.pdf").pages)
+              if pages == 12:
+                  break
+          assert pages == 12, f"Slide co {pages} trang, can kiem tra tran trang"
+          counts.append("Slide: 12 trang (yeu cau 10-15).")
+          (out / "KiemTra_SoTrang.txt").write_text(
+              "\n".join(counts), encoding="utf-8"
+          )
+          print("\n".join(counts))
+          PY
+
+      - name: Luu cac tep de tai ve
+        uses: actions/upload-artifact@v4
+        with:
+          name: TV4-BaoCao-Slide-PDF
+          path: output/
+          if-no-files-found: error
