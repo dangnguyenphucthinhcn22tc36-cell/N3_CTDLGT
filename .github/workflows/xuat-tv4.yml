@@ -176,8 +176,8 @@ jobs:
           )
 
           base_css = """
-          body {font-family:"DejaVu Serif",serif;color:#16243b;line-height:1.4}
-          h1,h2,h3 {font-family:"DejaVu Sans",sans-serif;color:#234b8e;break-after:avoid}
+          body {font-family:"DejaVu Serif",serif;color:#000000;line-height:1.4}
+          h1,h2,h3 {font-family:"DejaVu Sans",sans-serif;color:#000000;break-after:avoid}
           h1 {font-size:1.4em;break-before:page}
           h1:first-child {break-before:auto}
           h2 {font-size:1.12em}
