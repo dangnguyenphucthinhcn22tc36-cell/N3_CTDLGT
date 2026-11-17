@@ -1,3 +1,33 @@
+# BÁO CÁO BÀI TẬP LỚN
+## MÔN CẤU TRÚC DỮ LIỆU VÀ GIẢI THUẬT
+
+**Đề tài 5: Trình soạn thảo văn bản có Undo/Redo**
+
+**Tên ứng dụng:** CodeNote  
+**Nhóm thực hiện:** Nhóm 3  
+
+## DANH SÁCH VÀ PHÂN CÔNG THÀNH VIÊN
+
+| Thành viên | Họ và tên | MSSV | Nhiệm vụ được phân công |
+|---|---|---|---|
+| TV1 | [Đặng Nguyễn Phúc Thịnh] | [075207016890] | Giao diện Windows Forms, tích hợp tầng lõi và trực quan hóa |
+| TV2 | [Trần Quý Minh Thiện | [079207025398] | Danh sách liên kết kép, chỉnh sửa, tìm kiếm và thay thế |
+| TV3 | [Dương Đình Phúc] | [079202017784] | Stack, Undo/Redo, giới hạn lịch sử và kiểm tra ngoặc |
+| TV4 | [Lê Quang Thắng] | [051207020740] | Dữ liệu, kiểm thử, đo thời gian, phân tích, báo cáo và slide |
+
+## MỤC LỤC
+
+1. Giới thiệu đề tài.
+2. Cơ sở lý thuyết.
+3. Phân tích và thiết kế.
+4. Cài đặt và phân tích thuật toán.
+5. Kiểm thử và thực nghiệm.
+6. Kết luận và hướng phát triển.
+7. Tài liệu và nguồn đối chiếu.
+8. Phụ lục và minh chứng.
+
+---
+   
 # CHƯƠNG 1. GIỚI THIỆU ĐỀ TÀI
 
 ## 1.1. Lý do lựa chọn đề tài
