@@ -22,6 +22,8 @@ namespace N3CTDLGT {
 			//TODO: Add the constructor code here
 			//
 		}
+#pragma region code_thua_thiet_ke_form_thien
+
 
 	protected:
 		/// <summary>
@@ -34,15 +36,21 @@ namespace N3CTDLGT {
 				delete components;
 			}
 		}
-    private: System::Windows::Forms::Label^ label35;
+    private: System::Windows::Forms::Label^ lb_limit_undo;
     protected:
-    private: System::Windows::Forms::Label^ label34;
+    private: System::Windows::Forms::Label^ lb_che_do;
+
+    protected:
+
     private: System::Windows::Forms::Panel^ panel6;
-    private: System::Windows::Forms::Label^ label33;
+    private: System::Windows::Forms::Label^ lb_cot_n;
+
     private: System::Windows::Forms::Panel^ panel5;
-    private: System::Windows::Forms::Label^ label32;
+    private: System::Windows::Forms::Label^ lb_dong_n;
+
     private: System::Windows::Forms::Panel^ panel4;
-    private: System::Windows::Forms::Label^ label31;
+    private: System::Windows::Forms::Label^ lb_kiem_tra;
+
     private: System::Windows::Forms::Panel^ panel1;
     private: System::Windows::Forms::Panel^ panel2;
     private: System::Windows::Forms::Panel^ panel3;
@@ -51,43 +59,61 @@ namespace N3CTDLGT {
     private: System::Windows::Forms::TextBox^ textBox3;
     private: System::Windows::Forms::Label^ label23;
     private: System::Windows::Forms::Label^ label3;
-    private: System::Windows::Forms::Label^ lbl_Words;
+    private: System::Windows::Forms::Label^ lb_Words;
+
     private: System::Windows::Forms::Label^ label29;
-    private: System::Windows::Forms::Label^ label6;
+    private: System::Windows::Forms::Label^ lb_dong;
+
     private: System::Windows::Forms::ToolStrip^ toolStrip1;
-    private: System::Windows::Forms::ToolStripButton^ toolStripButton1;
-    private: System::Windows::Forms::ToolStripButton^ toolStripButton2;
-    private: System::Windows::Forms::ToolStripButton^ toolStripButton3;
-    private: System::Windows::Forms::ToolStripButton^ toolStripButton4;
-    private: System::Windows::Forms::ToolStripButton^ toolStripButton5;
-    private: System::Windows::Forms::ToolStripButton^ toolStripButton6;
-    private: System::Windows::Forms::ToolStripButton^ toolStripButton7;
-    private: System::Windows::Forms::ToolStripButton^ toolStripButton8;
+    private: System::Windows::Forms::ToolStripButton^ tsb_open;
+    private: System::Windows::Forms::ToolStripButton^ tsb_luu_save;
+
+
+    private: System::Windows::Forms::ToolStripButton^ btn_undo;
+    private: System::Windows::Forms::ToolStripButton^ btn_redo;
+    private: System::Windows::Forms::ToolStripButton^ tsb_find;
+    private: System::Windows::Forms::ToolStripButton^ tsb_thaythe;
+    private: System::Windows::Forms::ToolStripButton^ tsb_thongke;
+    private: System::Windows::Forms::ToolStripButton^ tsb_check;
+
+
+
+
+
+
     private: System::Windows::Forms::ToolStripMenuItem^ thêmToolStripMenuItem;
     private: System::Windows::Forms::TextBox^ textBox2;
     private: System::Windows::Forms::ToolStripMenuItem^ chỉnhSửaToolStripMenuItem;
     private: System::Windows::Forms::ToolStripMenuItem^ côngCụToolStripMenuItem;
     private: System::Windows::Forms::ToolStripMenuItem^ trợGiúpToolStripMenuItem;
-    private: System::Windows::Forms::RichTextBox^ richTextBox1;
+    private: System::Windows::Forms::RichTextBox^ richTextBox_code;
+
     private: System::Windows::Forms::MenuStrip^ menuStrip1;
     private: System::Windows::Forms::Label^ label5;
     private: System::Windows::Forms::TextBox^ textBox6;
     private: System::Windows::Forms::GroupBox^ groupBox5;
-    private: System::Windows::Forms::Label^ label21;
+    private: System::Windows::Forms::Label^ lb_trangthai;
+
     private: System::Windows::Forms::Label^ label10;
-    private: System::Windows::Forms::NumericUpDown^ numericUpDown1;
+    private: System::Windows::Forms::NumericUpDown^ numericUpDown_K_step;
+
     private: System::Windows::Forms::Label^ label18;
     private: System::Windows::Forms::Label^ label19;
     private: System::Windows::Forms::Label^ label20;
     private: System::Windows::Forms::Label^ label12;
-    private: System::Windows::Forms::Label^ lbl_ngoac_vuong;
-    private: System::Windows::Forms::Label^ lbl_ngoac_nhon;
+    private: System::Windows::Forms::Label^ lb_ngoac_vuong;
+    private: System::Windows::Forms::Label^ lb_ngoac_nhon;
+
+
     private: System::Windows::Forms::TextBox^ textBox4;
     private: System::Windows::Forms::GroupBox^ groupBox4;
     private: System::Windows::Forms::Button^ btn_timkiem;
-    private: System::Windows::Forms::CheckBox^ checkBox1;
-    private: System::Windows::Forms::RadioButton^ radioButton2;
-    private: System::Windows::Forms::RadioButton^ radioButton1;
+    private: System::Windows::Forms::CheckBox^ checkbox_findall;
+    private: System::Windows::Forms::RadioButton^ rb_hoa_thuong;
+    private: System::Windows::Forms::RadioButton^ rb_tu_thuong;
+
+
+
     private: System::Windows::Forms::TextBox^ txt_tukhoa;
     private: System::Windows::Forms::Label^ label24;
     private: System::Windows::Forms::Label^ label25;
@@ -96,22 +122,26 @@ namespace N3CTDLGT {
     private: System::Windows::Forms::Label^ label13;
     private: System::Windows::Forms::Panel^ panel7;
     private: System::Windows::Forms::GroupBox^ groupBox3;
-    private: System::Windows::Forms::TextBox^ textBox5;
-    private: System::Windows::Forms::Button^ button1;
+    private: System::Windows::Forms::TextBox^ txt_thaythe;
+    private: System::Windows::Forms::Button^ btn_thaythe;
+
+
     private: System::Windows::Forms::Label^ label11;
     private: System::Windows::Forms::Label^ label16;
     private: System::Windows::Forms::Label^ label17;
     private: System::Windows::Forms::Label^ label15;
     private: System::Windows::Forms::Label^ label14;
     private: System::Windows::Forms::Label^ label30;
-    private: System::Windows::Forms::Label^ lbl_ngoac_tron;
+private: System::Windows::Forms::Label^ lb_ngoac_tron;
+
     private: System::Windows::Forms::Label^ label9;
     private: System::Windows::Forms::Label^ label8;
     private: System::Windows::Forms::Label^ label7;
     private: System::Windows::Forms::Label^ label2;
     private: System::Windows::Forms::TextBox^ textBox1;
     private: System::Windows::Forms::GroupBox^ groupBox1;
-    private: System::Windows::Forms::Label^ label22;
+private: System::Windows::Forms::Label^ lb_check_ngoac;
+
     private: System::Windows::Forms::Label^ label1;
     private: System::Windows::Forms::Label^ label4;
     private: System::Windows::Forms::GroupBox^ groupBox2;
@@ -119,16 +149,19 @@ namespace N3CTDLGT {
 private: System::Windows::Forms::Label^ label36;
 private: System::Windows::Forms::Label^ label37;
 private: System::Windows::Forms::Label^ label38;
-private: System::Windows::Forms::Label^ label39;
-private: System::Windows::Forms::Label^ label40;
+private: System::Windows::Forms::Label^ lb_check;
 
+private: System::Windows::Forms::Label^ label40;
+#pragma endregion
+
+#pragma region Windows Form Designer generated code
 	private:
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
 		System::ComponentModel::Container ^components;
 
-#pragma region Windows Form Designer generated code
+
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
@@ -136,14 +169,14 @@ private: System::Windows::Forms::Label^ label40;
 		void InitializeComponent(void)
 		{
             System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(CodeNote_N3::typeid));
-            this->label35 = (gcnew System::Windows::Forms::Label());
-            this->label34 = (gcnew System::Windows::Forms::Label());
+            this->lb_limit_undo = (gcnew System::Windows::Forms::Label());
+            this->lb_che_do = (gcnew System::Windows::Forms::Label());
             this->panel6 = (gcnew System::Windows::Forms::Panel());
-            this->label33 = (gcnew System::Windows::Forms::Label());
+            this->lb_cot_n = (gcnew System::Windows::Forms::Label());
             this->panel5 = (gcnew System::Windows::Forms::Panel());
-            this->label32 = (gcnew System::Windows::Forms::Label());
+            this->lb_dong_n = (gcnew System::Windows::Forms::Label());
             this->panel4 = (gcnew System::Windows::Forms::Panel());
-            this->label31 = (gcnew System::Windows::Forms::Label());
+            this->lb_kiem_tra = (gcnew System::Windows::Forms::Label());
             this->panel1 = (gcnew System::Windows::Forms::Panel());
             this->panel2 = (gcnew System::Windows::Forms::Panel());
             this->panel3 = (gcnew System::Windows::Forms::Panel());
@@ -152,43 +185,43 @@ private: System::Windows::Forms::Label^ label40;
             this->textBox3 = (gcnew System::Windows::Forms::TextBox());
             this->label23 = (gcnew System::Windows::Forms::Label());
             this->label3 = (gcnew System::Windows::Forms::Label());
-            this->lbl_Words = (gcnew System::Windows::Forms::Label());
+            this->lb_Words = (gcnew System::Windows::Forms::Label());
             this->label29 = (gcnew System::Windows::Forms::Label());
-            this->label6 = (gcnew System::Windows::Forms::Label());
+            this->lb_dong = (gcnew System::Windows::Forms::Label());
             this->toolStrip1 = (gcnew System::Windows::Forms::ToolStrip());
-            this->toolStripButton1 = (gcnew System::Windows::Forms::ToolStripButton());
-            this->toolStripButton2 = (gcnew System::Windows::Forms::ToolStripButton());
-            this->toolStripButton3 = (gcnew System::Windows::Forms::ToolStripButton());
-            this->toolStripButton4 = (gcnew System::Windows::Forms::ToolStripButton());
-            this->toolStripButton5 = (gcnew System::Windows::Forms::ToolStripButton());
-            this->toolStripButton6 = (gcnew System::Windows::Forms::ToolStripButton());
-            this->toolStripButton7 = (gcnew System::Windows::Forms::ToolStripButton());
-            this->toolStripButton8 = (gcnew System::Windows::Forms::ToolStripButton());
+            this->tsb_open = (gcnew System::Windows::Forms::ToolStripButton());
+            this->tsb_luu_save = (gcnew System::Windows::Forms::ToolStripButton());
+            this->btn_undo = (gcnew System::Windows::Forms::ToolStripButton());
+            this->btn_redo = (gcnew System::Windows::Forms::ToolStripButton());
+            this->tsb_find = (gcnew System::Windows::Forms::ToolStripButton());
+            this->tsb_thaythe = (gcnew System::Windows::Forms::ToolStripButton());
+            this->tsb_thongke = (gcnew System::Windows::Forms::ToolStripButton());
+            this->tsb_check = (gcnew System::Windows::Forms::ToolStripButton());
             this->thêmToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
             this->textBox2 = (gcnew System::Windows::Forms::TextBox());
             this->chỉnhSửaToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
             this->côngCụToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
             this->trợGiúpToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-            this->richTextBox1 = (gcnew System::Windows::Forms::RichTextBox());
+            this->richTextBox_code = (gcnew System::Windows::Forms::RichTextBox());
             this->menuStrip1 = (gcnew System::Windows::Forms::MenuStrip());
             this->label5 = (gcnew System::Windows::Forms::Label());
             this->textBox6 = (gcnew System::Windows::Forms::TextBox());
             this->groupBox5 = (gcnew System::Windows::Forms::GroupBox());
-            this->label21 = (gcnew System::Windows::Forms::Label());
+            this->lb_trangthai = (gcnew System::Windows::Forms::Label());
             this->label10 = (gcnew System::Windows::Forms::Label());
-            this->numericUpDown1 = (gcnew System::Windows::Forms::NumericUpDown());
+            this->numericUpDown_K_step = (gcnew System::Windows::Forms::NumericUpDown());
             this->label18 = (gcnew System::Windows::Forms::Label());
             this->label19 = (gcnew System::Windows::Forms::Label());
             this->label20 = (gcnew System::Windows::Forms::Label());
             this->label12 = (gcnew System::Windows::Forms::Label());
-            this->lbl_ngoac_vuong = (gcnew System::Windows::Forms::Label());
-            this->lbl_ngoac_nhon = (gcnew System::Windows::Forms::Label());
+            this->lb_ngoac_vuong = (gcnew System::Windows::Forms::Label());
+            this->lb_ngoac_nhon = (gcnew System::Windows::Forms::Label());
             this->textBox4 = (gcnew System::Windows::Forms::TextBox());
             this->groupBox4 = (gcnew System::Windows::Forms::GroupBox());
             this->btn_timkiem = (gcnew System::Windows::Forms::Button());
-            this->checkBox1 = (gcnew System::Windows::Forms::CheckBox());
-            this->radioButton2 = (gcnew System::Windows::Forms::RadioButton());
-            this->radioButton1 = (gcnew System::Windows::Forms::RadioButton());
+            this->checkbox_findall = (gcnew System::Windows::Forms::CheckBox());
+            this->rb_hoa_thuong = (gcnew System::Windows::Forms::RadioButton());
+            this->rb_tu_thuong = (gcnew System::Windows::Forms::RadioButton());
             this->txt_tukhoa = (gcnew System::Windows::Forms::TextBox());
             this->label24 = (gcnew System::Windows::Forms::Label());
             this->label25 = (gcnew System::Windows::Forms::Label());
@@ -197,22 +230,22 @@ private: System::Windows::Forms::Label^ label40;
             this->label13 = (gcnew System::Windows::Forms::Label());
             this->panel7 = (gcnew System::Windows::Forms::Panel());
             this->groupBox3 = (gcnew System::Windows::Forms::GroupBox());
-            this->textBox5 = (gcnew System::Windows::Forms::TextBox());
-            this->button1 = (gcnew System::Windows::Forms::Button());
+            this->txt_thaythe = (gcnew System::Windows::Forms::TextBox());
+            this->btn_thaythe = (gcnew System::Windows::Forms::Button());
             this->label11 = (gcnew System::Windows::Forms::Label());
             this->label16 = (gcnew System::Windows::Forms::Label());
             this->label17 = (gcnew System::Windows::Forms::Label());
             this->label15 = (gcnew System::Windows::Forms::Label());
             this->label14 = (gcnew System::Windows::Forms::Label());
             this->label30 = (gcnew System::Windows::Forms::Label());
-            this->lbl_ngoac_tron = (gcnew System::Windows::Forms::Label());
+            this->lb_ngoac_tron = (gcnew System::Windows::Forms::Label());
             this->label9 = (gcnew System::Windows::Forms::Label());
             this->label8 = (gcnew System::Windows::Forms::Label());
             this->label7 = (gcnew System::Windows::Forms::Label());
             this->label2 = (gcnew System::Windows::Forms::Label());
             this->textBox1 = (gcnew System::Windows::Forms::TextBox());
             this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
-            this->label22 = (gcnew System::Windows::Forms::Label());
+            this->lb_check_ngoac = (gcnew System::Windows::Forms::Label());
             this->label1 = (gcnew System::Windows::Forms::Label());
             this->label4 = (gcnew System::Windows::Forms::Label());
             this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
@@ -220,7 +253,7 @@ private: System::Windows::Forms::Label^ label40;
             this->label36 = (gcnew System::Windows::Forms::Label());
             this->label37 = (gcnew System::Windows::Forms::Label());
             this->label38 = (gcnew System::Windows::Forms::Label());
-            this->label39 = (gcnew System::Windows::Forms::Label());
+            this->lb_check = (gcnew System::Windows::Forms::Label());
             this->label40 = (gcnew System::Windows::Forms::Label());
             this->panel1->SuspendLayout();
             this->panel2->SuspendLayout();
@@ -229,38 +262,40 @@ private: System::Windows::Forms::Label^ label40;
             this->toolStrip1->SuspendLayout();
             this->menuStrip1->SuspendLayout();
             this->groupBox5->SuspendLayout();
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown1))->BeginInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown_K_step))->BeginInit();
             this->groupBox4->SuspendLayout();
             this->groupBox3->SuspendLayout();
             this->groupBox1->SuspendLayout();
             this->groupBox2->SuspendLayout();
             this->SuspendLayout();
             // 
-            // label35
+            // lb_limit_undo
             // 
-            this->label35->AutoSize = true;
-            this->label35->BackColor = System::Drawing::Color::LightGray;
-            this->label35->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            this->lb_limit_undo->AutoSize = true;
+            this->lb_limit_undo->BackColor = System::Drawing::Color::LightGray;
+            this->lb_limit_undo->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->label35->Location = System::Drawing::Point(1324, 1016);
-            this->label35->Name = L"label35";
-            this->label35->Size = System::Drawing::Size(169, 23);
-            this->label35->TabIndex = 102;
-            this->label35->Text = L"Limit undo: x bước";
-            this->label35->TextAlign = System::Drawing::ContentAlignment::TopRight;
+            this->lb_limit_undo->Location = System::Drawing::Point(1324, 1016);
+            this->lb_limit_undo->Name = L"lb_limit_undo";
+            this->lb_limit_undo->Size = System::Drawing::Size(169, 23);
+            this->lb_limit_undo->TabIndex = 102;
+            this->lb_limit_undo->Text = L"Limit undo: x bước";
+            this->lb_limit_undo->TextAlign = System::Drawing::ContentAlignment::TopRight;
+            this->lb_limit_undo->Click += gcnew System::EventHandler(this, &CodeNote_N3::lb_limit_undo_Click);
             // 
-            // label34
+            // lb_che_do
             // 
-            this->label34->AutoSize = true;
-            this->label34->BackColor = System::Drawing::Color::LightGray;
-            this->label34->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            this->lb_che_do->AutoSize = true;
+            this->lb_che_do->BackColor = System::Drawing::Color::LightGray;
+            this->lb_che_do->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->label34->Location = System::Drawing::Point(1158, 1016);
-            this->label34->Name = L"label34";
-            this->label34->Size = System::Drawing::Size(117, 23);
-            this->label34->TabIndex = 100;
-            this->label34->Text = L"Chế độ: C++";
-            this->label34->TextAlign = System::Drawing::ContentAlignment::TopRight;
+            this->lb_che_do->Location = System::Drawing::Point(1158, 1016);
+            this->lb_che_do->Name = L"lb_che_do";
+            this->lb_che_do->Size = System::Drawing::Size(117, 23);
+            this->lb_che_do->TabIndex = 100;
+            this->lb_che_do->Text = L"Chế độ: C++";
+            this->lb_che_do->TextAlign = System::Drawing::ContentAlignment::TopRight;
+            this->lb_che_do->Click += gcnew System::EventHandler(this, &CodeNote_N3::lb_che_do_Click);
             // 
             // panel6
             // 
@@ -269,17 +304,18 @@ private: System::Windows::Forms::Label^ label40;
             this->panel6->Size = System::Drawing::Size(2, 57);
             this->panel6->TabIndex = 99;
             // 
-            // label33
+            // lb_cot_n
             // 
-            this->label33->AutoSize = true;
-            this->label33->BackColor = System::Drawing::Color::LightGray;
-            this->label33->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            this->lb_cot_n->AutoSize = true;
+            this->lb_cot_n->BackColor = System::Drawing::Color::LightGray;
+            this->lb_cot_n->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->label33->Location = System::Drawing::Point(679, 1016);
-            this->label33->Name = L"label33";
-            this->label33->Size = System::Drawing::Size(63, 23);
-            this->label33->TabIndex = 98;
-            this->label33->Text = L"Cột: y";
+            this->lb_cot_n->Location = System::Drawing::Point(679, 1016);
+            this->lb_cot_n->Name = L"lb_cot_n";
+            this->lb_cot_n->Size = System::Drawing::Size(63, 23);
+            this->lb_cot_n->TabIndex = 98;
+            this->lb_cot_n->Text = L"Cột: y";
+            this->lb_cot_n->Click += gcnew System::EventHandler(this, &CodeNote_N3::lb_cot_n_Click);
             // 
             // panel5
             // 
@@ -288,17 +324,18 @@ private: System::Windows::Forms::Label^ label40;
             this->panel5->Size = System::Drawing::Size(2, 57);
             this->panel5->TabIndex = 97;
             // 
-            // label32
+            // lb_dong_n
             // 
-            this->label32->AutoSize = true;
-            this->label32->BackColor = System::Drawing::Color::LightGray;
-            this->label32->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            this->lb_dong_n->AutoSize = true;
+            this->lb_dong_n->BackColor = System::Drawing::Color::LightGray;
+            this->lb_dong_n->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->label32->Location = System::Drawing::Point(540, 1016);
-            this->label32->Name = L"label32";
-            this->label32->Size = System::Drawing::Size(76, 23);
-            this->label32->TabIndex = 96;
-            this->label32->Text = L"Dòng: x";
+            this->lb_dong_n->Location = System::Drawing::Point(540, 1016);
+            this->lb_dong_n->Name = L"lb_dong_n";
+            this->lb_dong_n->Size = System::Drawing::Size(76, 23);
+            this->lb_dong_n->TabIndex = 96;
+            this->lb_dong_n->Text = L"Dòng: x";
+            this->lb_dong_n->Click += gcnew System::EventHandler(this, &CodeNote_N3::lb_dong_n_Click);
             // 
             // panel4
             // 
@@ -307,17 +344,18 @@ private: System::Windows::Forms::Label^ label40;
             this->panel4->Size = System::Drawing::Size(2, 57);
             this->panel4->TabIndex = 95;
             // 
-            // label31
+            // lb_kiem_tra
             // 
-            this->label31->AutoSize = true;
-            this->label31->BackColor = System::Drawing::Color::LightGray;
-            this->label31->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            this->lb_kiem_tra->AutoSize = true;
+            this->lb_kiem_tra->BackColor = System::Drawing::Color::LightGray;
+            this->lb_kiem_tra->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->label31->Location = System::Drawing::Point(32, 1016);
-            this->label31->Name = L"label31";
-            this->label31->Size = System::Drawing::Size(84, 23);
-            this->label31->TabIndex = 84;
-            this->label31->Text = L"Sẵn sàng";
+            this->lb_kiem_tra->Location = System::Drawing::Point(32, 1016);
+            this->lb_kiem_tra->Name = L"lb_kiem_tra";
+            this->lb_kiem_tra->Size = System::Drawing::Size(84, 23);
+            this->lb_kiem_tra->TabIndex = 84;
+            this->lb_kiem_tra->Text = L"Sẵn sàng";
+            this->lb_kiem_tra->Click += gcnew System::EventHandler(this, &CodeNote_N3::lb_kiem_tra_Click);
             // 
             // panel1
             // 
@@ -395,16 +433,17 @@ private: System::Windows::Forms::Label^ label40;
             this->label3->Text = L"Từ";
             this->label3->TextAlign = System::Drawing::ContentAlignment::TopCenter;
             // 
-            // lbl_Words
+            // lb_Words
             // 
-            this->lbl_Words->AutoSize = true;
-            this->lbl_Words->Font = (gcnew System::Drawing::Font(L"Times New Roman", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            this->lb_Words->AutoSize = true;
+            this->lb_Words->Font = (gcnew System::Drawing::Font(L"Times New Roman", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->lbl_Words->Location = System::Drawing::Point(162, 22);
-            this->lbl_Words->Name = L"lbl_Words";
-            this->lbl_Words->Size = System::Drawing::Size(93, 26);
-            this->lbl_Words->TabIndex = 5;
-            this->lbl_Words->Text = L"abcxyz..";
+            this->lb_Words->Location = System::Drawing::Point(162, 22);
+            this->lb_Words->Name = L"lb_Words";
+            this->lb_Words->Size = System::Drawing::Size(93, 26);
+            this->lb_Words->TabIndex = 5;
+            this->lb_Words->Text = L"abcxyz..";
+            this->lb_Words->Click += gcnew System::EventHandler(this, &CodeNote_N3::lb_Words_Click);
             // 
             // label29
             // 
@@ -419,125 +458,133 @@ private: System::Windows::Forms::Label^ label40;
             this->label29->TabIndex = 91;
             this->label29->Text = L"Kết quả / Thông báo";
             // 
-            // label6
+            // lb_dong
             // 
-            this->label6->AutoSize = true;
-            this->label6->Font = (gcnew System::Drawing::Font(L"Times New Roman", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            this->lb_dong->AutoSize = true;
+            this->lb_dong->Font = (gcnew System::Drawing::Font(L"Times New Roman", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->label6->Location = System::Drawing::Point(162, 73);
-            this->label6->Name = L"label6";
-            this->label6->Size = System::Drawing::Size(93, 26);
-            this->label6->TabIndex = 8;
-            this->label6->Text = L"abcxyz..";
+            this->lb_dong->Location = System::Drawing::Point(162, 73);
+            this->lb_dong->Name = L"lb_dong";
+            this->lb_dong->Size = System::Drawing::Size(93, 26);
+            this->lb_dong->TabIndex = 8;
+            this->lb_dong->Text = L"abcxyz..";
+            this->lb_dong->Click += gcnew System::EventHandler(this, &CodeNote_N3::lb_dong_Click);
             // 
             // toolStrip1
             // 
             this->toolStrip1->ImageScalingSize = System::Drawing::Size(24, 24);
             this->toolStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(8) {
-                this->toolStripButton1,
-                    this->toolStripButton2, this->toolStripButton3, this->toolStripButton4, this->toolStripButton5, this->toolStripButton6, this->toolStripButton7,
-                    this->toolStripButton8
+                this->tsb_open, this->tsb_luu_save,
+                    this->btn_undo, this->btn_redo, this->tsb_find, this->tsb_thaythe, this->tsb_thongke, this->tsb_check
             });
-            this->toolStrip1->Location = System::Drawing::Point(0, 36);
+            this->toolStrip1->Location = System::Drawing::Point(0, 33);
             this->toolStrip1->Name = L"toolStrip1";
             this->toolStrip1->Size = System::Drawing::Size(1520, 58);
             this->toolStrip1->TabIndex = 76;
             this->toolStrip1->Text = L"toolStrip1";
             // 
-            // toolStripButton1
+            // tsb_open
             // 
-            this->toolStripButton1->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            this->tsb_open->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->toolStripButton1->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"toolStripButton1.Image")));
-            this->toolStripButton1->ImageTransparentColor = System::Drawing::Color::Magenta;
-            this->toolStripButton1->Name = L"toolStripButton1";
-            this->toolStripButton1->Size = System::Drawing::Size(48, 53);
-            this->toolStripButton1->Text = L"Mở";
-            this->toolStripButton1->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageAboveText;
+            this->tsb_open->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"tsb_open.Image")));
+            this->tsb_open->ImageTransparentColor = System::Drawing::Color::Magenta;
+            this->tsb_open->Name = L"tsb_open";
+            this->tsb_open->Size = System::Drawing::Size(48, 53);
+            this->tsb_open->Text = L"Mở";
+            this->tsb_open->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageAboveText;
+            this->tsb_open->Click += gcnew System::EventHandler(this, &CodeNote_N3::tsb_open_Click);
             // 
-            // toolStripButton2
+            // tsb_luu_save
             // 
-            this->toolStripButton2->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            this->tsb_luu_save->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->toolStripButton2->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"toolStripButton2.Image")));
-            this->toolStripButton2->ImageTransparentColor = System::Drawing::Color::Magenta;
-            this->toolStripButton2->Name = L"toolStripButton2";
-            this->toolStripButton2->Size = System::Drawing::Size(56, 53);
-            this->toolStripButton2->Text = L"Lưu";
-            this->toolStripButton2->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageAboveText;
+            this->tsb_luu_save->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"tsb_luu_save.Image")));
+            this->tsb_luu_save->ImageTransparentColor = System::Drawing::Color::Magenta;
+            this->tsb_luu_save->Name = L"tsb_luu_save";
+            this->tsb_luu_save->Size = System::Drawing::Size(56, 53);
+            this->tsb_luu_save->Text = L"Lưu";
+            this->tsb_luu_save->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageAboveText;
+            this->tsb_luu_save->Click += gcnew System::EventHandler(this, &CodeNote_N3::tsb_luu_save_Click);
             // 
-            // toolStripButton3
+            // btn_undo
             // 
-            this->toolStripButton3->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            this->btn_undo->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->toolStripButton3->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"toolStripButton3.Image")));
-            this->toolStripButton3->ImageTransparentColor = System::Drawing::Color::Magenta;
-            this->toolStripButton3->Name = L"toolStripButton3";
-            this->toolStripButton3->Size = System::Drawing::Size(217, 53);
-            this->toolStripButton3->Text = L"Hoàn Tác (CTRL+Z)";
-            this->toolStripButton3->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageAboveText;
+            this->btn_undo->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"btn_undo.Image")));
+            this->btn_undo->ImageTransparentColor = System::Drawing::Color::Magenta;
+            this->btn_undo->Name = L"btn_undo";
+            this->btn_undo->Size = System::Drawing::Size(217, 53);
+            this->btn_undo->Text = L"Hoàn Tác (CTRL+Z)";
+            this->btn_undo->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageAboveText;
+            this->btn_undo->Click += gcnew System::EventHandler(this, &CodeNote_N3::btn_undo_Click);
             // 
-            // toolStripButton4
+            // btn_redo
             // 
-            this->toolStripButton4->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            this->btn_redo->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->toolStripButton4->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"toolStripButton4.Image")));
-            this->toolStripButton4->ImageTransparentColor = System::Drawing::Color::Magenta;
-            this->toolStripButton4->Name = L"toolStripButton4";
-            this->toolStripButton4->Size = System::Drawing::Size(207, 53);
-            this->toolStripButton4->Text = L"Làm Lại (CTRL+Y)";
-            this->toolStripButton4->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageAboveText;
+            this->btn_redo->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"btn_redo.Image")));
+            this->btn_redo->ImageTransparentColor = System::Drawing::Color::Magenta;
+            this->btn_redo->Name = L"btn_redo";
+            this->btn_redo->Size = System::Drawing::Size(207, 53);
+            this->btn_redo->Text = L"Làm Lại (CTRL+Y)";
+            this->btn_redo->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageAboveText;
+            this->btn_redo->Click += gcnew System::EventHandler(this, &CodeNote_N3::btn_redo_Click);
             // 
-            // toolStripButton5
+            // tsb_find
             // 
-            this->toolStripButton5->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            this->tsb_find->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->toolStripButton5->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"toolStripButton5.Image")));
-            this->toolStripButton5->ImageTransparentColor = System::Drawing::Color::Magenta;
-            this->toolStripButton5->Name = L"toolStripButton5";
-            this->toolStripButton5->Size = System::Drawing::Size(113, 53);
-            this->toolStripButton5->Text = L"Tìm Kiếm";
-            this->toolStripButton5->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageAboveText;
+            this->tsb_find->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"tsb_find.Image")));
+            this->tsb_find->ImageTransparentColor = System::Drawing::Color::Magenta;
+            this->tsb_find->Name = L"tsb_find";
+            this->tsb_find->Size = System::Drawing::Size(113, 53);
+            this->tsb_find->Text = L"Tìm Kiếm";
+            this->tsb_find->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageAboveText;
+            this->tsb_find->Click += gcnew System::EventHandler(this, &CodeNote_N3::tsb_find_Click);
             // 
-            // toolStripButton6
+            // tsb_thaythe
             // 
-            this->toolStripButton6->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            this->tsb_thaythe->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->toolStripButton6->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"toolStripButton6.Image")));
-            this->toolStripButton6->ImageTransparentColor = System::Drawing::Color::Magenta;
-            this->toolStripButton6->Name = L"toolStripButton6";
-            this->toolStripButton6->Size = System::Drawing::Size(107, 53);
-            this->toolStripButton6->Text = L"Thay Thế";
-            this->toolStripButton6->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageAboveText;
+            this->tsb_thaythe->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"tsb_thaythe.Image")));
+            this->tsb_thaythe->ImageTransparentColor = System::Drawing::Color::Magenta;
+            this->tsb_thaythe->Name = L"tsb_thaythe";
+            this->tsb_thaythe->Size = System::Drawing::Size(107, 53);
+            this->tsb_thaythe->Text = L"Thay Thế";
+            this->tsb_thaythe->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageAboveText;
+            this->tsb_thaythe->Click += gcnew System::EventHandler(this, &CodeNote_N3::tsb_thaythe_Click);
             // 
-            // toolStripButton7
+            // tsb_thongke
             // 
-            this->toolStripButton7->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            this->tsb_thongke->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->toolStripButton7->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"toolStripButton7.Image")));
-            this->toolStripButton7->ImageTransparentColor = System::Drawing::Color::Magenta;
-            this->toolStripButton7->Name = L"toolStripButton7";
-            this->toolStripButton7->Size = System::Drawing::Size(111, 53);
-            this->toolStripButton7->Text = L"Thống Kê";
-            this->toolStripButton7->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageAboveText;
+            this->tsb_thongke->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"tsb_thongke.Image")));
+            this->tsb_thongke->ImageTransparentColor = System::Drawing::Color::Magenta;
+            this->tsb_thongke->Name = L"tsb_thongke";
+            this->tsb_thongke->Size = System::Drawing::Size(111, 53);
+            this->tsb_thongke->Text = L"Thống Kê";
+            this->tsb_thongke->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageAboveText;
+            this->tsb_thongke->Click += gcnew System::EventHandler(this, &CodeNote_N3::tsb_thongke_Click);
             // 
-            // toolStripButton8
+            // tsb_check
             // 
-            this->toolStripButton8->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            this->tsb_check->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->toolStripButton8->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"toolStripButton8.Image")));
-            this->toolStripButton8->ImageTransparentColor = System::Drawing::Color::Magenta;
-            this->toolStripButton8->Name = L"toolStripButton8";
-            this->toolStripButton8->Size = System::Drawing::Size(162, 53);
-            this->toolStripButton8->Text = L"Kiểm tra ngoặc";
-            this->toolStripButton8->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageAboveText;
+            this->tsb_check->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"tsb_check.Image")));
+            this->tsb_check->ImageTransparentColor = System::Drawing::Color::Magenta;
+            this->tsb_check->Name = L"tsb_check";
+            this->tsb_check->Size = System::Drawing::Size(162, 53);
+            this->tsb_check->Text = L"Kiểm tra ngoặc";
+            this->tsb_check->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageAboveText;
+            this->tsb_check->Click += gcnew System::EventHandler(this, &CodeNote_N3::tsb_check_Click);
             // 
             // thêmToolStripMenuItem
             // 
             this->thêmToolStripMenuItem->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
             this->thêmToolStripMenuItem->Name = L"thêmToolStripMenuItem";
-            this->thêmToolStripMenuItem->Size = System::Drawing::Size(65, 32);
+            this->thêmToolStripMenuItem->Size = System::Drawing::Size(65, 29);
             this->thêmToolStripMenuItem->Text = L"Tệp";
             // 
             // textBox2
@@ -554,7 +601,7 @@ private: System::Windows::Forms::Label^ label40;
             this->chỉnhSửaToolStripMenuItem->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
             this->chỉnhSửaToolStripMenuItem->Name = L"chỉnhSửaToolStripMenuItem";
-            this->chỉnhSửaToolStripMenuItem->Size = System::Drawing::Size(128, 32);
+            this->chỉnhSửaToolStripMenuItem->Size = System::Drawing::Size(128, 29);
             this->chỉnhSửaToolStripMenuItem->Text = L"Chỉnh Sửa";
             // 
             // côngCụToolStripMenuItem
@@ -562,7 +609,7 @@ private: System::Windows::Forms::Label^ label40;
             this->côngCụToolStripMenuItem->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
             this->côngCụToolStripMenuItem->Name = L"côngCụToolStripMenuItem";
-            this->côngCụToolStripMenuItem->Size = System::Drawing::Size(112, 32);
+            this->côngCụToolStripMenuItem->Size = System::Drawing::Size(112, 29);
             this->côngCụToolStripMenuItem->Text = L"Công Cụ";
             // 
             // trợGiúpToolStripMenuItem
@@ -570,16 +617,17 @@ private: System::Windows::Forms::Label^ label40;
             this->trợGiúpToolStripMenuItem->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
             this->trợGiúpToolStripMenuItem->Name = L"trợGiúpToolStripMenuItem";
-            this->trợGiúpToolStripMenuItem->Size = System::Drawing::Size(115, 32);
+            this->trợGiúpToolStripMenuItem->Size = System::Drawing::Size(115, 29);
             this->trợGiúpToolStripMenuItem->Text = L"Trợ Giúp";
             // 
-            // richTextBox1
+            // richTextBox_code
             // 
-            this->richTextBox1->Location = System::Drawing::Point(310, 96);
-            this->richTextBox1->Name = L"richTextBox1";
-            this->richTextBox1->Size = System::Drawing::Size(895, 765);
-            this->richTextBox1->TabIndex = 74;
-            this->richTextBox1->Text = L"";
+            this->richTextBox_code->Location = System::Drawing::Point(310, 96);
+            this->richTextBox_code->Name = L"richTextBox_code";
+            this->richTextBox_code->Size = System::Drawing::Size(895, 765);
+            this->richTextBox_code->TabIndex = 74;
+            this->richTextBox_code->Text = L"";
+            this->richTextBox_code->TextChanged += gcnew System::EventHandler(this, &CodeNote_N3::richTextBox_code_TextChanged);
             // 
             // menuStrip1
             // 
@@ -592,7 +640,7 @@ private: System::Windows::Forms::Label^ label40;
             });
             this->menuStrip1->Location = System::Drawing::Point(0, 0);
             this->menuStrip1->Name = L"menuStrip1";
-            this->menuStrip1->Size = System::Drawing::Size(1520, 36);
+            this->menuStrip1->Size = System::Drawing::Size(1520, 33);
             this->menuStrip1->TabIndex = 75;
             this->menuStrip1->Text = L"menuStrip1";
             // 
@@ -620,9 +668,9 @@ private: System::Windows::Forms::Label^ label40;
             // 
             // groupBox5
             // 
-            this->groupBox5->Controls->Add(this->label21);
+            this->groupBox5->Controls->Add(this->lb_trangthai);
             this->groupBox5->Controls->Add(this->label10);
-            this->groupBox5->Controls->Add(this->numericUpDown1);
+            this->groupBox5->Controls->Add(this->numericUpDown_K_step);
             this->groupBox5->Controls->Add(this->label18);
             this->groupBox5->Controls->Add(this->label19);
             this->groupBox5->Controls->Add(this->label20);
@@ -632,16 +680,17 @@ private: System::Windows::Forms::Label^ label40;
             this->groupBox5->TabIndex = 89;
             this->groupBox5->TabStop = false;
             // 
-            // label21
+            // lb_trangthai
             // 
-            this->label21->AutoSize = true;
-            this->label21->Font = (gcnew System::Drawing::Font(L"Times New Roman", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            this->lb_trangthai->AutoSize = true;
+            this->lb_trangthai->Font = (gcnew System::Drawing::Font(L"Times New Roman", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->label21->Location = System::Drawing::Point(124, 73);
-            this->label21->Name = L"label21";
-            this->label21->Size = System::Drawing::Size(93, 26);
-            this->label21->TabIndex = 10;
-            this->label21->Text = L"abcxyz..";
+            this->lb_trangthai->Location = System::Drawing::Point(124, 73);
+            this->lb_trangthai->Name = L"lb_trangthai";
+            this->lb_trangthai->Size = System::Drawing::Size(93, 26);
+            this->lb_trangthai->TabIndex = 10;
+            this->lb_trangthai->Text = L"abcxyz..";
+            this->lb_trangthai->Click += gcnew System::EventHandler(this, &CodeNote_N3::lb_trangthai_Click);
             // 
             // label10
             // 
@@ -654,12 +703,13 @@ private: System::Windows::Forms::Label^ label40;
             this->label10->TabIndex = 10;
             this->label10->Text = L"Trạng thái:";
             // 
-            // numericUpDown1
+            // numericUpDown_K_step
             // 
-            this->numericUpDown1->Location = System::Drawing::Point(130, 19);
-            this->numericUpDown1->Name = L"numericUpDown1";
-            this->numericUpDown1->Size = System::Drawing::Size(80, 26);
-            this->numericUpDown1->TabIndex = 9;
+            this->numericUpDown_K_step->Location = System::Drawing::Point(130, 19);
+            this->numericUpDown_K_step->Name = L"numericUpDown_K_step";
+            this->numericUpDown_K_step->Size = System::Drawing::Size(80, 26);
+            this->numericUpDown_K_step->TabIndex = 9;
+            this->numericUpDown_K_step->ValueChanged += gcnew System::EventHandler(this, &CodeNote_N3::numericUpDown_K_step_ValueChanged);
             // 
             // label18
             // 
@@ -705,27 +755,29 @@ private: System::Windows::Forms::Label^ label40;
             this->label12->TabIndex = 88;
             this->label12->Text = L"Giới hạn Undo / Redo";
             // 
-            // lbl_ngoac_vuong
+            // lb_ngoac_vuong
             // 
-            this->lbl_ngoac_vuong->AutoSize = true;
-            this->lbl_ngoac_vuong->Font = (gcnew System::Drawing::Font(L"Times New Roman", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            this->lb_ngoac_vuong->AutoSize = true;
+            this->lb_ngoac_vuong->Font = (gcnew System::Drawing::Font(L"Times New Roman", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->lbl_ngoac_vuong->Location = System::Drawing::Point(143, 200);
-            this->lbl_ngoac_vuong->Name = L"lbl_ngoac_vuong";
-            this->lbl_ngoac_vuong->Size = System::Drawing::Size(66, 26);
-            this->lbl_ngoac_vuong->TabIndex = 14;
-            this->lbl_ngoac_vuong->Text = L"Dòng";
+            this->lb_ngoac_vuong->Location = System::Drawing::Point(143, 200);
+            this->lb_ngoac_vuong->Name = L"lb_ngoac_vuong";
+            this->lb_ngoac_vuong->Size = System::Drawing::Size(66, 26);
+            this->lb_ngoac_vuong->TabIndex = 14;
+            this->lb_ngoac_vuong->Text = L"Dòng";
+            this->lb_ngoac_vuong->Click += gcnew System::EventHandler(this, &CodeNote_N3::lb_ngoac_vuong_Click);
             // 
-            // lbl_ngoac_nhon
+            // lb_ngoac_nhon
             // 
-            this->lbl_ngoac_nhon->AutoSize = true;
-            this->lbl_ngoac_nhon->Font = (gcnew System::Drawing::Font(L"Times New Roman", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            this->lb_ngoac_nhon->AutoSize = true;
+            this->lb_ngoac_nhon->Font = (gcnew System::Drawing::Font(L"Times New Roman", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->lbl_ngoac_nhon->Location = System::Drawing::Point(143, 159);
-            this->lbl_ngoac_nhon->Name = L"lbl_ngoac_nhon";
-            this->lbl_ngoac_nhon->Size = System::Drawing::Size(66, 26);
-            this->lbl_ngoac_nhon->TabIndex = 13;
-            this->lbl_ngoac_nhon->Text = L"Dòng";
+            this->lb_ngoac_nhon->Location = System::Drawing::Point(143, 159);
+            this->lb_ngoac_nhon->Name = L"lb_ngoac_nhon";
+            this->lb_ngoac_nhon->Size = System::Drawing::Size(66, 26);
+            this->lb_ngoac_nhon->TabIndex = 13;
+            this->lb_ngoac_nhon->Text = L"Dòng";
+            this->lb_ngoac_nhon->Click += gcnew System::EventHandler(this, &CodeNote_N3::lb_ngoac_nhon_Click);
             // 
             // textBox4
             // 
@@ -739,9 +791,9 @@ private: System::Windows::Forms::Label^ label40;
             // groupBox4
             // 
             this->groupBox4->Controls->Add(this->btn_timkiem);
-            this->groupBox4->Controls->Add(this->checkBox1);
-            this->groupBox4->Controls->Add(this->radioButton2);
-            this->groupBox4->Controls->Add(this->radioButton1);
+            this->groupBox4->Controls->Add(this->checkbox_findall);
+            this->groupBox4->Controls->Add(this->rb_hoa_thuong);
+            this->groupBox4->Controls->Add(this->rb_tu_thuong);
             this->groupBox4->Controls->Add(this->txt_tukhoa);
             this->groupBox4->Controls->Add(this->label24);
             this->groupBox4->Controls->Add(this->label25);
@@ -767,45 +819,49 @@ private: System::Windows::Forms::Label^ label40;
             this->btn_timkiem->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
             this->btn_timkiem->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageBeforeText;
             this->btn_timkiem->UseVisualStyleBackColor = true;
+            this->btn_timkiem->Click += gcnew System::EventHandler(this, &CodeNote_N3::btn_timkiem_Click);
             // 
-            // checkBox1
+            // checkbox_findall
             // 
-            this->checkBox1->AutoSize = true;
-            this->checkBox1->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+            this->checkbox_findall->AutoSize = true;
+            this->checkbox_findall->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->checkBox1->Location = System::Drawing::Point(22, 231);
-            this->checkBox1->Name = L"checkBox1";
-            this->checkBox1->Size = System::Drawing::Size(120, 26);
-            this->checkBox1->TabIndex = 12;
-            this->checkBox1->Text = L"Tìm cả tệp";
-            this->checkBox1->UseVisualStyleBackColor = true;
+            this->checkbox_findall->Location = System::Drawing::Point(22, 231);
+            this->checkbox_findall->Name = L"checkbox_findall";
+            this->checkbox_findall->Size = System::Drawing::Size(120, 26);
+            this->checkbox_findall->TabIndex = 12;
+            this->checkbox_findall->Text = L"Tìm cả tệp";
+            this->checkbox_findall->UseVisualStyleBackColor = true;
+            this->checkbox_findall->CheckedChanged += gcnew System::EventHandler(this, &CodeNote_N3::checkbox_findall_CheckedChanged);
             // 
-            // radioButton2
+            // rb_hoa_thuong
             // 
-            this->radioButton2->AutoSize = true;
-            this->radioButton2->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+            this->rb_hoa_thuong->AutoSize = true;
+            this->rb_hoa_thuong->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->radioButton2->Location = System::Drawing::Point(22, 199);
-            this->radioButton2->Name = L"radioButton2";
-            this->radioButton2->Size = System::Drawing::Size(201, 26);
-            this->radioButton2->TabIndex = 11;
-            this->radioButton2->TabStop = true;
-            this->radioButton2->Text = L"Phân biệt hoa/thường";
-            this->radioButton2->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
-            this->radioButton2->UseVisualStyleBackColor = true;
+            this->rb_hoa_thuong->Location = System::Drawing::Point(22, 199);
+            this->rb_hoa_thuong->Name = L"rb_hoa_thuong";
+            this->rb_hoa_thuong->Size = System::Drawing::Size(201, 26);
+            this->rb_hoa_thuong->TabIndex = 11;
+            this->rb_hoa_thuong->TabStop = true;
+            this->rb_hoa_thuong->Text = L"Phân biệt hoa/thường";
+            this->rb_hoa_thuong->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
+            this->rb_hoa_thuong->UseVisualStyleBackColor = true;
+            this->rb_hoa_thuong->CheckedChanged += gcnew System::EventHandler(this, &CodeNote_N3::rb_hoa_thuong_CheckedChanged);
             // 
-            // radioButton1
+            // rb_tu_thuong
             // 
-            this->radioButton1->AutoSize = true;
-            this->radioButton1->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+            this->rb_tu_thuong->AutoSize = true;
+            this->rb_tu_thuong->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->radioButton1->Location = System::Drawing::Point(22, 167);
-            this->radioButton1->Name = L"radioButton1";
-            this->radioButton1->Size = System::Drawing::Size(96, 26);
-            this->radioButton1->TabIndex = 10;
-            this->radioButton1->TabStop = true;
-            this->radioButton1->Text = L"Thường";
-            this->radioButton1->UseVisualStyleBackColor = true;
+            this->rb_tu_thuong->Location = System::Drawing::Point(22, 167);
+            this->rb_tu_thuong->Name = L"rb_tu_thuong";
+            this->rb_tu_thuong->Size = System::Drawing::Size(96, 26);
+            this->rb_tu_thuong->TabIndex = 10;
+            this->rb_tu_thuong->TabStop = true;
+            this->rb_tu_thuong->Text = L"Thường";
+            this->rb_tu_thuong->UseVisualStyleBackColor = true;
+            this->rb_tu_thuong->CheckedChanged += gcnew System::EventHandler(this, &CodeNote_N3::rb_tu_thuong_CheckedChanged);
             // 
             // txt_tukhoa
             // 
@@ -814,6 +870,7 @@ private: System::Windows::Forms::Label^ label40;
             this->txt_tukhoa->Name = L"txt_tukhoa";
             this->txt_tukhoa->Size = System::Drawing::Size(247, 36);
             this->txt_tukhoa->TabIndex = 9;
+            this->txt_tukhoa->TextChanged += gcnew System::EventHandler(this, &CodeNote_N3::txt_tukhoa_TextChanged);
             // 
             // label24
             // 
@@ -877,8 +934,8 @@ private: System::Windows::Forms::Label^ label40;
             // 
             // groupBox3
             // 
-            this->groupBox3->Controls->Add(this->textBox5);
-            this->groupBox3->Controls->Add(this->button1);
+            this->groupBox3->Controls->Add(this->txt_thaythe);
+            this->groupBox3->Controls->Add(this->btn_thaythe);
             this->groupBox3->Controls->Add(this->label11);
             this->groupBox3->Controls->Add(this->label16);
             this->groupBox3->Controls->Add(this->label17);
@@ -888,28 +945,30 @@ private: System::Windows::Forms::Label^ label40;
             this->groupBox3->TabIndex = 86;
             this->groupBox3->TabStop = false;
             // 
-            // textBox5
+            // txt_thaythe
             // 
-            this->textBox5->Location = System::Drawing::Point(100, 15);
-            this->textBox5->Multiline = true;
-            this->textBox5->Name = L"textBox5";
-            this->textBox5->Size = System::Drawing::Size(162, 36);
-            this->textBox5->TabIndex = 14;
+            this->txt_thaythe->Location = System::Drawing::Point(100, 15);
+            this->txt_thaythe->Multiline = true;
+            this->txt_thaythe->Name = L"txt_thaythe";
+            this->txt_thaythe->Size = System::Drawing::Size(162, 36);
+            this->txt_thaythe->TabIndex = 14;
+            this->txt_thaythe->TextChanged += gcnew System::EventHandler(this, &CodeNote_N3::txt_thaythe_TextChanged);
             // 
-            // button1
+            // btn_thaythe
             // 
-            this->button1->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
-            this->button1->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            this->btn_thaythe->FlatStyle = System::Windows::Forms::FlatStyle::Flat;
+            this->btn_thaythe->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->button1->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"button1.Image")));
-            this->button1->Location = System::Drawing::Point(22, 73);
-            this->button1->Name = L"button1";
-            this->button1->Size = System::Drawing::Size(226, 46);
-            this->button1->TabIndex = 13;
-            this->button1->Text = L"Thay Thế";
-            this->button1->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
-            this->button1->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageBeforeText;
-            this->button1->UseVisualStyleBackColor = true;
+            this->btn_thaythe->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"btn_thaythe.Image")));
+            this->btn_thaythe->Location = System::Drawing::Point(22, 73);
+            this->btn_thaythe->Name = L"btn_thaythe";
+            this->btn_thaythe->Size = System::Drawing::Size(226, 46);
+            this->btn_thaythe->TabIndex = 13;
+            this->btn_thaythe->Text = L"Thay Thế";
+            this->btn_thaythe->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
+            this->btn_thaythe->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageBeforeText;
+            this->btn_thaythe->UseVisualStyleBackColor = true;
+            this->btn_thaythe->Click += gcnew System::EventHandler(this, &CodeNote_N3::btn_thaythe_Click);
             // 
             // label11
             // 
@@ -978,16 +1037,17 @@ private: System::Windows::Forms::Label^ label40;
             this->label30->Text = L"kiểm tra cú pháp...";
             this->label30->TextAlign = System::Drawing::ContentAlignment::TopCenter;
             // 
-            // lbl_ngoac_tron
+            // lb_ngoac_tron
             // 
-            this->lbl_ngoac_tron->AutoSize = true;
-            this->lbl_ngoac_tron->Font = (gcnew System::Drawing::Font(L"Times New Roman", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            this->lb_ngoac_tron->AutoSize = true;
+            this->lb_ngoac_tron->Font = (gcnew System::Drawing::Font(L"Times New Roman", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->lbl_ngoac_tron->Location = System::Drawing::Point(143, 117);
-            this->lbl_ngoac_tron->Name = L"lbl_ngoac_tron";
-            this->lbl_ngoac_tron->Size = System::Drawing::Size(66, 26);
-            this->lbl_ngoac_tron->TabIndex = 12;
-            this->lbl_ngoac_tron->Text = L"Dòng";
+            this->lb_ngoac_tron->Location = System::Drawing::Point(143, 108);
+            this->lb_ngoac_tron->Name = L"lb_ngoac_tron";
+            this->lb_ngoac_tron->Size = System::Drawing::Size(66, 26);
+            this->lb_ngoac_tron->TabIndex = 12;
+            this->lb_ngoac_tron->Text = L"Dòng";
+            this->lb_ngoac_tron->Click += gcnew System::EventHandler(this, &CodeNote_N3::lb_ngoac_tron_Click);
             // 
             // label9
             // 
@@ -1043,13 +1103,13 @@ private: System::Windows::Forms::Label^ label40;
             // 
             // groupBox1
             // 
-            this->groupBox1->Controls->Add(this->label22);
+            this->groupBox1->Controls->Add(this->lb_check_ngoac);
             this->groupBox1->Controls->Add(this->label15);
             this->groupBox1->Controls->Add(this->label14);
             this->groupBox1->Controls->Add(this->label13);
-            this->groupBox1->Controls->Add(this->lbl_ngoac_vuong);
-            this->groupBox1->Controls->Add(this->lbl_ngoac_nhon);
-            this->groupBox1->Controls->Add(this->lbl_ngoac_tron);
+            this->groupBox1->Controls->Add(this->lb_ngoac_vuong);
+            this->groupBox1->Controls->Add(this->lb_ngoac_nhon);
+            this->groupBox1->Controls->Add(this->lb_ngoac_tron);
             this->groupBox1->Controls->Add(this->label9);
             this->groupBox1->Controls->Add(this->label8);
             this->groupBox1->Controls->Add(this->label7);
@@ -1059,20 +1119,21 @@ private: System::Windows::Forms::Label^ label40;
             this->groupBox1->TabIndex = 79;
             this->groupBox1->TabStop = false;
             // 
-            // label22
+            // lb_check_ngoac
             // 
-            this->label22->BackColor = System::Drawing::SystemColors::Control;
-            this->label22->Font = (gcnew System::Drawing::Font(L"Times New Roman", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            this->lb_check_ngoac->BackColor = System::Drawing::SystemColors::Control;
+            this->lb_check_ngoac->Font = (gcnew System::Drawing::Font(L"Times New Roman", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->label22->ForeColor = System::Drawing::Color::Green;
-            this->label22->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"label22.Image")));
-            this->label22->ImageAlign = System::Drawing::ContentAlignment::MiddleLeft;
-            this->label22->Location = System::Drawing::Point(18, 44);
-            this->label22->Name = L"label22";
-            this->label22->Size = System::Drawing::Size(258, 26);
-            this->label22->TabIndex = 18;
-            this->label22->Text = L"Ngoặc cân bằng!";
-            this->label22->TextAlign = System::Drawing::ContentAlignment::TopCenter;
+            this->lb_check_ngoac->ForeColor = System::Drawing::Color::Green;
+            this->lb_check_ngoac->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"lb_check_ngoac.Image")));
+            this->lb_check_ngoac->ImageAlign = System::Drawing::ContentAlignment::MiddleLeft;
+            this->lb_check_ngoac->Location = System::Drawing::Point(18, 44);
+            this->lb_check_ngoac->Name = L"lb_check_ngoac";
+            this->lb_check_ngoac->Size = System::Drawing::Size(258, 26);
+            this->lb_check_ngoac->TabIndex = 18;
+            this->lb_check_ngoac->Text = L"Ngoặc cân bằng!";
+            this->lb_check_ngoac->TextAlign = System::Drawing::ContentAlignment::TopCenter;
+            this->lb_check_ngoac->Click += gcnew System::EventHandler(this, &CodeNote_N3::lb_check_ngoac_Click);
             // 
             // label1
             // 
@@ -1103,9 +1164,9 @@ private: System::Windows::Forms::Label^ label40;
             // groupBox2
             // 
             this->groupBox2->Controls->Add(this->label28);
-            this->groupBox2->Controls->Add(this->label6);
+            this->groupBox2->Controls->Add(this->lb_dong);
             this->groupBox2->Controls->Add(this->label3);
-            this->groupBox2->Controls->Add(this->lbl_Words);
+            this->groupBox2->Controls->Add(this->lb_Words);
             this->groupBox2->Controls->Add(this->label5);
             this->groupBox2->Location = System::Drawing::Point(15, 167);
             this->groupBox2->Name = L"groupBox2";
@@ -1165,20 +1226,21 @@ private: System::Windows::Forms::Label^ label40;
             this->label38->TabIndex = 105;
             this->label38->Text = L"Kết quả / thông báo";
             // 
-            // label39
+            // lb_check
             // 
-            this->label39->BackColor = System::Drawing::SystemColors::Control;
-            this->label39->Font = (gcnew System::Drawing::Font(L"Times New Roman", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            this->lb_check->BackColor = System::Drawing::SystemColors::Control;
+            this->lb_check->Font = (gcnew System::Drawing::Font(L"Times New Roman", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->label39->ForeColor = System::Drawing::Color::Green;
-            this->label39->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"label39.Image")));
-            this->label39->ImageAlign = System::Drawing::ContentAlignment::MiddleLeft;
-            this->label39->Location = System::Drawing::Point(40, 959);
-            this->label39->Name = L"label39";
-            this->label39->Size = System::Drawing::Size(410, 26);
-            this->label39->TabIndex = 19;
-            this->label39->Text = L"Kiểm tra cú pháp thành công!";
-            this->label39->TextAlign = System::Drawing::ContentAlignment::TopCenter;
+            this->lb_check->ForeColor = System::Drawing::Color::Green;
+            this->lb_check->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"lb_check.Image")));
+            this->lb_check->ImageAlign = System::Drawing::ContentAlignment::MiddleLeft;
+            this->lb_check->Location = System::Drawing::Point(40, 959);
+            this->lb_check->Name = L"lb_check";
+            this->lb_check->Size = System::Drawing::Size(410, 26);
+            this->lb_check->TabIndex = 19;
+            this->lb_check->Text = L"Kiểm tra cú pháp thành công!";
+            this->lb_check->TextAlign = System::Drawing::ContentAlignment::TopCenter;
+            this->lb_check->Click += gcnew System::EventHandler(this, &CodeNote_N3::lb_check_Click);
             // 
             // label40
             // 
@@ -1199,18 +1261,18 @@ private: System::Windows::Forms::Label^ label40;
             this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
             this->ClientSize = System::Drawing::Size(1520, 1063);
             this->Controls->Add(this->label40);
-            this->Controls->Add(this->label39);
+            this->Controls->Add(this->lb_check);
             this->Controls->Add(this->label38);
             this->Controls->Add(this->label37);
             this->Controls->Add(this->label36);
-            this->Controls->Add(this->label35);
-            this->Controls->Add(this->label34);
+            this->Controls->Add(this->lb_limit_undo);
+            this->Controls->Add(this->lb_che_do);
             this->Controls->Add(this->panel6);
-            this->Controls->Add(this->label33);
+            this->Controls->Add(this->lb_cot_n);
             this->Controls->Add(this->panel5);
-            this->Controls->Add(this->label32);
+            this->Controls->Add(this->lb_dong_n);
             this->Controls->Add(this->panel4);
-            this->Controls->Add(this->label31);
+            this->Controls->Add(this->lb_kiem_tra);
             this->Controls->Add(this->panel1);
             this->Controls->Add(this->pictureBox2);
             this->Controls->Add(this->pictureBox1);
@@ -1219,7 +1281,7 @@ private: System::Windows::Forms::Label^ label40;
             this->Controls->Add(this->label29);
             this->Controls->Add(this->toolStrip1);
             this->Controls->Add(this->textBox2);
-            this->Controls->Add(this->richTextBox1);
+            this->Controls->Add(this->richTextBox_code);
             this->Controls->Add(this->menuStrip1);
             this->Controls->Add(this->textBox6);
             this->Controls->Add(this->groupBox5);
@@ -1247,7 +1309,7 @@ private: System::Windows::Forms::Label^ label40;
             this->menuStrip1->PerformLayout();
             this->groupBox5->ResumeLayout(false);
             this->groupBox5->PerformLayout();
-            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown1))->EndInit();
+            (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown_K_step))->EndInit();
             this->groupBox4->ResumeLayout(false);
             this->groupBox4->PerformLayout();
             this->groupBox3->ResumeLayout(false);
@@ -1261,5 +1323,112 @@ private: System::Windows::Forms::Label^ label40;
 
         }
 #pragma endregion
-	};
+
+#pragma region code_toolstripbutton_open_save_undo_redo_vv
+
+
+
+    private: System::Void tsb_open_Click(System::Object^ sender, System::EventArgs^ e) {
+
+    }
+private: System::Void tsb_luu_save_Click(System::Object^ sender, System::EventArgs^ e) {
+
+}
+private: System::Void btn_undo_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void btn_redo_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void tsb_find_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void tsb_thaythe_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void tsb_thongke_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void tsb_check_Click(System::Object^ sender, System::EventArgs^ e) {
+
+}
+#pragma endregion
+
+#pragma region Thong_ke_cac_tu
+
+
+
+private: System::Void lb_Words_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void lb_dong_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+#pragma endregion
+
+#pragma region Kiem_tra_ngoac
+
+
+
+private: System::Void lb_check_ngoac_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void lb_ngoac_tron_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void lb_ngoac_nhon_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void lb_ngoac_vuong_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+#pragma endregion
+
+#pragma region code_Tim_kiem_thay_the
+
+
+
+private: System::Void txt_tukhoa_TextChanged(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void rb_tu_thuong_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void rb_hoa_thuong_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void checkbox_findall_CheckedChanged(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void btn_timkiem_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+
+private: System::Void txt_thaythe_TextChanged(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void btn_thaythe_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+#pragma endregion
+
+
+#pragma region gioi_han_undo/redo
+
+
+
+private: System::Void numericUpDown_K_step_ValueChanged(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void lb_trangthai_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+#pragma endregion
+
+#pragma region Ketqua_thongbao
+
+
+
+private: System::Void lb_check_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void lb_kiem_tra_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void lb_dong_n_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void lb_cot_n_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void lb_che_do_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void lb_limit_undo_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+#pragma endregion
+
+#pragma region Vung_bo_code
+
+
+
+private: System::Void richTextBox_code_TextChanged(System::Object^ sender, System::EventArgs^ e) {
+}
+#pragma endregion
+};
 }
