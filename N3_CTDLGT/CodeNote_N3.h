@@ -18,6 +18,7 @@ namespace N3CTDLGT {
 	public ref class CodeNote_N3 : public System::Windows::Forms::Form
 	{
 	private:
+        
 		DoublyLinkedList* coreDoc;
 
 		std::string ToStdString(System::String^ s) {
@@ -32,10 +33,85 @@ namespace N3CTDLGT {
 		CodeNote_N3(void)
 		{
 			InitializeComponent();
+#pragma region Phong_to_form
+			// ===== TRAN VIEN FULL SIZE =====
+
+			// 1. Thanh toolbar keo dai sang phai
+			this->toolStrip1->Dock = System::Windows::Forms::DockStyle::Top;
+
+			// 2. Khung code chinh giua - dan 4 huong
+			this->richTextBox_code->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(
+				System::Windows::Forms::AnchorStyles::Top |
+				System::Windows::Forms::AnchorStyles::Bottom |
+				System::Windows::Forms::AnchorStyles::Left |
+				System::Windows::Forms::AnchorStyles::Right
+			);
+
+			// 3. Cot trai (Thong ke + Kiem tra ngoac) - ban sai ben trai
+			System::Windows::Forms::AnchorStyles anchorTrai = static_cast<System::Windows::Forms::AnchorStyles>(
+				System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left
+			);
+			this->groupBox2->Anchor = anchorTrai;
+			this->groupBox1->Anchor = anchorTrai;
+			this->textBox2->Anchor = anchorTrai;
+
+			// 4. Cum Tim kiem / Thay the / Undo - ban sat men phai
+			System::Windows::Forms::AnchorStyles anchorPhai = static_cast<System::Windows::Forms::AnchorStyles>(
+				System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right
+			);
+			this->textBox4->Anchor = anchorPhai;
+			this->label23->Anchor = anchorPhai;
+			this->groupBox4->Anchor = anchorPhai;
+			this->groupBox3->Anchor = anchorPhai;
+			this->textBox6->Anchor = anchorPhai;
+			this->label12->Anchor = anchorPhai;
+			this->label37->Anchor = anchorPhai;
+			this->groupBox5->Anchor = anchorPhai;
+
+			// 5. Thanh ket qua + vung ve + thanh trang thai - ban sat day, keo tran chieu ngang
+			System::Windows::Forms::AnchorStyles anchorDay = static_cast<System::Windows::Forms::AnchorStyles>(
+				System::Windows::Forms::AnchorStyles::Bottom |
+				System::Windows::Forms::AnchorStyles::Left |
+				System::Windows::Forms::AnchorStyles::Right
+			);
+			this->textBox3->Anchor = anchorDay;
+			this->pictureBox1->Anchor = anchorDay;
+			this->pictureBox2->Anchor = anchorDay;
+
+			// 6. Chu trang thai goc duoi trai
+			System::Windows::Forms::AnchorStyles anchorDayTrai = static_cast<System::Windows::Forms::AnchorStyles>(
+				System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left
+			);
+			this->label29->Anchor = anchorDayTrai;
+			this->label38->Anchor = anchorDayTrai;
+			this->lb_check->Anchor = anchorDayTrai;
+			this->label30->Anchor = anchorDayTrai;
+			this->label6->Anchor = anchorDayTrai;
+			this->panel8->Anchor = anchorDayTrai;
+			this->label21->Anchor = anchorDayTrai;
+			this->panel9->Anchor = anchorDayTrai;
+			this->label22->Anchor = anchorDayTrai;
+
+			// 7. Chu trang thai goc duoi phai
+			System::Windows::Forms::AnchorStyles anchorDayPhai = static_cast<System::Windows::Forms::AnchorStyles>(
+				System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right
+			);
+			this->panel6->Anchor = anchorDayPhai;
+			this->label31->Anchor = anchorDayPhai;
+			this->panel7->Anchor = anchorDayPhai;
+			this->label32->Anchor = anchorDayPhai;
+
+			// 8. Mo toan man hinh
+			this->WindowState = System::Windows::Forms::FormWindowState::Maximized;
+
+			// Setup editor style: Dark theme giong VS Dark
+			SetupEditorStyle();
+
 			coreDoc = new DoublyLinkedList();
 			coreDoc->appendLine("");
 			this->pictureBox1->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &CodeNote_N3::pictureBox1_Paint);
 			this->richTextBox_code->SelectionChanged += gcnew System::EventHandler(this, &CodeNote_N3::richTextBox_code_SelectionChanged);
+#pragma endregion
 		}
 #pragma region code_thua_thiet_ke_form
 
@@ -52,24 +128,24 @@ namespace N3CTDLGT {
 				delete components;
 			}
 		}
-    private: System::Windows::Forms::Label^ lb_limit_undo;
+
     protected:
-    private: System::Windows::Forms::Label^ lb_che_do;
+
 
     protected:
 
     private: System::Windows::Forms::Panel^ panel6;
-    private: System::Windows::Forms::Label^ lb_cot_n;
 
-    private: System::Windows::Forms::Panel^ panel5;
-    private: System::Windows::Forms::Label^ lb_dong_n;
 
-    private: System::Windows::Forms::Panel^ panel4;
-    private: System::Windows::Forms::Label^ lb_kiem_tra;
 
-    private: System::Windows::Forms::Panel^ panel1;
-    private: System::Windows::Forms::Panel^ panel2;
-    private: System::Windows::Forms::Panel^ panel3;
+
+
+
+
+
+
+
+
     private: System::Windows::Forms::PictureBox^ pictureBox2;
     private: System::Windows::Forms::PictureBox^ pictureBox1;
     private: System::Windows::Forms::TextBox^ textBox3;
@@ -168,6 +244,16 @@ private: System::Windows::Forms::Label^ label38;
 private: System::Windows::Forms::Label^ lb_check;
 
 private: System::Windows::Forms::Label^ label40;
+
+private: System::Windows::Forms::Label^ label6;
+private: System::Windows::Forms::Panel^ panel8;
+private: System::Windows::Forms::Label^ label21;
+private: System::Windows::Forms::Panel^ panel9;
+private: System::Windows::Forms::Label^ label22;
+private: System::Windows::Forms::Label^ label31;
+private: System::Windows::Forms::Label^ label32;
+
+
 #pragma endregion
 
 #pragma region Windows Form Designer generated code
@@ -185,17 +271,7 @@ private: System::Windows::Forms::Label^ label40;
 		void InitializeComponent(void)
 		{
             System::ComponentModel::ComponentResourceManager^ resources = (gcnew System::ComponentModel::ComponentResourceManager(CodeNote_N3::typeid));
-            this->lb_limit_undo = (gcnew System::Windows::Forms::Label());
-            this->lb_che_do = (gcnew System::Windows::Forms::Label());
             this->panel6 = (gcnew System::Windows::Forms::Panel());
-            this->lb_cot_n = (gcnew System::Windows::Forms::Label());
-            this->panel5 = (gcnew System::Windows::Forms::Panel());
-            this->lb_dong_n = (gcnew System::Windows::Forms::Label());
-            this->panel4 = (gcnew System::Windows::Forms::Panel());
-            this->lb_kiem_tra = (gcnew System::Windows::Forms::Label());
-            this->panel1 = (gcnew System::Windows::Forms::Panel());
-            this->panel2 = (gcnew System::Windows::Forms::Panel());
-            this->panel3 = (gcnew System::Windows::Forms::Panel());
             this->pictureBox2 = (gcnew System::Windows::Forms::PictureBox());
             this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
             this->textBox3 = (gcnew System::Windows::Forms::TextBox());
@@ -271,8 +347,13 @@ private: System::Windows::Forms::Label^ label40;
             this->label38 = (gcnew System::Windows::Forms::Label());
             this->lb_check = (gcnew System::Windows::Forms::Label());
             this->label40 = (gcnew System::Windows::Forms::Label());
-            this->panel1->SuspendLayout();
-            this->panel2->SuspendLayout();
+            this->label6 = (gcnew System::Windows::Forms::Label());
+            this->panel8 = (gcnew System::Windows::Forms::Panel());
+            this->label21 = (gcnew System::Windows::Forms::Label());
+            this->panel9 = (gcnew System::Windows::Forms::Panel());
+            this->label22 = (gcnew System::Windows::Forms::Label());
+            this->label31 = (gcnew System::Windows::Forms::Label());
+            this->label32 = (gcnew System::Windows::Forms::Label());
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox2))->BeginInit();
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
             this->toolStrip1->SuspendLayout();
@@ -285,121 +366,17 @@ private: System::Windows::Forms::Label^ label40;
             this->groupBox2->SuspendLayout();
             this->SuspendLayout();
             // 
-            // lb_limit_undo
-            // 
-            this->lb_limit_undo->AutoSize = true;
-            this->lb_limit_undo->BackColor = System::Drawing::Color::LightGray;
-            this->lb_limit_undo->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-                static_cast<System::Byte>(0)));
-            this->lb_limit_undo->Location = System::Drawing::Point(1324, 1016);
-            this->lb_limit_undo->Name = L"lb_limit_undo";
-            this->lb_limit_undo->Size = System::Drawing::Size(169, 23);
-            this->lb_limit_undo->TabIndex = 102;
-            this->lb_limit_undo->Text = L"Limit undo: x bước";
-            this->lb_limit_undo->TextAlign = System::Drawing::ContentAlignment::TopRight;
-            this->lb_limit_undo->Click += gcnew System::EventHandler(this, &CodeNote_N3::lb_limit_undo_Click);
-            // 
-            // lb_che_do
-            // 
-            this->lb_che_do->AutoSize = true;
-            this->lb_che_do->BackColor = System::Drawing::Color::LightGray;
-            this->lb_che_do->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-                static_cast<System::Byte>(0)));
-            this->lb_che_do->Location = System::Drawing::Point(1158, 1016);
-            this->lb_che_do->Name = L"lb_che_do";
-            this->lb_che_do->Size = System::Drawing::Size(117, 23);
-            this->lb_che_do->TabIndex = 100;
-            this->lb_che_do->Text = L"Chế độ: C++";
-            this->lb_che_do->TextAlign = System::Drawing::ContentAlignment::TopRight;
-            this->lb_che_do->Click += gcnew System::EventHandler(this, &CodeNote_N3::lb_che_do_Click);
-            // 
             // panel6
             // 
-            this->panel6->Location = System::Drawing::Point(1150, 998);
+            this->panel6->Location = System::Drawing::Point(1154, 1148);
             this->panel6->Name = L"panel6";
             this->panel6->Size = System::Drawing::Size(2, 57);
             this->panel6->TabIndex = 99;
             // 
-            // lb_cot_n
-            // 
-            this->lb_cot_n->AutoSize = true;
-            this->lb_cot_n->BackColor = System::Drawing::Color::LightGray;
-            this->lb_cot_n->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-                static_cast<System::Byte>(0)));
-            this->lb_cot_n->Location = System::Drawing::Point(679, 1016);
-            this->lb_cot_n->Name = L"lb_cot_n";
-            this->lb_cot_n->Size = System::Drawing::Size(63, 23);
-            this->lb_cot_n->TabIndex = 98;
-            this->lb_cot_n->Text = L"Cột: y";
-            this->lb_cot_n->Click += gcnew System::EventHandler(this, &CodeNote_N3::lb_cot_n_Click);
-            // 
-            // panel5
-            // 
-            this->panel5->Location = System::Drawing::Point(652, 998);
-            this->panel5->Name = L"panel5";
-            this->panel5->Size = System::Drawing::Size(2, 57);
-            this->panel5->TabIndex = 97;
-            // 
-            // lb_dong_n
-            // 
-            this->lb_dong_n->AutoSize = true;
-            this->lb_dong_n->BackColor = System::Drawing::Color::LightGray;
-            this->lb_dong_n->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-                static_cast<System::Byte>(0)));
-            this->lb_dong_n->Location = System::Drawing::Point(540, 1016);
-            this->lb_dong_n->Name = L"lb_dong_n";
-            this->lb_dong_n->Size = System::Drawing::Size(76, 23);
-            this->lb_dong_n->TabIndex = 96;
-            this->lb_dong_n->Text = L"Dòng: x";
-            this->lb_dong_n->Click += gcnew System::EventHandler(this, &CodeNote_N3::lb_dong_n_Click);
-            // 
-            // panel4
-            // 
-            this->panel4->Location = System::Drawing::Point(502, 998);
-            this->panel4->Name = L"panel4";
-            this->panel4->Size = System::Drawing::Size(2, 57);
-            this->panel4->TabIndex = 95;
-            // 
-            // lb_kiem_tra
-            // 
-            this->lb_kiem_tra->AutoSize = true;
-            this->lb_kiem_tra->BackColor = System::Drawing::Color::LightGray;
-            this->lb_kiem_tra->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
-                static_cast<System::Byte>(0)));
-            this->lb_kiem_tra->Location = System::Drawing::Point(32, 1016);
-            this->lb_kiem_tra->Name = L"lb_kiem_tra";
-            this->lb_kiem_tra->Size = System::Drawing::Size(84, 23);
-            this->lb_kiem_tra->TabIndex = 84;
-            this->lb_kiem_tra->Text = L"Sẵn sàng";
-            this->lb_kiem_tra->Click += gcnew System::EventHandler(this, &CodeNote_N3::lb_kiem_tra_Click);
-            // 
-            // panel1
-            // 
-            this->panel1->Controls->Add(this->panel2);
-            this->panel1->Location = System::Drawing::Point(152, 997);
-            this->panel1->Name = L"panel1";
-            this->panel1->Size = System::Drawing::Size(2, 57);
-            this->panel1->TabIndex = 94;
-            // 
-            // panel2
-            // 
-            this->panel2->Controls->Add(this->panel3);
-            this->panel2->Location = System::Drawing::Point(0, 0);
-            this->panel2->Name = L"panel2";
-            this->panel2->Size = System::Drawing::Size(2, 57);
-            this->panel2->TabIndex = 33;
-            // 
-            // panel3
-            // 
-            this->panel3->Location = System::Drawing::Point(0, 0);
-            this->panel3->Name = L"panel3";
-            this->panel3->Size = System::Drawing::Size(2, 57);
-            this->panel3->TabIndex = 33;
-            // 
             // pictureBox2
             // 
             this->pictureBox2->BackColor = System::Drawing::Color::LightGray;
-            this->pictureBox2->Location = System::Drawing::Point(17, 997);
+            this->pictureBox2->Location = System::Drawing::Point(16, 1147);
             this->pictureBox2->Name = L"pictureBox2";
             this->pictureBox2->Size = System::Drawing::Size(1490, 58);
             this->pictureBox2->TabIndex = 93;
@@ -410,7 +387,7 @@ private: System::Windows::Forms::Label^ label40;
             this->pictureBox1->BackColor = System::Drawing::Color::White;
             this->pictureBox1->Location = System::Drawing::Point(16, 942);
             this->pictureBox1->Name = L"pictureBox1";
-            this->pictureBox1->Size = System::Drawing::Size(1490, 58);
+            this->pictureBox1->Size = System::Drawing::Size(1490, 263);
             this->pictureBox1->TabIndex = 92;
             this->pictureBox1->TabStop = false;
             // 
@@ -488,14 +465,15 @@ private: System::Windows::Forms::Label^ label40;
             // 
             // toolStrip1
             // 
+            this->toolStrip1->Dock = System::Windows::Forms::DockStyle::None;
             this->toolStrip1->ImageScalingSize = System::Drawing::Size(24, 24);
             this->toolStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(8) {
                 this->tsb_open, this->tsb_luu_save,
                     this->btn_undo, this->btn_redo, this->tsb_find, this->tsb_thaythe, this->tsb_thongke, this->tsb_check
             });
-            this->toolStrip1->Location = System::Drawing::Point(0, 33);
+            this->toolStrip1->Location = System::Drawing::Point(0, 36);
             this->toolStrip1->Name = L"toolStrip1";
-            this->toolStrip1->Size = System::Drawing::Size(1520, 58);
+            this->toolStrip1->Size = System::Drawing::Size(1039, 58);
             this->toolStrip1->TabIndex = 76;
             this->toolStrip1->Text = L"toolStrip1";
             // 
@@ -647,6 +625,7 @@ private: System::Windows::Forms::Label^ label40;
             // 
             // menuStrip1
             // 
+            this->menuStrip1->Dock = System::Windows::Forms::DockStyle::None;
             this->menuStrip1->GripMargin = System::Windows::Forms::Padding(2, 2, 0, 2);
             this->menuStrip1->GripStyle = System::Windows::Forms::ToolStripGripStyle::Visible;
             this->menuStrip1->ImageScalingSize = System::Drawing::Size(24, 24);
@@ -656,7 +635,7 @@ private: System::Windows::Forms::Label^ label40;
             });
             this->menuStrip1->Location = System::Drawing::Point(0, 0);
             this->menuStrip1->Name = L"menuStrip1";
-            this->menuStrip1->Size = System::Drawing::Size(1520, 33);
+            this->menuStrip1->Size = System::Drawing::Size(435, 33);
             this->menuStrip1->TabIndex = 75;
             this->menuStrip1->Text = L"menuStrip1";
             // 
@@ -943,7 +922,7 @@ private: System::Windows::Forms::Label^ label40;
             // 
             // panel7
             // 
-            this->panel7->Location = System::Drawing::Point(1316, 998);
+            this->panel7->Location = System::Drawing::Point(1320, 1148);
             this->panel7->Name = L"panel7";
             this->panel7->Size = System::Drawing::Size(2, 57);
             this->panel7->TabIndex = 101;
@@ -1271,27 +1250,105 @@ private: System::Windows::Forms::Label^ label40;
             this->label40->TabIndex = 106;
             this->label40->Text = L"Kiểm tra ngoặc";
             // 
+            // label6
+            // 
+            this->label6->AutoSize = true;
+            this->label6->BackColor = System::Drawing::Color::LightGray;
+            this->label6->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+                static_cast<System::Byte>(0)));
+            this->label6->Location = System::Drawing::Point(35, 1166);
+            this->label6->Name = L"label6";
+            this->label6->Size = System::Drawing::Size(84, 23);
+            this->label6->TabIndex = 84;
+            this->label6->Text = L"Sẵn sàng";
+            this->label6->Click += gcnew System::EventHandler(this, &CodeNote_N3::lb_kiem_tra_Click);
+            // 
+            // panel8
+            // 
+            this->panel8->Location = System::Drawing::Point(505, 1148);
+            this->panel8->Name = L"panel8";
+            this->panel8->Size = System::Drawing::Size(2, 57);
+            this->panel8->TabIndex = 95;
+            // 
+            // label21
+            // 
+            this->label21->AutoSize = true;
+            this->label21->BackColor = System::Drawing::Color::LightGray;
+            this->label21->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+                static_cast<System::Byte>(0)));
+            this->label21->Location = System::Drawing::Point(543, 1166);
+            this->label21->Name = L"label21";
+            this->label21->Size = System::Drawing::Size(76, 23);
+            this->label21->TabIndex = 96;
+            this->label21->Text = L"Dòng: x";
+            this->label21->Click += gcnew System::EventHandler(this, &CodeNote_N3::lb_dong_n_Click);
+            // 
+            // panel9
+            // 
+            this->panel9->Location = System::Drawing::Point(655, 1148);
+            this->panel9->Name = L"panel9";
+            this->panel9->Size = System::Drawing::Size(2, 57);
+            this->panel9->TabIndex = 97;
+            // 
+            // label22
+            // 
+            this->label22->AutoSize = true;
+            this->label22->BackColor = System::Drawing::Color::LightGray;
+            this->label22->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+                static_cast<System::Byte>(0)));
+            this->label22->Location = System::Drawing::Point(682, 1166);
+            this->label22->Name = L"label22";
+            this->label22->Size = System::Drawing::Size(63, 23);
+            this->label22->TabIndex = 98;
+            this->label22->Text = L"Cột: y";
+            this->label22->Click += gcnew System::EventHandler(this, &CodeNote_N3::lb_cot_n_Click);
+            // 
+            // label31
+            // 
+            this->label31->AutoSize = true;
+            this->label31->BackColor = System::Drawing::Color::LightGray;
+            this->label31->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+                static_cast<System::Byte>(0)));
+            this->label31->Location = System::Drawing::Point(1161, 1166);
+            this->label31->Name = L"label31";
+            this->label31->Size = System::Drawing::Size(117, 23);
+            this->label31->TabIndex = 100;
+            this->label31->Text = L"Chế độ: C++";
+            this->label31->TextAlign = System::Drawing::ContentAlignment::TopRight;
+            this->label31->Click += gcnew System::EventHandler(this, &CodeNote_N3::lb_che_do_Click);
+            // 
+            // label32
+            // 
+            this->label32->AutoSize = true;
+            this->label32->BackColor = System::Drawing::Color::LightGray;
+            this->label32->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+                static_cast<System::Byte>(0)));
+            this->label32->Location = System::Drawing::Point(1327, 1166);
+            this->label32->Name = L"label32";
+            this->label32->Size = System::Drawing::Size(169, 23);
+            this->label32->TabIndex = 102;
+            this->label32->Text = L"Limit undo: x bước";
+            this->label32->TextAlign = System::Drawing::ContentAlignment::TopRight;
+            this->label32->Click += gcnew System::EventHandler(this, &CodeNote_N3::lb_limit_undo_Click);
+            // 
             // CodeNote_N3
             // 
             this->AutoScaleDimensions = System::Drawing::SizeF(9, 20);
             this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-            this->ClientSize = System::Drawing::Size(1520, 1063);
+            this->ClientSize = System::Drawing::Size(1520, 1215);
             this->Controls->Add(this->label40);
             this->Controls->Add(this->lb_check);
             this->Controls->Add(this->label38);
             this->Controls->Add(this->label37);
             this->Controls->Add(this->label36);
-            this->Controls->Add(this->lb_limit_undo);
-            this->Controls->Add(this->lb_che_do);
+            this->Controls->Add(this->label32);
+            this->Controls->Add(this->label31);
             this->Controls->Add(this->panel6);
-            this->Controls->Add(this->lb_cot_n);
-            this->Controls->Add(this->panel5);
-            this->Controls->Add(this->lb_dong_n);
-            this->Controls->Add(this->panel4);
-            this->Controls->Add(this->lb_kiem_tra);
-            this->Controls->Add(this->panel1);
-            this->Controls->Add(this->pictureBox2);
-            this->Controls->Add(this->pictureBox1);
+            this->Controls->Add(this->label22);
+            this->Controls->Add(this->panel9);
+            this->Controls->Add(this->label21);
+            this->Controls->Add(this->panel8);
+            this->Controls->Add(this->label6);
             this->Controls->Add(this->textBox3);
             this->Controls->Add(this->label23);
             this->Controls->Add(this->label29);
@@ -1313,10 +1370,10 @@ private: System::Windows::Forms::Label^ label40;
             this->Controls->Add(this->label1);
             this->Controls->Add(this->label4);
             this->Controls->Add(this->groupBox2);
+            this->Controls->Add(this->pictureBox2);
+            this->Controls->Add(this->pictureBox1);
             this->Name = L"CodeNote_N3";
             this->Text = L"CodeNote_N3";
-            this->panel1->ResumeLayout(false);
-            this->panel2->ResumeLayout(false);
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox2))->EndInit();
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->EndInit();
             this->toolStrip1->ResumeLayout(false);
@@ -1351,8 +1408,8 @@ private: System::Windows::Forms::Label^ label40;
             if (coreDoc->loadFromFile(filePath)) {
                 this->richTextBox_code->Text = ToSysString(coreDoc->getAllText());
                 this->lb_check->Text = L"Đã mở tệp: " + System::IO::Path::GetFileName(ofd->FileName);
-                this->lb_dong_n->Text = L"Dòng: 1";
-                this->lb_cot_n->Text = L"Cột: 1";
+                this->label21->Text = L"Dòng: 1";
+                this->label22->Text = L"Cột: 1";
                 UpdateStatisticsUI();
                 this->pictureBox1->Invalidate();
             } else {
@@ -1489,8 +1546,8 @@ private: System::Windows::Forms::Label^ label40;
                 this->richTextBox_code->Select(charIdx, (int)keyword.length());
                 this->richTextBox_code->Focus();
                 this->lb_check->Text = L"Tìm thấy tại: Dòng " + (foundLine + 1).ToString() + L", Cột " + (foundCol + 1).ToString();
-                this->lb_dong_n->Text = L"Dòng: " + (foundLine + 1).ToString();
-                this->lb_cot_n->Text = L"Cột: " + (foundCol + 1).ToString();
+                this->label21->Text = L"Dòng: " + (foundLine + 1).ToString();
+                this->label22->Text = L"Cột: " + (foundCol + 1).ToString();
             } else {
                 this->lb_check->Text = L"Không tìm thấy từ khóa: '" + this->txt_tukhoa->Text + L"'";
             }
@@ -1552,6 +1609,136 @@ private: System::Windows::Forms::Label^ label40;
 #pragma endregion
 
 #pragma region Vung_bo_code (Thiện)
+    private:
+        bool _isHighlighting = false;
+
+        // Setup RichTextBox giong VS Dark Theme - goi 1 lan trong constructor
+        void SetupEditorStyle() {
+            RichTextBox^ rtb = this->richTextBox_code;
+            rtb->BackColor = System::Drawing::Color::FromArgb(30, 30, 30);
+            rtb->ForeColor = System::Drawing::Color::FromArgb(220, 220, 220);
+            rtb->Font = gcnew System::Drawing::Font(L"Consolas", 11, System::Drawing::FontStyle::Regular);
+        }
+
+        void ColorRange(RichTextBox^ rtb, int start, int length, System::Drawing::Color fg) {
+            if (start < 0 || length <= 0 || start + length > rtb->Text->Length) return;
+            rtb->Select(start, length);
+            rtb->SelectionColor = fg;
+        }
+
+        void ApplySyntaxHighlighting() {
+            if (_isHighlighting) return;
+            _isHighlighting = true;
+
+            RichTextBox^ rtb = this->richTextBox_code;
+            int selStart = rtb->SelectionStart;
+
+            rtb->SuspendLayout();
+
+            // Reset ve mau mac dinh (nen den, chu trang)
+            rtb->SelectAll();
+            rtb->SelectionBackColor = System::Drawing::Color::FromArgb(30, 30, 30);
+            rtb->SelectionColor = System::Drawing::Color::FromArgb(220, 220, 220);
+
+            String^ text = rtb->Text;
+            int len = text->Length;
+
+            // 1. Tu khoa C++ - mau xanh duong
+            System::Drawing::Color kwColor = System::Drawing::Color::FromArgb(86, 156, 214);
+            array<String^>^ keywords = {
+                L"int", L"float", L"double", L"char", L"bool", L"void",
+                L"return", L"if", L"else", L"for", L"while", L"do",
+                L"switch", L"case", L"break", L"continue", L"default",
+                L"class", L"struct", L"new", L"delete", L"nullptr",
+                L"true", L"false", L"const", L"static", L"public",
+                L"private", L"protected", L"namespace", L"using",
+                L"typedef", L"enum", L"template", L"auto", L"long",
+                L"short", L"unsigned", L"signed", L"try", L"catch",
+                L"throw", L"virtual", L"override", L"string"
+            };
+            for each (String^ kw in keywords) {
+                int pos = 0;
+                while ((pos = text->IndexOf(kw, pos, System::StringComparison::Ordinal)) >= 0) {
+                    bool leftOk  = (pos == 0 || (!Char::IsLetterOrDigit(text[pos - 1]) && text[pos - 1] != L'_'));
+                    bool rightOk = (pos + kw->Length >= len || (!Char::IsLetterOrDigit(text[pos + kw->Length]) && text[pos + kw->Length] != L'_'));
+                    if (leftOk && rightOk)
+                        ColorRange(rtb, pos, kw->Length, kwColor);
+                    pos += kw->Length;
+                }
+            }
+
+            // 2. Chuoi string - mau cam
+            System::Drawing::Color strColor = System::Drawing::Color::FromArgb(206, 145, 120);
+            int i = 0;
+            while (i < len) {
+                if (text[i] == L'"') {
+                    int end = i + 1;
+                    while (end < len && text[end] != L'"') {
+                        if (text[end] == L'\\') end++;
+                        end++;
+                    }
+                    ColorRange(rtb, i, Math::Min(end - i + 1, len - i), strColor);
+                    i = end + 1;
+                } else { i++; }
+            }
+
+            // 3. Comment // - mau xanh la
+            System::Drawing::Color cmtColor = System::Drawing::Color::FromArgb(106, 153, 85);
+            i = 0;
+            while (i < len - 1) {
+                if (text[i] == L'/' && text[i+1] == L'/') {
+                    int end = text->IndexOf(L'\n', i);
+                    if (end < 0) end = len;
+                    ColorRange(rtb, i, end - i, cmtColor);
+                    i = end + 1;
+                } else { i++; }
+            }
+
+            // 4. Comment /* */ - mau xanh la
+            i = 0;
+            while (i < len - 1) {
+                if (text[i] == L'/' && text[i+1] == L'*') {
+                    int end = text->IndexOf(L"*/", i + 2);
+                    if (end < 0) end = len - 2;
+                    ColorRange(rtb, i, end - i + 2, cmtColor);
+                    i = end + 2;
+                } else { i++; }
+            }
+
+            // 5. Preprocessor #include #define - mau tim
+            System::Drawing::Color ppColor = System::Drawing::Color::FromArgb(155, 155, 255);
+            i = 0;
+            while (i < len) {
+                if (text[i] == L'#') {
+                    int end = text->IndexOf(L'\n', i);
+                    if (end < 0) end = len;
+                    ColorRange(rtb, i, end - i, ppColor);
+                    i = end + 1;
+                } else { i++; }
+            }
+
+            // 6. So - mau vang xanh nhat
+            System::Drawing::Color numColor = System::Drawing::Color::FromArgb(181, 206, 168);
+            i = 0;
+            while (i < len) {
+                if (Char::IsDigit(text[i])) {
+                    bool leftNum = (i == 0 || (!Char::IsLetterOrDigit(text[i-1]) && text[i-1] != L'_'));
+                    if (leftNum) {
+                        int end = i;
+                        while (end < len && (Char::IsDigit(text[end]) || text[end] == L'.')) end++;
+                        ColorRange(rtb, i, end - i, numColor);
+                        i = end;
+                        continue;
+                    }
+                }
+                i++;
+            }
+
+            rtb->Select(selStart, 0);
+            rtb->ResumeLayout();
+            _isHighlighting = false;
+        }
+
     private: System::Void richTextBox_code_TextChanged(System::Object^ sender, System::EventArgs^ e) {
         if (coreDoc == nullptr) return;
 
@@ -1560,6 +1747,9 @@ private: System::Windows::Forms::Label^ label40;
 
         UpdateStatisticsUI();
         this->pictureBox1->Invalidate();
+
+        // Syntax highlight kieu C++ Dark Theme
+        ApplySyntaxHighlighting();
     }
 
     private: System::Void richTextBox_code_SelectionChanged(System::Object^ sender, System::EventArgs^ e) {
@@ -1567,8 +1757,8 @@ private: System::Windows::Forms::Label^ label40;
         int sel = this->richTextBox_code->SelectionStart;
         int line = this->richTextBox_code->GetLineFromCharIndex(sel);
         int col = sel - this->richTextBox_code->GetFirstCharIndexFromLine(line);
-        this->lb_dong_n->Text = L"Dòng: " + (line + 1).ToString();
-        this->lb_cot_n->Text = L"Cột: " + (col + 1).ToString();
+        this->label21->Text = L"Dòng: " + (line + 1).ToString();
+        this->label22->Text = L"Cột: " + (col + 1).ToString();
     }
 
     private: System::Void UpdateStatisticsUI() {
@@ -1651,5 +1841,10 @@ private: System::Windows::Forms::Label^ label40;
         }
     }
 #pragma endregion
+
+
+
+
+
 };
 }
