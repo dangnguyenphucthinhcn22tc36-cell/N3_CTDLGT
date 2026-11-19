@@ -2,7 +2,7 @@ name: Xuat bao cao va slide TV4
 
 on:
   push:
-        branches:
+    branches:
       - tv4-kiem-thu
       - main
     paths:
