@@ -272,7 +272,7 @@ jobs:
           name: TV4-BaoCao-Slide-PDF
           path: output/
           if-no-files-found: error
-    latex-overleaf:
+  latex-overleaf:
     name: Tao goi LaTeX cho Overleaf
     needs: xuat-pdf
     runs-on: ubuntu-latest
