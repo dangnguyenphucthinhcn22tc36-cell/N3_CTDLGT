@@ -252,6 +252,9 @@ private: System::Windows::Forms::Panel^ panel9;
 private: System::Windows::Forms::Label^ label22;
 private: System::Windows::Forms::Label^ label31;
 private: System::Windows::Forms::Label^ label32;
+private: System::Windows::Forms::ToolStripButton^ tsb_thoat;
+
+
 
 
 #pragma endregion
@@ -354,6 +357,7 @@ private: System::Windows::Forms::Label^ label32;
             this->label22 = (gcnew System::Windows::Forms::Label());
             this->label31 = (gcnew System::Windows::Forms::Label());
             this->label32 = (gcnew System::Windows::Forms::Label());
+            this->tsb_thoat = (gcnew System::Windows::Forms::ToolStripButton());
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox2))->BeginInit();
             (cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
             this->toolStrip1->SuspendLayout();
@@ -467,13 +471,13 @@ private: System::Windows::Forms::Label^ label32;
             // 
             this->toolStrip1->Dock = System::Windows::Forms::DockStyle::None;
             this->toolStrip1->ImageScalingSize = System::Drawing::Size(24, 24);
-            this->toolStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(8) {
+            this->toolStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(9) {
                 this->tsb_open, this->tsb_luu_save,
-                    this->btn_undo, this->btn_redo, this->tsb_find, this->tsb_thaythe, this->tsb_thongke, this->tsb_check
+                    this->btn_undo, this->btn_redo, this->tsb_find, this->tsb_thaythe, this->tsb_thongke, this->tsb_check, this->tsb_thoat
             });
             this->toolStrip1->Location = System::Drawing::Point(0, 36);
             this->toolStrip1->Name = L"toolStrip1";
-            this->toolStrip1->Size = System::Drawing::Size(1039, 58);
+            this->toolStrip1->Size = System::Drawing::Size(1157, 58);
             this->toolStrip1->TabIndex = 76;
             this->toolStrip1->Text = L"toolStrip1";
             // 
@@ -942,10 +946,10 @@ private: System::Windows::Forms::Label^ label32;
             // 
             // txt_thaythe
             // 
-            this->txt_thaythe->Location = System::Drawing::Point(100, 15);
+            this->txt_thaythe->Location = System::Drawing::Point(100, 13);
             this->txt_thaythe->Multiline = true;
             this->txt_thaythe->Name = L"txt_thaythe";
-            this->txt_thaythe->Size = System::Drawing::Size(162, 36);
+            this->txt_thaythe->Size = System::Drawing::Size(162, 38);
             this->txt_thaythe->TabIndex = 14;
             this->txt_thaythe->TextChanged += gcnew System::EventHandler(this, &CodeNote_N3::txt_thaythe_TextChanged);
             // 
@@ -1330,6 +1334,18 @@ private: System::Windows::Forms::Label^ label32;
             this->label32->Text = L"Limit undo: x bước";
             this->label32->TextAlign = System::Drawing::ContentAlignment::TopRight;
             this->label32->Click += gcnew System::EventHandler(this, &CodeNote_N3::lb_limit_undo_Click);
+            // 
+            // tsb_thoat
+            // 
+            this->tsb_thoat->Font = (gcnew System::Drawing::Font(L"Times New Roman", 11, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+                static_cast<System::Byte>(0)));
+            this->tsb_thoat->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"tsb_thoat.Image")));
+            this->tsb_thoat->ImageTransparentColor = System::Drawing::Color::Magenta;
+            this->tsb_thoat->Name = L"tsb_thoat";
+            this->tsb_thoat->Size = System::Drawing::Size(72, 53);
+            this->tsb_thoat->Text = L"Thoát";
+            this->tsb_thoat->TextImageRelation = System::Windows::Forms::TextImageRelation::ImageAboveText;
+            this->tsb_thoat->Click += gcnew System::EventHandler(this, &CodeNote_N3::tsb_thoat_Click);
             // 
             // CodeNote_N3
             // 
@@ -1845,6 +1861,20 @@ private: System::Windows::Forms::Label^ label32;
 
 
 
-
+#pragma region bo_sung_nut_thoat
+private: System::Void tsb_thoat_Click(System::Object^ sender, System::EventArgs^ e) {
+    // 1. Hiển thị thông báo hỏi người dùng
+    System::Windows::Forms::DialogResult result = MessageBox::Show(
+        L"Bạn có muốn thoát không?",
+        L"Xác nhận",
+        MessageBoxButtons::YesNo,
+        MessageBoxIcon::Question
+    );
+    // 2. Nếu người dùng bấm "Yes" thì đóng Form
+    if (result == System::Windows::Forms::DialogResult::Yes) {
+        this->Close();
+    }
+}
+#pragma endregion
 };
 }
