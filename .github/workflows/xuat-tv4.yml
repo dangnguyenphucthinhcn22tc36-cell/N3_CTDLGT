@@ -2,8 +2,9 @@ name: Xuat bao cao va slide TV4
 
 on:
   push:
-    branches:
+        branches:
       - tv4-kiem-thu
+      - main
     paths:
       - "TV4/**"
       - ".github/workflows/xuat-tv4.yml"
@@ -270,4 +271,119 @@ jobs:
         with:
           name: TV4-BaoCao-Slide-PDF
           path: output/
+          if-no-files-found: error
+    latex-overleaf:
+    name: Tao goi LaTeX cho Overleaf
+    needs: xuat-pdf
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: TV4-BaoCao-Slide-PDF
+          path: overleaf
+
+      - name: Cai Pandoc
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y pandoc
+
+      - name: Chuyen bao cao hien tai sang LaTeX
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          import subprocess
+
+          folder = Path("overleaf")
+          source = Path("TV4/BaoCao/BaoCao_CodeNote.md")
+          text = source.read_text(encoding="utf-8-sig")
+
+          lines = text.splitlines()
+          for i, line in enumerate(lines):
+              if re.match(r"^\|\s*TV[1-4]\s*\|", line):
+                  cells = line.split("|")
+                  for j in (2, 3):
+                      cells[j] = " " + cells[j].strip().strip("[]").strip() + " "
+                  if cells[1].strip() == "TV3":
+                      cells[4] = " Stack, Undo/Redo và giới hạn lịch sử "
+                  if cells[1].strip() == "TV4":
+                      cells[4] = " Bổ sung kiểm tra ngoặc; dữ liệu, kiểm thử, đo thời gian, báo cáo và slide "
+                  lines[i] = "|".join(cells)
+
+          text = "\n".join(lines)
+          text = text.replace("⇄", "<->").replace("→", "->").replace("←", "<-")
+          text = re.sub(r"(?m)([^\n])\n(?=- )", r"\1\n\n", text)
+          text = re.sub(r"(?m)(\|[^\n]*\|)\n(?=[^\n|])", r"\1\n\n", text)
+          text = re.sub(
+              r"```mermaid.*?```",
+              "![Kiến trúc dự kiến](KienTruc_DuKien.png)",
+              text, flags=re.S,
+          )
+
+          if "![Thời gian trung bình" not in text:
+              text = re.sub(
+                  r"(?m)^## 5\.8\.",
+                  "![Thời gian trung bình và độ lệch chuẩn](BieuDo_ThoiGian.png)\n\n## 5.8.",
+                  text, count=1,
+              )
+
+          old = ("Việc có nút hoặc nhãn trên giao diện chưa chứng minh chức năng\n"
+                 "đã kết nối với tầng lõi. Trong phiên bản mã đã kiểm tra,\n"
+                 "chưa thấy phần xử lý sự kiện gọi các thuật toán tương ứng.")
+          new = ("Bản mã giao diện cập nhật đã có các hàm xử lý mở/lưu tệp, "
+                 "tìm kiếm, thay thế, thống kê và cập nhật khi văn bản thay đổi. "
+                 "Đây là kết quả đọc mã nguồn, không thay thế việc kiểm thử GUI trên Windows.")
+          text = text.replace(old, new)
+
+          (folder / "report.md").write_text(text, encoding="utf-8")
+          header = r"""
+          \usepackage{setspace}
+          \setstretch{1.15}
+          \usepackage{titlesec}
+          \titlespacing*{\chapter}{0pt}{0pt}{18pt}
+          \usepackage{fvextra}
+          \fvset{breaklines=true,fontsize=\small}
+          \renewcommand{\chaptername}{Chương}
+          \renewcommand{\contentsname}{Mục lục}
+          \renewcommand{\figurename}{Hình}
+          \renewcommand{\tablename}{Bảng}
+          \emergencystretch=3em
+          """
+          (folder / "header.tex").write_text(header, encoding="utf-8")
+
+          subprocess.run([
+              "pandoc", "report.md", "--from=markdown", "--standalone", "--to=latex",
+              "--top-level-division=chapter", "--no-highlight",
+              "-V", "documentclass=report", "-V", "fontsize=12pt",
+              "-V", "mainfont=Latin Modern Roman",
+              "-V", "monofont=Latin Modern Mono",
+              "-V", "geometry=a4paper,margin=2cm",
+              "--include-in-header=header.tex",
+              "-o", "main.tex",
+          ], cwd=folder, check=True)
+
+          main = folder / "main.tex"
+          main.write_text(
+              "% !TeX program = xelatex\n" + main.read_text(encoding="utf-8"),
+              encoding="utf-8",
+          )
+          (folder / "HUONG_DAN.txt").write_text(
+              "Upload main.tex va hai tep PNG vao Overleaf. "
+              "Chon Compiler = XeLaTeX, roi Recompile.\n"
+              "Bao cao duoc chuyen tu ban Markdown tren GitHub; so lieu giu nguyen.\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Luu goi nguon Overleaf
+        uses: actions/upload-artifact@v4
+        with:
+          name: CodeNote-Overleaf
+          path: |
+            overleaf/main.tex
+            overleaf/BieuDo_ThoiGian.png
+            overleaf/KienTruc_DuKien.png
+            overleaf/HUONG_DAN.txt
           if-no-files-found: error
