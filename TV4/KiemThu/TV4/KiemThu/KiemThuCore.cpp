@@ -1,4 +1,7 @@
 #include "DoublyLinkedList.h"
+#include "ActionStack.h"
+#include "UndoRedoManager.h"
+#include "SyntaxChecker.h"
 #include <cstdio>
 #include <exception>
 #include <fstream>
@@ -192,6 +195,144 @@ int main() {
 
         std::remove(tep);
         return dat;
+    });
+
+    thu("C11", "ActionStack_Deque_GioiHanK", +[]() {
+        ActionStack s(3);
+        s.push(UndoRedoManager::makeInsertChar(TextPosition(0, 0), 'a', TextPosition(0, 0), TextPosition(0, 1)));
+        s.push(UndoRedoManager::makeInsertChar(TextPosition(0, 1), 'b', TextPosition(0, 1), TextPosition(0, 2)));
+        s.push(UndoRedoManager::makeInsertChar(TextPosition(0, 2), 'c', TextPosition(0, 2), TextPosition(0, 3)));
+        s.push(UndoRedoManager::makeInsertChar(TextPosition(0, 3), 'd', TextPosition(0, 3), TextPosition(0, 4)));
+
+        Action bot, top;
+        if (s.getSize() != 3 || !s.isFull()) return false;
+        if (!s.peekBottom(bot) || bot.content != "b") return false;
+        if (!s.peek(top) || top.content != "d") return false;
+        if (!s.getTopNode() || s.getTopNode()->next != nullptr) return false;
+        if (!s.getBottomNode() || s.getBottomNode()->prev != nullptr) return false;
+
+        if (!s.setMaxCapacity(2) || s.getSize() != 2) return false;
+        if (!s.peekBottom(bot) || bot.content != "c") return false;
+        if (s.setMaxCapacity(-1) || s.getMaxCapacity() != 2 || s.getSize() != 2) return false;
+
+        ActionStack copy(s);
+        ActionStack assigned;
+        assigned = s;
+        s.clear();
+
+        if (!s.isEmpty() || !s.setMaxCapacity(0) || !s.isUnlimited()) return false;
+
+        return copy.getSize() == 2
+            && assigned.getSize() == 2
+            && copy.peek(top) && top.content == "d"
+            && assigned.peekBottom(bot) && bot.content == "c";
+    });
+
+    thu("C12", "UndoRedo_Va_XoaRedo", +[]() {
+        DoublyLinkedList d;
+        d.appendLine("");
+        UndoRedoManager m;
+        Action act;
+
+        d.pasteText(0, 0, "abc");
+        if (!m.recordAction(UndoRedoManager::makeInsertText(
+                TextPosition(0, 0), "abc", TextPosition(0, 0), TextPosition(0, 3)))) {
+            return false;
+        }
+
+        if (!m.undo(act) || act.type != ActionType::DELETE_TEXT
+            || act.cursorAfter.line != 0 || act.cursorAfter.col != 0) {
+            return false;
+        }
+        d.deleteRange(act.startPos.line, act.startPos.col, act.endPos.line, act.endPos.col);
+        if (!d.getAllText().empty() || !m.canRedo()) return false;
+
+        if (!m.redo(act) || act.type != ActionType::INSERT_TEXT
+            || act.cursorAfter.line != 0 || act.cursorAfter.col != 3) {
+            return false;
+        }
+        d.insertTextAt(act.startPos.line, act.startPos.col, act.content);
+        if (d.getAllText() != "abc") return false;
+
+        if (!m.undo(act)) return false;
+        d.deleteRange(act.startPos.line, act.startPos.col, act.endPos.line, act.endPos.col);
+        d.pasteText(0, 0, "xyz");
+        if (!m.recordAction(UndoRedoManager::makeInsertText(
+                TextPosition(0, 0), "xyz", TextPosition(0, 0), TextPosition(0, 3)))) {
+            return false;
+        }
+        if (m.canRedo() || m.redo(act)) return false;
+
+        if (m.recordAction(UndoRedoManager::makeInsertChar(
+                TextPosition(-1, 0), 'z', TextPosition(0, 0), TextPosition(0, 1)))) {
+            return false;
+        }
+
+        m.onDocumentOpened();
+        return !m.canUndo() && !m.canRedo()
+            && m.getUndoCount() == 0 && m.getRedoCount() == 0;
+    });
+
+    thu("C13", "SyntaxChecker_CanBang_Va_Loi", +[]() {
+        BracketCheckResult ok = SyntaxChecker::checkText("([]{})");
+        if (!ok.isBalanced || ok.errorType != BracketErrorType::NONE
+            || ok.roundOpenCount != 1 || ok.roundCloseCount != 1
+            || ok.curlyOpenCount != 1 || ok.curlyCloseCount != 1
+            || ok.squareOpenCount != 1 || ok.squareCloseCount != 1) {
+            return false;
+        }
+
+        BracketCheckResult mis = SyntaxChecker::checkText("([)]");
+        if (mis.isBalanced || mis.errorType != BracketErrorType::MISMATCHED_PAIR
+            || mis.errorLine != 0 || mis.errorCol != 2
+            || mis.foundChar != ')' || mis.expectedChar != ']') {
+            return false;
+        }
+
+        BracketCheckResult unclosed = SyntaxChecker::checkText("(()");
+        if (unclosed.isBalanced || unclosed.errorType != BracketErrorType::UNCLOSED_OPENING
+            || unclosed.errorLine != 0 || unclosed.errorCol != 0) {
+            return false;
+        }
+
+        BracketCheckResult extra = SyntaxChecker::checkText("int x = 0;\n}");
+        if (extra.isBalanced || extra.errorType != BracketErrorType::UNMATCHED_CLOSING
+            || extra.errorLine != 1 || extra.errorCol != 0) {
+            return false;
+        }
+
+        const std::string code =
+            "int f() {\n"
+            "    // ngoac du ((( ]]]\n"
+            "    /* comment { [ ( */\n"
+            "    const char* s = \"abc { [ ( \\\" \";\n"
+            "    char c = '(';\n"
+            "    return 0;\n"
+            "}\n";
+
+        return SyntaxChecker::checkText(code, true).isBalanced
+            && !SyntaxChecker::checkText(code, false).isBalanced;
+    });
+
+    thu("C14", "SyntaxChecker_TepLon_DSLK", +[]() {
+        DoublyLinkedList d;
+        for (int i = 1; i <= 100; ++i) {
+            d.appendLine("void ham_" + std::to_string(i) + "() { int a[3] = {1, 2, 3}; }");
+        }
+
+        BracketCheckResult ok = SyntaxChecker::checkDocument(d, true);
+        if (!ok.isBalanced || ok.errorType != BracketErrorType::NONE
+            || ok.roundOpenCount != 100 || ok.roundCloseCount != 100
+            || ok.curlyOpenCount != 200 || ok.curlyCloseCount != 200
+            || ok.squareOpenCount != 100 || ok.squareCloseCount != 100) {
+            return false;
+        }
+
+        d.appendLine("void loi( {");
+        BracketCheckResult err = SyntaxChecker::checkDocument(d, true);
+        return !err.isBalanced
+            && err.errorType == BracketErrorType::UNCLOSED_OPENING
+            && err.errorLine == 100;
     });
 
     csv.close();
