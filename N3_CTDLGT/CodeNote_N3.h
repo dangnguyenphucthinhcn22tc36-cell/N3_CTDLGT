@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "DoublyLinkedList.h"
+#include "UndoRedoManager.h"
 #include <msclr/marshal_cppstd.h>
 
 namespace N3CTDLGT {
@@ -20,6 +21,10 @@ namespace N3CTDLGT {
 	private:
         
 		DoublyLinkedList* coreDoc;
+		UndoRedoManager* undoManager;
+		std::string* lastSyncedText;
+		TextPosition* lastCursorPos;
+		bool _isApplyingUndoRedo;
 
 		std::string ToStdString(System::String^ s) {
 			if (System::String::IsNullOrEmpty(s)) return "";
@@ -109,8 +114,14 @@ namespace N3CTDLGT {
 
 			coreDoc = new DoublyLinkedList();
 			coreDoc->appendLine("");
+			undoManager = new UndoRedoManager(0);
+			lastSyncedText = new std::string("");
+			lastCursorPos = new TextPosition(0, 0);
+			_isApplyingUndoRedo = false;
 			this->pictureBox1->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &CodeNote_N3::pictureBox1_Paint);
 			this->richTextBox_code->SelectionChanged += gcnew System::EventHandler(this, &CodeNote_N3::richTextBox_code_SelectionChanged);
+			this->richTextBox_code->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &CodeNote_N3::richTextBox_code_KeyDown);
+			UpdateUndoRedoUI();
 #pragma endregion
 		}
 #pragma region code_thua_thiet_ke_form
@@ -121,6 +132,18 @@ namespace N3CTDLGT {
 			if (coreDoc != nullptr) {
 				delete coreDoc;
 				coreDoc = nullptr;
+			}
+			if (undoManager != nullptr) {
+				delete undoManager;
+				undoManager = nullptr;
+			}
+			if (lastSyncedText != nullptr) {
+				delete lastSyncedText;
+				lastSyncedText = nullptr;
+			}
+			if (lastCursorPos != nullptr) {
+				delete lastCursorPos;
+				lastCursorPos = nullptr;
 			}
 
 			if (components)
@@ -1422,11 +1445,26 @@ private: System::Windows::Forms::ToolStripButton^ tsb_thoat;
         if (ofd->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
             std::string filePath = ToStdString(ofd->FileName);
             if (coreDoc->loadFromFile(filePath)) {
+                _isApplyingUndoRedo = true;
                 this->richTextBox_code->Text = ToSysString(coreDoc->getAllText());
+                ApplySyntaxHighlighting();
+                _isApplyingUndoRedo = false;
+
+                if (undoManager != nullptr) {
+                    undoManager->onDocumentOpened();
+                }
+                if (lastSyncedText != nullptr) {
+                    *lastSyncedText = NormalizeLF(coreDoc->getAllText());
+                }
+                if (lastCursorPos != nullptr) {
+                    *lastCursorPos = TextPosition(0, 0);
+                }
+
                 this->lb_check->Text = L"Đã mở tệp: " + System::IO::Path::GetFileName(ofd->FileName);
                 this->label21->Text = L"Dòng: 1";
                 this->label22->Text = L"Cột: 1";
                 UpdateStatisticsUI();
+                UpdateUndoRedoUI();
                 this->pictureBox1->Invalidate();
             } else {
                 MessageBox::Show(L"Không thể mở tệp này!", L"Lỗi", MessageBoxButtons::OK, MessageBoxIcon::Error);
@@ -1485,7 +1523,7 @@ private: System::Windows::Forms::ToolStripButton^ tsb_thoat;
     }
 #pragma endregion
 
-#pragma region Kiem_tra_ngoac
+#pragma region Kiem_tra_ngoac (Phuc)
     private: System::Void tsb_check_Click(System::Object^ sender, System::EventArgs^ e) {
     }
     private: System::Void lb_check_ngoac_Click(System::Object^ sender, System::EventArgs^ e) {
@@ -1598,14 +1636,260 @@ private: System::Windows::Forms::ToolStripButton^ tsb_thoat;
     }
 #pragma endregion
 
-#pragma region gioi_han_undo/redo
+#pragma region gioi_han_undo/redo (Phuc)
+    private:
+        std::string NormalizeLF(const std::string& text) {
+            std::string out;
+            out.reserve(text.length());
+            for (size_t i = 0; i < text.length(); ++i) {
+                if (text[i] != '\r') {
+                    out += text[i];
+                }
+            }
+            return out;
+        }
+
+        TextPosition LinearOffsetToPos(const std::string& lfText, int offset) {
+            if (offset < 0) offset = 0;
+            int maxLen = static_cast<int>(lfText.length());
+            int limit = (offset < maxLen) ? offset : maxLen;
+            int line = 0;
+            int col = 0;
+            for (int i = 0; i < limit; ++i) {
+                if (lfText[i] == '\n') {
+                    line++;
+                    col = 0;
+                } else {
+                    col++;
+                }
+            }
+            return TextPosition(line, col);
+        }
+
+        int PosToLinearOffset(const std::string& lfText, const TextPosition& pos) {
+            int curLine = 0;
+            int curCol = 0;
+            for (size_t i = 0; i < lfText.length(); ++i) {
+                if (curLine == pos.line && curCol == pos.col) {
+                    return static_cast<int>(i);
+                }
+                if (lfText[i] == '\n') {
+                    if (curLine == pos.line) {
+                        return static_cast<int>(i);
+                    }
+                    curLine++;
+                    curCol = 0;
+                } else {
+                    curCol++;
+                }
+            }
+            return static_cast<int>(lfText.length());
+        }
+
+        void RecordDiffAction(const std::string& oldText,
+                              const std::string& newText,
+                              const TextPosition& cursorBefore,
+                              const TextPosition& cursorAfter) {
+            if (undoManager == nullptr) return;
+
+            size_t oldLen = oldText.length();
+            size_t newLen = newText.length();
+            size_t minLen = (oldLen < newLen) ? oldLen : newLen;
+
+            size_t prefix = 0;
+            while (prefix < minLen && oldText[prefix] == newText[prefix]) {
+                prefix++;
+            }
+
+            size_t suffix = 0;
+            while (suffix < (oldLen - prefix) &&
+                   suffix < (newLen - prefix) &&
+                   oldText[oldLen - 1 - suffix] == newText[newLen - 1 - suffix]) {
+                suffix++;
+            }
+
+            size_t removedLen = oldLen - prefix - suffix;
+            size_t insertedLen = newLen - prefix - suffix;
+            if (removedLen == 0 && insertedLen == 0) {
+                return;
+            }
+
+            std::string removed = oldText.substr(prefix, removedLen);
+            std::string inserted = newText.substr(prefix, insertedLen);
+            TextPosition startPos = LinearOffsetToPos(oldText, static_cast<int>(prefix));
+
+            ::Action act;
+            if (removedLen == 0) {
+                if (inserted == "\n") {
+                    act = UndoRedoManager::makeSplitLine(startPos, cursorBefore, cursorAfter);
+                } else if (inserted.length() == 1) {
+                    act = UndoRedoManager::makeInsertChar(startPos, inserted[0], cursorBefore, cursorAfter);
+                } else {
+                    act = UndoRedoManager::makeInsertText(startPos, inserted, cursorBefore, cursorAfter);
+                }
+            } else if (insertedLen == 0) {
+                if (removed == "\n") {
+                    act = UndoRedoManager::makeMergeLine(startPos, cursorBefore, cursorAfter);
+                } else if (removed.length() == 1) {
+                    act = UndoRedoManager::makeDeleteChar(startPos, removed[0], cursorBefore, cursorAfter);
+                } else {
+                    act = UndoRedoManager::makeDeleteText(startPos, removed, cursorBefore, cursorAfter);
+                }
+            } else {
+                act = UndoRedoManager::makeReplaceText(startPos, removed, inserted, cursorBefore, cursorAfter);
+            }
+
+            undoManager->recordAction(act);
+        }
+
+        void ApplyActionToCoreDoc(const ::Action& act) {
+            if (coreDoc == nullptr) return;
+            switch (act.type) {
+                case ActionType::INSERT_CHAR:
+                    if (!act.content.empty()) {
+                        coreDoc->insertChar(act.startPos.line, act.startPos.col, act.content[0]);
+                    }
+                    break;
+                case ActionType::DELETE_CHAR:
+                    coreDoc->deleteChar(act.startPos.line, act.startPos.col);
+                    break;
+                case ActionType::INSERT_TEXT:
+                    coreDoc->insertTextAt(act.startPos.line, act.startPos.col, act.content);
+                    break;
+                case ActionType::DELETE_TEXT:
+                    coreDoc->deleteRange(act.startPos.line, act.startPos.col, act.endPos.line, act.endPos.col);
+                    break;
+                case ActionType::INSERT_LINE:
+                    coreDoc->insertLine(act.startPos.line, act.content);
+                    break;
+                case ActionType::DELETE_LINE:
+                    coreDoc->deleteLine(act.startPos.line);
+                    break;
+                case ActionType::SPLIT_LINE:
+                    coreDoc->splitLine(act.startPos.line, act.startPos.col);
+                    break;
+                case ActionType::MERGE_LINE:
+                    coreDoc->mergeLines(act.endPos.line);
+                    break;
+                case ActionType::REPLACE_TEXT:
+                {
+                    bool multiLine = (act.previousContent.find('\n') != std::string::npos) ||
+                                     (act.content.find('\n') != std::string::npos);
+                    if (!multiLine) {
+                        coreDoc->replaceAt(act.startPos.line,
+                                           act.startPos.col,
+                                           static_cast<int>(act.previousContent.length()),
+                                           act.content);
+                    } else {
+                        TextPosition oldEnd = UndoRedoManager::computeEndPosition(act.startPos, act.previousContent);
+                        coreDoc->deleteRange(act.startPos.line, act.startPos.col, oldEnd.line, oldEnd.col);
+                        if (!act.content.empty()) {
+                            coreDoc->insertTextAt(act.startPos.line, act.startPos.col, act.content);
+                        }
+                    }
+                    break;
+                }
+            }
+            if (coreDoc->isEmpty()) {
+                coreDoc->appendLine("");
+            }
+        }
+
+        void ExecuteHistoryAction(const ::Action& act, bool isUndo) {
+            if (coreDoc == nullptr) return;
+            ApplyActionToCoreDoc(act);
+
+            std::string updatedText = coreDoc->getAllText();
+            std::string normalized = NormalizeLF(updatedText);
+
+            TextPosition targetCursor = act.cursorAfter;
+            coreDoc->clampCursor(targetCursor.line, targetCursor.col);
+            int targetOffset = PosToLinearOffset(normalized, targetCursor);
+
+            _isApplyingUndoRedo = true;
+            this->richTextBox_code->Text = ToSysString(updatedText);
+            int maxLen = this->richTextBox_code->Text->Length;
+            int clampedOffset = (targetOffset < 0) ? 0 : ((targetOffset > maxLen) ? maxLen : targetOffset);
+            this->richTextBox_code->SelectionStart = clampedOffset;
+            this->richTextBox_code->SelectionLength = 0;
+
+            if (lastSyncedText != nullptr) {
+                *lastSyncedText = normalized;
+            }
+            if (lastCursorPos != nullptr) {
+                *lastCursorPos = targetCursor;
+            }
+
+            ApplySyntaxHighlighting();
+            this->richTextBox_code->SelectionStart = clampedOffset;
+            this->richTextBox_code->SelectionLength = 0;
+            _isApplyingUndoRedo = false;
+
+            this->label21->Text = L"Dòng: " + (targetCursor.line + 1).ToString();
+            this->label22->Text = L"Cột: " + (targetCursor.col + 1).ToString();
+            UpdateStatisticsUI();
+            UpdateUndoRedoUI();
+            this->pictureBox1->Invalidate();
+            this->lb_check->Text = isUndo ? L"Đã hoàn tác thao tác!" : L"Đã làm lại thao tác!";
+            this->richTextBox_code->Focus();
+        }
+
+        void UpdateUndoRedoUI() {
+            if (undoManager == nullptr) return;
+            this->lb_trangthai->Text = L"Undo: " + undoManager->getUndoCount().ToString()
+                + L" | Redo: " + undoManager->getRedoCount().ToString();
+            if (undoManager->isUndoUnlimited()) {
+                this->label32->Text = L"Limit undo: Không giới hạn";
+            } else {
+                this->label32->Text = L"Limit undo: " + undoManager->getMaxUndoSteps().ToString() + L" bước";
+            }
+        }
+
     private: System::Void btn_undo_Click(System::Object^ sender, System::EventArgs^ e) {
+        if (undoManager == nullptr || coreDoc == nullptr) return;
+        ::Action invAct;
+        if (undoManager->undo(invAct)) {
+            ExecuteHistoryAction(invAct, true);
+        } else {
+            this->lb_check->Text = L"Không còn thao tác để hoàn tác!";
+        }
     }
     private: System::Void btn_redo_Click(System::Object^ sender, System::EventArgs^ e) {
+        if (undoManager == nullptr || coreDoc == nullptr) return;
+        ::Action redoAct;
+        if (undoManager->redo(redoAct)) {
+            ExecuteHistoryAction(redoAct, false);
+        } else {
+            this->lb_check->Text = L"Không còn thao tác để làm lại!";
+        }
     }
     private: System::Void numericUpDown_K_step_ValueChanged(System::Object^ sender, System::EventArgs^ e) {
+        if (undoManager == nullptr) return;
+        int k = System::Decimal::ToInt32(this->numericUpDown_K_step->Value);
+        if (undoManager->setMaxUndoSteps(k)) {
+            UpdateUndoRedoUI();
+            if (k == 0) {
+                this->lb_check->Text = L"Giới hạn Undo: Không giới hạn";
+            } else {
+                this->lb_check->Text = L"Đã đặt giới hạn Undo: " + k.ToString() + L" bước";
+            }
+        }
     }
     private: System::Void lb_trangthai_Click(System::Object^ sender, System::EventArgs^ e) {
+        UpdateUndoRedoUI();
+    }
+    private: System::Void richTextBox_code_KeyDown(System::Object^ sender, System::Windows::Forms::KeyEventArgs^ e) {
+        if (e->Control && !e->Alt && !e->Shift) {
+            if (e->KeyCode == Keys::Z) {
+                e->Handled = true;
+                e->SuppressKeyPress = true;
+                btn_undo_Click(sender, e);
+            } else if (e->KeyCode == Keys::Y) {
+                e->Handled = true;
+                e->SuppressKeyPress = true;
+                btn_redo_Click(sender, e);
+            }
+        }
     }
 #pragma endregion
 
@@ -1756,12 +2040,25 @@ private: System::Windows::Forms::ToolStripButton^ tsb_thoat;
         }
 
     private: System::Void richTextBox_code_TextChanged(System::Object^ sender, System::EventArgs^ e) {
-        if (coreDoc == nullptr) return;
+        if (coreDoc == nullptr || _isApplyingUndoRedo || _isHighlighting) return;
 
         std::string fullText = ToStdString(this->richTextBox_code->Text);
+        std::string newNormalized = NormalizeLF(fullText);
+        TextPosition curBefore = (lastCursorPos != nullptr) ? *lastCursorPos : TextPosition(0, 0);
+        TextPosition curAfter = LinearOffsetToPos(newNormalized, this->richTextBox_code->SelectionStart);
+
+        if (lastSyncedText != nullptr) {
+            RecordDiffAction(*lastSyncedText, newNormalized, curBefore, curAfter);
+            *lastSyncedText = newNormalized;
+        }
+        if (lastCursorPos != nullptr) {
+            *lastCursorPos = curAfter;
+        }
+
         coreDoc->loadFromText(fullText);
 
         UpdateStatisticsUI();
+        UpdateUndoRedoUI();
         this->pictureBox1->Invalidate();
 
         // Syntax highlight kieu C++ Dark Theme
@@ -1775,6 +2072,9 @@ private: System::Windows::Forms::ToolStripButton^ tsb_thoat;
         int col = sel - this->richTextBox_code->GetFirstCharIndexFromLine(line);
         this->label21->Text = L"Dòng: " + (line + 1).ToString();
         this->label22->Text = L"Cột: " + (col + 1).ToString();
+        if (!_isHighlighting && !_isApplyingUndoRedo && lastCursorPos != nullptr && lastSyncedText != nullptr) {
+            *lastCursorPos = LinearOffsetToPos(*lastSyncedText, sel);
+        }
     }
 
     private: System::Void UpdateStatisticsUI() {
