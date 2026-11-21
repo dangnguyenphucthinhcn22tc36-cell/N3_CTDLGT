@@ -57,3 +57,6 @@ x86/
 *.log
 *.idb
 *.cache
+
+# Agents Prompt
+*.md

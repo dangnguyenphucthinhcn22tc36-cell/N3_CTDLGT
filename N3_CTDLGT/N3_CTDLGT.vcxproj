@@ -130,14 +130,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ActionStack.cpp" />
     <ClCompile Include="CodeNote_N3.cpp" />
     <ClCompile Include="DoublyLinkedList.cpp" />
+    <ClCompile Include="SyntaxChecker.cpp" />
+    <ClCompile Include="UndoRedoManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ActionStack.h" />
     <ClInclude Include="CodeNote_N3.h">
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="DoublyLinkedList.h" />
+    <ClInclude Include="SyntaxChecker.h" />
+    <ClInclude Include="UndoRedoManager.h" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CodeNote_N3.resx">
