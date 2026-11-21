@@ -1198,13 +1198,13 @@ private: System::Windows::Forms::ToolStripButton^ tsb_thoat;
             // 
             // label28
             // 
-            this->label28->AutoSize = true;
-            this->label28->Font = (gcnew System::Drawing::Font(L"Times New Roman", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+            this->label28->AutoSize = false;
+            this->label28->Font = (gcnew System::Drawing::Font(L"Times New Roman", 10, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
                 static_cast<System::Byte>(0)));
-            this->label28->Location = System::Drawing::Point(57, 25);
+            this->label28->Location = System::Drawing::Point(55, 18);
             this->label28->Name = L"label28";
-            this->label28->RightToLeft = System::Windows::Forms::RightToLeft::Yes;
-            this->label28->Size = System::Drawing::Size(0, 26);
+            this->label28->RightToLeft = System::Windows::Forms::RightToLeft::No;
+            this->label28->Size = System::Drawing::Size(215, 46);
             this->label28->TabIndex = 9;
             // 
             // label36
@@ -2080,9 +2080,9 @@ private: System::Windows::Forms::ToolStripButton^ tsb_thoat;
     private: System::Void UpdateStatisticsUI() {
         if (coreDoc == nullptr) return;
         TextStatistics st = coreDoc->getStatistics();
-        this->lb_Words->Text = st.wordCount.ToString();
-        this->lb_dong->Text = st.lineCount.ToString() + L" dòng";
-        this->label28->Text = st.charCount.ToString() + L" ký tự (" + st.charNoSpaceCount.ToString() + L" ký tự không cách)";
+        this->lb_Words->Text = st.wordCount.ToString("N0");
+        this->lb_dong->Text = st.lineCount.ToString("N0") + L" dòng";
+        this->label28->Text = st.charCount.ToString("N0") + L" ký tự\r\n(" + st.charNoSpaceCount.ToString("N0") + L" ký tự không cách)";
     }
 #pragma endregion
 
