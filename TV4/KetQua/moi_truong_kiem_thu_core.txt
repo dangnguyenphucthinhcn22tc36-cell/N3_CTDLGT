@@ -1,0 +1,10 @@
+Thoi diem UTC: 2026-11-22T07:00:26Z
+He dieu han: Linux 6.18.57 x86_64
+Trinh bien dich: c++ (Debian 14.2.0-19) 14.2.0
+Copyright (C) 2024 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+Co bien dich: -std=c++17 -O2 -Wall -Wextra
+Ma thoat bo kiem thu: 0
+Pham vi: 14 ca C++ thuan C01-C14; khong chay WinForms.

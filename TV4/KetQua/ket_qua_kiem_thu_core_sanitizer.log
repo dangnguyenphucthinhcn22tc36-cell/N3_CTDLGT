@@ -1,0 +1,15 @@
+C01 PASS - Them_xoa_dong
+C02 PASS - Tach_gop_dong
+C03 PASS - Chen_Delete_Backspace
+C04 PASS - Chen_xoa_nhieu_dong
+C05 PASS - Sao_chep_doc_lap
+C06 PASS - Tim_kiem_hoa_thuong_ASCII
+C07 PASS - Tim_tat_ca_khong_chong_lan
+C08 PASS - Thay_the_tat_ca
+C09 PASS - Ranh_gioi_dong
+C10 PASS - Luu_mo_lai_UTF8
+C11 PASS - ActionStack_Deque_GioiHanK
+C12 PASS - UndoRedo_Va_XoaRedo
+C13 PASS - SyntaxChecker_CanBang_Va_Loi
+C14 PASS - SyntaxChecker_TepLon_DSLK
+Tong: 14; PASS: 14; FAIL: 0

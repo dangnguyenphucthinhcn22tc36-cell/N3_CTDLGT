@@ -1,4 +1,5 @@
 # BÁO CÁO BÀI TẬP LỚN
+
 ## MÔN CẤU TRÚC DỮ LIỆU VÀ GIẢI THUẬT
 
 **Đề tài 5: Trình soạn thảo văn bản có Undo/Redo**
@@ -10,10 +11,10 @@
 
 | Thành viên | Họ và tên | MSSV | Nhiệm vụ được phân công |
 |---|---|---|---|
-| TV1 | [Đặng Nguyễn Phúc Thịnh] | [075207016890] | Giao diện Windows Forms, tích hợp tầng lõi và trực quan hóa |
+| TV1 | [Đặng Nguyễn Phúc Thịnh] | [075207016890] | Giao diện Windows Forms, tích hợp tầng lõi, trực quan hóa và tổng hợp PPT |
 | TV2 | [Trần Quý Minh Thiện | [079207025398] | Danh sách liên kết kép, chỉnh sửa, tìm kiếm và thay thế |
 | TV3 | [Dương Đình Phúc] | [079202017784] | Stack, Undo/Redo, giới hạn lịch sử và kiểm tra ngoặc |
-| TV4 | [Lê Quang Thắng] | [051207020740] | Dữ liệu, kiểm thử, đo thời gian, phân tích, báo cáo và slide |
+| TV4 | [Lê Quang Thắng] | [051207020740] | Dữ liệu, kiểm thử, đo thời gian, phân tích và báo cáo LaTeX |
 
 ## MỤC LỤC
 
@@ -28,6 +29,7 @@
 
 ---
    
+
 # CHƯƠNG 1. GIỚI THIỆU ĐỀ TÀI
 
 ## 1.1. Lý do lựa chọn đề tài
@@ -286,8 +288,9 @@ Trong mã nguồn đã được xem xét, lớp DoublyLinkedList
 - DoublyLinkedList.h
 - DoublyLinkedList.cpp
 
-Các thành phần lịch sử và kiểm tra ngoặc sẽ được mô tả
-chi tiết sau khi đối chiếu mã nguồn của thành viên phụ trách.
+Các lớp ActionStack, UndoRedoManager và SyntaxChecker của TV3 đã được
+đối chiếu; cấu trúc và thuật toán được trình bày tại mục 3.5 và 4.11.
+UndoRedoManager trả Action cho tầng gọi thực thi, không trực tiếp sửa tài liệu.
 
 Sơ đồ dưới đây thể hiện kiến trúc dự kiến, không dùng để
 khẳng định mọi kết nối đã được tích hợp:
@@ -299,7 +302,7 @@ flowchart TD
     B --> D[Quản lý lịch sử Undo/Redo]
     B --> E[Kiểm tra ngoặc]
     C --> F[Dữ liệu các dòng văn bản]
-    D --> C
+    D -- Trả Action --> B
     C --> B
     D --> B
     E --> B
@@ -413,24 +416,19 @@ tương ứng trên giao diện đã kết nối và hoạt động đúng.
 
 ## 3.5. Thiết kế lịch sử thao tác
 
-Theo kế hoạch, một bản ghi hành động cần chứa đủ thông tin
-để thực hiện lại và đảo ngược thao tác.
+Mã TV3 của Dương Đình Phúc sử dụng ActionStack và UndoRedoManager.
+Mỗi Action lưu type, startPos, endPos, content, previousContent,
+cursorBefore và cursorAfter. Tọa độ dòng/cột của tầng lõi bắt đầu từ 0.
+Nội dung cũ được giữ lại để khôi phục thao tác xóa hoặc thay thế.
 
-Thông tin có thể gồm:
+ActionStack dùng danh sách liên kết kép: topNode giữ thao tác mới nhất,
+bottomNode giữ thao tác cũ nhất. UndoRedoManager quản lý hai ActionStack,
+không trực tiếp giữ hoặc chỉnh sửa DoublyLinkedList. Khi Undo/Redo,
+bộ điều phối trả về Action để tầng gọi áp dụng lên tài liệu.
 
-- Loại thao tác.
-- Vị trí bắt đầu.
-- Nội dung bị xóa.
-- Nội dung được chèn.
-
-UndoStack lưu các thao tác có thể hoàn tác.
-RedoStack lưu các thao tác đã hoàn tác và có thể làm lại.
-
-Trong lúc áp dụng Undo hoặc Redo, chương trình cần tránh
-ghi chính thao tác phục hồi thành một thao tác chỉnh sửa mới.
-
-Cấu trúc bản ghi, tên lớp và cách điều phối cụ thể cần
-được cập nhật theo mã thực tế của TV3.
+Khi mở tài liệu khác, onDocumentOpened xóa cả hai lịch sử. Trên giao diện,
+cờ _isApplyingUndoRedo ngăn việc ghi thao tác phục hồi thành chỉnh sửa mới.
+Giới hạn k = 0 là không giới hạn; k > 0 giữ tối đa k bản ghi Undo.
 
 ## 3.6. Thiết kế kiểm thử
 
@@ -465,6 +463,8 @@ Phần quản lý văn bản được tổ chức trong hai tệp:
 
 - DoublyLinkedList.h: khai báo các cấu trúc và giao diện hàm.
 - DoublyLinkedList.cpp: cài đặt các thao tác xử lý.
+
+Mã TV3 gồm ActionStack.h/.cpp, UndoRedoManager.h/.cpp và SyntaxChecker.h/.cpp.
 
 Các cấu trúc được sử dụng gồm Node, TextPosition,
 SearchResult, TextStatistics và lớp DoublyLinkedList.
@@ -707,19 +707,69 @@ nút trước và nút sau để hỗ trợ vẽ cấu trúc liên kết.
 Địa chỉ chỉ có ý nghĩa trong lần chạy hiện tại,
 không dùng làm giá trị cố định giữa các máy.
 
-## 4.11. Phạm vi cài đặt đã đối chiếu
+## 4.11. Cài đặt lịch sử và kiểm tra ngoặc của TV3
 
-Phần phân tích trên dựa vào mã DoublyLinkedList của nhóm.
+Phần này được đối chiếu với ActionStack, UndoRedoManager và SyntaxChecker
+của Dương Đình Phúc trong bản mã c7d3f205d9d67b14c676e14af8e119794da7236d.
 
-Mã cụ thể của ActionStack, bộ điều phối Undo/Redo,
-giới hạn k bước và kiểm tra ngoặc chưa được cung cấp
-để đối chiếu trong bản phân tích này.
+### 4.11.1. ActionStack và giới hạn k bước
 
-Các phần đó cần được cập nhật theo mã thực tế,
-không dùng mô tả nguyên lý thay cho bằng chứng cài đặt.
+ActionNode lưu một Action cùng prev và next. push nối nút mới tại đỉnh;
+pop lấy nút mới nhất; popBottom loại bỏ nút cũ nhất. Vì có con trỏ hai đầu,
+cập nhật liên kết cho mỗi thao tác này là O(1), chưa tính sao chép chuỗi
+trong Action. Khi push vượt k, nút ở đáy bị loại bỏ. setMaxCapacity giảm
+giới hạn bằng cách loại các bản ghi cũ dư thừa; giá trị âm bị từ chối,
+giá trị 0 chuyển sang không giới hạn. Hàm hủy, tạo sao chép và gán sao chép
+quản lý các nút riêng để các Stack không cùng sở hữu một chuỗi nút.
 
-Kết quả biên dịch và thực nghiệm phần lõi không thay thế
-việc kiểm thử các chức năng tích hợp trên giao diện.
+Ví dụ k = 3: thực hiện riêng lẻ a, b, c, d thì lịch sử còn b, c, d.
+Ba lần Undo đưa tài liệu từ abcd về a; lần Undo thứ tư bị từ chối.
+
+### 4.11.2. Điều phối Undo/Redo
+
+recordAction kiểm tra tính hợp lệ, đưa Action vào undoStack và xóa
+redoStack. Trích đoạn từ UndoRedoManager.cpp:
+
+```cpp
+bool UndoRedoManager::recordAction(const Action& action) {
+    if (!isValidAction(action)) return false;
+    undoStack.push(action);
+    redoStack.clear();
+    return true;
+}
+```
+
+Undo lấy bản gốc từ undoStack, chuyển bản gốc sang redoStack và trả về
+hành động nghịch đảo. Redo chuyển bản gốc trở lại undoStack rồi trả nó
+cho tầng gọi thực thi. createInverseAction đổi chèn thành xóa và ngược lại,
+đổi tách thành gộp dòng; thao tác thay thế hoán đổi content với
+previousContent. cursorBefore và cursorAfter cũng được hoán đổi.
+
+Ví dụ dán abc: Undo trả DELETE_TEXT và tầng gọi xóa abc; Redo trả
+INSERT_TEXT và tầng gọi chèn lại abc. Nếu sau Undo người dùng dán xyz,
+recordAction xóa nhánh Redo cũ. Bộ kiểm thử C12 áp dụng Action trả về lên
+DoublyLinkedList rồi so sánh nội dung, không chỉ kiểm tra số bản ghi.
+
+### 4.11.3. Kiểm tra ngoặc bằng BracketStack
+
+SyntaxChecker dùng BracketStack liên kết đơn, tách biệt với ActionStack.
+Mỗi BracketItem chứa ký tự ngoặc mở, dòng và cột. Ngoặc mở được push;
+ngoặc đóng khớp đỉnh thì pop. Có ba loại lỗi: dư ngoặc đóng
+(UNMATCHED_CLOSING), sai cặp (MISMATCHED_PAIR) và thiếu ngoặc đóng
+(UNCLOSED_OPENING). Ví dụ `([]{})` cân bằng, `([)]` sai thứ tự, `(()` thiếu `)`.
+
+checkText kiểm tra chuỗi; checkDocument duyệt trực tiếp Node của
+DoublyLinkedList. Khi ignoreStringsAndComments = true, bộ quét bỏ qua
+chuỗi, hằng ký tự và chú thích //, /* ... */. BracketCheckResult chứa
+trạng thái, loại lỗi, tọa độ, ký tự gặp/kỳ vọng và số ngoặc từng loại.
+Thông báo hiển thị chuyển tọa độ từ 0-based sang 1-based. Nếu kết thúc
+còn ngoặc mở và trước đó chưa ghi lỗi, hàm báo ngoặc còn trên đỉnh Stack.
+
+Với N byte và độ sâu ngoặc d, thời gian quét là O(N), bộ nhớ Stack O(d).
+Cột được tính theo byte std::string, chưa phải vị trí ký tự Unicode.
+Bộ quét không thay thế bộ phân tích cú pháp C++ đầy đủ; raw string và
+nối dòng tiền xử lý chưa thuộc phạm vi kiểm thử hiện tại.
+
 ## 4.12. Giao diện và quá trình khởi chạy
 
 ### Giao diện Windows Forms
@@ -738,9 +788,9 @@ Các thành phần giao diện đã được quan sát gồm:
 - Điều khiển giới hạn số bước Undo/Redo.
 - Các nhãn thông tin dòng, cột và trạng thái.
 
-Việc có nút hoặc nhãn trên giao diện chưa chứng minh chức năng
-đã kết nối với tầng lõi. Trong phiên bản mã đã kiểm tra,
-chưa thấy phần xử lý sự kiện gọi các thuật toán tương ứng.
+Bản c7d3f205 đã có xử lý mở/lưu, tìm/thay thế, thống kê và Undo/Redo.
+Riêng tsb_check_Click vẫn trống. Việc xác nhận thao tác giao diện
+đúng cần dựa vào kết quả chạy bản Windows đã tích hợp.
 
 Các dòng thông báo đặt sẵn, chẳng hạn “Ngoặc cân bằng!”,
 không được sử dụng làm kết quả kiểm thử.
@@ -819,73 +869,65 @@ chuỗi ký tự và chú thích phức tạp.
 
 ### 5.3.1. Kế hoạch kiểm thử toàn ứng dụng
 
-Các ca kiểm thử của toàn ứng dụng được lưu tại:
-
-TV4/KiemThu/KeHoachKiemThu.md
-
-Các ca này bao gồm giao diện, chỉnh sửa, Undo/Redo,
-giới hạn lịch sử, tìm kiếm, thay thế và kiểm tra ngoặc.
-
-Chưa có bộ kết quả chạy đầy đủ trên giao diện Windows.
-Không dùng kết quả kiểm thử phần lõi để đánh dấu toàn bộ
-các ca kiểm thử tích hợp là đã đạt.
+TV4/KiemThu/KeHoachKiemThu.md chứa các ca thủ công TC01–TC17 cho bản
+Windows đã tích hợp. Các ca C01–C14 dưới đây là kiểm thử C++ thuần,
+không tự động xác nhận các nút, phím tắt hoặc giao diện Windows đã đạt.
 
 ### 5.3.2. Kết quả kiểm thử tự động phần lõi
 
-Chương trình KiemThuCore.cpp gọi trực tiếp các hàm
-của DoublyLinkedList, độc lập với Windows Forms.
+KiemThuCore.cpp gọi DoublyLinkedList, ActionStack, UndoRedoManager và
+SyntaxChecker. TV4 giữ C01–C10, mở rộng kiểm tra C11–C14 và xuất CSV.
+Bản C01–C10 trước đó đã chạy trên Mac bằng clang++; bản mở rộng
+ngày 22/11/2026 được chạy lại trên Linux x86_64 bằng GCC 14.2.0,
+C++17, -O2 -Wall -Wextra. Không gán lần chạy Linux này cho máy Mac.
 
-Bộ kiểm thử đã chạy trên Mac bằng clang++ với C++17,
-cờ -O2, -Wall và -Wextra.
-
-| Mã | Nội dung kiểm thử | Kết quả thực tế |
+| Mã | Nội dung kiểm thử | Kết quả |
 |---|---|---|
-| C01 | Thêm, chèn, xóa dòng và kiểm tra liên kết hai chiều | PASS |
+| C01 | Thêm, chèn, xóa dòng và liên kết hai chiều | PASS |
 | C02 | Tách dòng rồi gộp lại | PASS |
-| C03 | Chèn ký tự, Delete và Backspace trong dòng | PASS |
-| C04 | Chèn đoạn nhiều dòng rồi xóa đoạn đó | PASS |
-| C05 | Sao chép và gán danh sách; thay đổi một bản không làm đổi bản khác | PASS |
-| C06 | Tìm kiếm phân biệt và không phân biệt hoa/thường với ASCII | PASS |
-| C07 | Tìm tất cả các kết quả không chồng lấn | PASS |
-| C08 | Thay thế tất cả và xử lý từ khóa không xuất hiện | PASS |
-| C09 | Delete cuối dòng, Backspace đầu dòng và xóa nút duy nhất | PASS |
-| C10 | Lưu rồi mở lại văn bản UTF-8 nhiều dòng | PASS |
+| C03 | Chèn ký tự, Delete, Backspace | PASS |
+| C04 | Chèn và xóa đoạn nhiều dòng | PASS |
+| C05 | Sao chép, gán danh sách độc lập | PASS |
+| C06 | Tìm phân biệt/không phân biệt hoa thường ASCII | PASS |
+| C07 | Tìm các kết quả không chồng lấn | PASS |
+| C08 | Thay tất cả và từ khóa không xuất hiện | PASS |
+| C09 | Ranh giới dòng và xóa nút duy nhất | PASS |
+| C10 | Lưu/mở lại văn bản UTF-8 | PASS |
+| C11 | ActionStack: LIFO, lấy đáy, giảm k, sao chép, Stack rỗng | PASS |
+| C12 | Undo/Redo trên tài liệu, xóa Redo, mở tệp mới, k = 3 | PASS |
+| C13 | Ngoặc đúng/sai/thiếu/dư; chuỗi, chú thích và xuống dòng CRLF | PASS |
+| C14 | Duyệt 50.000 dòng qua checkDocument, đếm ngoặc, thêm dòng lỗi | PASS |
 
-Tổng số: 10 ca.
-Đạt: 10 ca.
-Không đạt: 0 ca.
+Tổng số: 14 ca; đạt: 14; không đạt: 0. Mỗi ca gồm một hoặc nhiều
+điều kiện so sánh đầu ra. C14 kiểm tra dòng lỗi thứ 50.001 sau khi
+thêm một dòng lỗi vào tài liệu 50.000 dòng.
 
-Kết quả được ghi tại:
+CSV, log và môi trường chạy được lưu trong TV4/KetQua:
+ket_qua_kiem_thu_core.csv, ket_qua_kiem_thu_core.log và
+moi_truong_kiem_thu_core.txt. Cách chạy lại từ thư mục gốc dự án:
 
-TV4/KetQua/ket_qua_kiem_thu_core.csv
+```sh
+bash TV4/KiemThu/chay_kiem_thu_core.sh
+```
 
 ### 5.3.3. Phạm vi kết luận
 
-Kết quả xác nhận các tình huống C01–C10 cho đầu ra
-đúng với mong đợi trong lần chạy được ghi nhận.
+C01–C14 xác nhận các đầu ra đã kiểm tra của bốn lớp lõi. Bộ này chưa
+chạy giao diện Windows, chưa phủ mọi trường hợp và chưa xác nhận các
+phím tắt, ánh xạ vị trí Unicode hoặc lỗi I/O trên mọi hệ thống.
+C10 chỉ kiểm tra giữ nội dung UTF-8 khi lưu/mở lại. Kết quả 14 ca là
+kiểm thử chức năng; 120 lượt đo tại mục 5.7 vẫn là dữ liệu hiệu năng
+DoublyLinkedList trên Mac và không phải phép đo Undo/Redo hay WinForms.
 
-Bộ kiểm thử chưa bao gồm:
-
-- Giao diện Windows Forms.
-- Undo/Redo và giới hạn lịch sử.
-- Kiểm tra ngoặc.
-- Toàn bộ tình huống biên và lỗi đọc/ghi tệp.
-- Kiểm tra rò rỉ bộ nhớ bằng công cụ chuyên dụng.
-
-C10 xác nhận việc giữ nội dung UTF-8 khi lưu/mở lại.
-Ca này không chứng minh các thao tác vị trí con trỏ
-hoặc chuyển đổi hoa/thường Unicode đều đúng.
 ## 5.4. Các bước chuẩn bị đã xác nhận
 
-| Nội dung | Bằng chứng | Kết luận trong phạm vi kiểm tra |
+| Nội dung | Bằng chứng | Phạm vi kết luận |
 |---|---|---|
-| Sinh ba tệp dữ liệu lớn | Thông báo chương trình sinh dữ liệu | Đã tạo được các tệp |
-| Kiểm tra số dòng | Kết quả wc -l trên Terminal | Đúng số dòng của ba tệp lớn |
-| Biên dịch độc lập DoublyLinkedList | Lệnh clang++ trên Mac không báo lỗi | Phần lõi biên dịch được trong môi trường đó |
-| Chạy giao diện và các chức năng | Chưa có bộ kết quả kiểm thử | Chưa kết luận |
-| Đo thời gian bốn thao tác lõi | Hai CSV gồm 120 lượt đo và 12 giá trị trung bình | Đã có kết quả; phân tích tại mục 5.7 và 5.8 |
-Biên dịch thành công không chứng minh thuật toán đúng
-trong mọi trường hợp hoặc không có rò rỉ bộ nhớ.
+| Sinh và đếm dữ liệu | Chương trình sinh dữ liệu, wc -l | Có ba tệp 10.000, 20.000, 50.000 dòng |
+| Biên dịch bốn lớp C++ thuần | Script chay_kiem_thu_core.sh | Các mô-đun lõi biên dịch cùng nhau |
+| Kiểm thử lõi mở rộng | CSV, log C01–C14 | 14/14 ca đạt trong môi trường đã ghi |
+| Chạy giao diện Windows | Chưa có bộ kết quả đầy đủ | Chưa kết luận TC01–TC17 đã đạt |
+| Đo thời gian quản lý văn bản | 120 lượt đo và 12 giá trị trung bình | Giữ số liệu Mac ở mục 5.7–5.8 |
 
 ## 5.5. Thiết kế phép đo thời gian
 
@@ -916,10 +958,12 @@ nhưng không tính thời gian giải phóng danh sách kết quả.
 
 Phép đo loadFromFile có thể chịu ảnh hưởng bộ nhớ đệm.
 Không gọi đây là phép đo tốc độ đọc đĩa thuần túy.
+
 ## 5.6. Môi trường thực nghiệm
 
-Các phép đo phần lõi và bộ kiểm thử tự động được thực hiện
-trên môi trường sau:
+Các phép đo hiệu năng và lần kiểm thử C01–C10 ban đầu được thực hiện
+trên môi trường Mac sau đây. Lần chạy C01–C14 trên Linux được mô tả
+riêng tại mục 5.3 và trong tệp môi trường kiểm thử:
 
 | Thành phần | Thông tin |
 |---|---|
@@ -1046,48 +1090,33 @@ kiểm tra ngoặc hoặc kiểm tra rò rỉ bộ nhớ.
 
 ## 6.1. Kết quả hiện có
 
-Tại thời điểm lập bản thảo, dự án đã có thiết kế giao diện
-Windows Forms và mã lõi quản lý văn bản bằng danh sách
-liên kết kép.
+Dự án đã có mã quản lý văn bản bằng DoublyLinkedList, lịch sử bằng
+ActionStack và UndoRedoManager, cùng kiểm tra ngoặc bằng SyntaxChecker.
+Phần giải thích tại mục 4.11 đã được đối chiếu trực tiếp với mã TV3.
 
-Mã DoublyLinkedList cung cấp các nhóm thao tác quản lý dòng,
-chỉnh sửa, tìm kiếm, thay thế, thống kê và đọc/ghi tệp.
+TV4 đã chuẩn bị dữ liệu mẫu và ba bộ dữ liệu lớn, thu 120 lượt đo với
+12 giá trị trung bình trên Mac. Bộ kiểm thử C++ thuần mở rộng đạt
+14/14 ca trong lần chạy Linux ngày 22/11/2026; kết quả và môi trường
+được lưu cùng mã kiểm thử. Các bằng chứng này chưa thay thế việc
+kiểm thử toàn bộ ứng dụng Windows đã tích hợp.
 
-Phần chuẩn bị kiểm thử đã có dữ liệu mẫu, dữ liệu lớn
-và danh sách ca kiểm thử. Phần lõi đã được biên dịch độc lập
-trên Mac.
-
-Các kết quả này chưa đủ để khẳng định ứng dụng đã hoàn thành
-mọi yêu cầu hoặc đã đạt toàn bộ ca kiểm thử.
-Phần thực nghiệm đã thu được 120 lượt đo cho bốn thao tác
-quản lý văn bản trên ba kích thước dữ liệu, cùng 12 giá trị
-thời gian trung bình đã được đối chiếu.
-
-Bộ kiểm thử tự động phần lõi đã chạy trên Mac với kết quả
-10/10 ca đạt. Các kết quả này cung cấp minh chứng cho
-phần lõi trong phạm vi đã kiểm thử, chưa thay thế kết quả
-kiểm thử tích hợp của toàn ứng dụng.
 ## 6.2. Nội dung còn cần hoàn thiện
 
-- Đối chiếu mã Undo/Redo và kiểm tra ngoặc.
-- Hoàn thiện và xác nhận kết nối giao diện với tầng lõi.
-- Chạy kiểm thử chức năng trên Windows.
-- Bổ sung phép đo cho các thành phần khác khi có mã tích hợp.
-- Kiểm tra quản lý bộ nhớ bằng công cụ phù hợp.
-- Kiểm tra vị trí con trỏ và xử lý văn bản tiếng Việt.
-- Bổ sung kiểm tra lỗi đọc/ghi tệp.
+- Hoàn thiện kết nối nút Kiểm tra ngoặc với SyntaxChecker: trong bản
+  c7d3f205, tsb_check_Click vẫn chưa có xử lý.
+- Chạy TC01–TC17 trên Windows, gồm Undo/Redo, giới hạn k và kiểm tra ngoặc.
+- Kiểm tra vị trí con trỏ và xử lý văn bản tiếng Việt qua giao diện.
+- Mở rộng kiểm thử lỗi đọc/ghi, trường hợp biên và mô hình cấp phát lỗi.
 
-Mục này cần cập nhật theo tình trạng thực tế trước khi nộp.
+Không dùng nhãn thông báo đặt sẵn hoặc kết quả kiểm thử lõi để đánh dấu
+toàn bộ ca giao diện là đạt.
 
 ## 6.3. Hướng phát triển
 
-Sau khi hoàn thiện phạm vi hiện tại, có thể xem xét:
-
-- Cải thiện khả năng xử lý Unicode.
-- Xử lý ngoặc trong chuỗi và chú thích mã nguồn.
-- Tối ưu việc cập nhật văn bản lớn từ giao diện.
-- Lưu thêm trạng thái con trỏ khi Undo/Redo.
-- Mở rộng bộ dữ liệu thực nghiệm với mã nguồn thực tế.
+- Cải thiện ánh xạ chỉ số byte UTF-8 với vị trí ký tự trên giao diện.
+- Mở rộng bộ quét cho raw string và nối dòng tiền xử lý C++.
+- Tối ưu cập nhật và trực quan hóa khi tài liệu lớn.
+- Mở rộng kiểm thử lịch sử, con trỏ và dữ liệu mã nguồn thực tế.
 
 ## 6.4. Kiến thức vận dụng
 
@@ -1107,6 +1136,8 @@ cần có điều kiện chạy rõ ràng và dữ liệu đo có thể kiểm t
 4. Mã nguồn DoublyLinkedList.h và DoublyLinkedList.cpp.
 5. TV4/CongCu/sinh_du_lieu.cpp.
 6. TV4/KiemThu/KeHoachKiemThu.md.
+7. Mã TV3: ActionStack.h/.cpp, UndoRedoManager.h/.cpp, SyntaxChecker.h/.cpp.
+8. Phiên bản đối chiếu: https://github.com/dangnguyenphucthinhcn22tc36-cell/N3_CTDLGT/tree/c7d3f205d9d67b14c676e14af8e119794da7236d.
 
 Bổ sung tài liệu lý thuyết mà nhóm thực tế sử dụng,
 ghi rõ tên tài liệu, tác giả hoặc địa chỉ nguồn.
@@ -1129,7 +1160,8 @@ Các tệp được lưu tại TV4/KetQua:
 
 - ket_qua_chi_tiet.csv: 120 lượt đo thời gian.
 - ket_qua_trung_binh.csv: 12 giá trị trung bình.
-- ket_qua_kiem_thu_core.csv: kết quả 10 ca kiểm thử lõi.
+- ket_qua_kiem_thu_core.csv: kết quả 14 ca C01–C14.
+- ket_qua_kiem_thu_core.log và moi_truong_kiem_thu_core.txt: log và môi trường chạy.
 
 Mã nguồn và CSV là tài liệu dùng để kiểm tra, chạy lại
 và đối chiếu các kết quả trình bày trong báo cáo.

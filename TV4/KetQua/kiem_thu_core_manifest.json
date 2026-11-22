@@ -1,0 +1,38 @@
+{
+  "base_commit": "c7d3f205d9d67b14c676e14af8e119794da7236d",
+  "checked_utc": "2026-11-22T07:05:27.034606+00:00",
+  "functional_cases": 14,
+  "pass": 14,
+  "fail": 0,
+  "c14_document_lines_before_error": 50000,
+  "platform": "Linux x86_64",
+  "compiler": "GCC 14.2.0",
+  "normal_flags": [
+    "-std=c++17",
+    "-O2",
+    "-Wall",
+    "-Wextra"
+  ],
+  "sanitizer_flags": [
+    "-std=c++17",
+    "-O1",
+    "-g",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-fsanitize=address,undefined",
+    "-fno-omit-frame-pointer"
+  ],
+  "scope": "Native C++ core tests only. No WinForms or Windows GUI execution.",
+  "sha256": {
+    "TV4/KiemThu/TV4/KiemThu/KiemThuCore.cpp": "059168c370b8cb6e4a262f712c9d7ffbbbcf319c1fa2e801dd769daa3847b987",
+    "N3_CTDLGT/DoublyLinkedList.h": "cdaff590df422a1c0114029a0b84a13efa71b9523b2de6011c4edd763ef66b22",
+    "N3_CTDLGT/DoublyLinkedList.cpp": "4048be2fe07904848a5298aa302b57a64dfb354ce0de9c197f62a606fb3f9307",
+    "N3_CTDLGT/ActionStack.h": "14797cddc199f5e0e954861b5b512635ac86d640c92e4b92ca752cc687fc9b7c",
+    "N3_CTDLGT/ActionStack.cpp": "dcc69205c96fae535bb85632045310874d2ad7937a74f86e8b874779a597d252",
+    "N3_CTDLGT/UndoRedoManager.h": "b0de8c77e842271610da2db64e1d7df4caa6bf98cd1df5cf0d62950b4046cd5f",
+    "N3_CTDLGT/UndoRedoManager.cpp": "8d7c1bb0e93cadbe63a9cd50bebf4e70c799f3f58e18f93ccd3ba92fedaec388",
+    "N3_CTDLGT/SyntaxChecker.h": "5374e1eabb7604ba598fc03195ed4d6d178d96730cc61f1437836bcc22a3606d",
+    "N3_CTDLGT/SyntaxChecker.cpp": "1e2ea629df52cae74ee41f072c1a901c158bf3a067bf42f4945f70203c221256"
+  }
+}

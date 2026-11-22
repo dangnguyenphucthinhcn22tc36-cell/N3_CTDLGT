@@ -222,10 +222,19 @@ int main() {
 
         if (!s.isEmpty() || !s.setMaxCapacity(0) || !s.isUnlimited()) return false;
 
-        return copy.getSize() == 2
-            && assigned.getSize() == 2
-            && copy.peek(top) && top.content == "d"
-            && assigned.peekBottom(bot) && bot.content == "c";
+        if (copy.getSize() != 2 || assigned.getSize() != 2
+            || !copy.pop(top) || top.content != "d"
+            || !copy.pop(top) || top.content != "c"
+            || !copy.isEmpty() || copy.pop(top)
+            || copy.getTopNode() || copy.getBottomNode()) {
+            return false;
+        }
+
+        return assigned.getSize() == 2
+            && assigned.popBottom(bot) && bot.content == "c"
+            && assigned.pop(top) && top.content == "d"
+            && assigned.isEmpty() && !assigned.popBottom(bot)
+            && !assigned.getTopNode() && !assigned.getBottomNode();
     });
 
     thu("C12", "UndoRedo_Va_XoaRedo", +[]() {
@@ -233,6 +242,9 @@ int main() {
         d.appendLine("");
         UndoRedoManager m;
         Action act;
+
+        if (m.canUndo() || m.canRedo() || m.undo(act) || m.redo(act))
+            return false;
 
         d.pasteText(0, 0, "abc");
         if (!m.recordAction(UndoRedoManager::makeInsertText(
@@ -269,11 +281,54 @@ int main() {
         }
 
         m.onDocumentOpened();
-        return !m.canUndo() && !m.canRedo()
-            && m.getUndoCount() == 0 && m.getRedoCount() == 0;
+        if (m.canUndo() || m.canRedo()
+            || m.getUndoCount() != 0 || m.getRedoCount() != 0) {
+            return false;
+        }
+
+        // Bon thao tac rieng le voi k = 3: chi hoan tac duoc d, c, b.
+        DoublyLinkedList limitedDoc;
+        limitedDoc.appendLine("");
+        UndoRedoManager limited(3);
+        for (int i = 0; i < 4; ++i) {
+            const char ch = static_cast<char>('a' + i);
+            limitedDoc.insertChar(0, i, ch);
+            if (!limited.recordAction(UndoRedoManager::makeInsertChar(
+                    TextPosition(0, i), ch,
+                    TextPosition(0, i), TextPosition(0, i + 1)))) {
+                return false;
+            }
+        }
+        if (limited.getUndoCount() != 3 || limited.getRedoCount() != 0)
+            return false;
+
+        const char* afterUndo[] = {"abc", "ab", "a"};
+        for (int i = 0; i < 3; ++i) {
+            if (!limited.undo(act) || act.type != ActionType::DELETE_CHAR)
+                return false;
+            limitedDoc.deleteChar(act.startPos.line, act.startPos.col);
+            if (limitedDoc.getAllText() != afterUndo[i]) return false;
+        }
+        if (limited.undo(act) || limited.getRedoCount() != 3) return false;
+
+        const char* afterRedo[] = {"ab", "abc", "abcd"};
+        for (int i = 0; i < 3; ++i) {
+            if (!limited.redo(act) || act.type != ActionType::INSERT_CHAR
+                || act.content.size() != 1) return false;
+            limitedDoc.insertChar(act.startPos.line, act.startPos.col, act.content[0]);
+            if (limitedDoc.getAllText() != afterRedo[i]) return false;
+        }
+        if (limited.redo(act) || limited.getUndoCount() != 3) return false;
+
+        return !limited.setMaxUndoSteps(-1)
+            && limited.getMaxUndoSteps() == 3
+            && limited.getUndoCount() == 3
+            && limited.setMaxUndoSteps(0)
+            && limited.isUndoUnlimited();
     });
 
     thu("C13", "SyntaxChecker_CanBang_Va_Loi", +[]() {
+        if (!SyntaxChecker::checkText("").isBalanced) return false;
         BracketCheckResult ok = SyntaxChecker::checkText("([]{})");
         if (!ok.isBalanced || ok.errorType != BracketErrorType::NONE
             || ok.roundOpenCount != 1 || ok.roundCloseCount != 1
@@ -310,21 +365,26 @@ int main() {
             "    return 0;\n"
             "}\n";
 
+        BracketCheckResult crlf = SyntaxChecker::checkText("int x = 0;\r\n]");
         return SyntaxChecker::checkText(code, true).isBalanced
-            && !SyntaxChecker::checkText(code, false).isBalanced;
+            && !SyntaxChecker::checkText(code, false).isBalanced
+            && !crlf.isBalanced
+            && crlf.errorType == BracketErrorType::UNMATCHED_CLOSING
+            && crlf.errorLine == 1 && crlf.errorCol == 0;
     });
 
     thu("C14", "SyntaxChecker_TepLon_DSLK", +[]() {
         DoublyLinkedList d;
-        for (int i = 1; i <= 100; ++i) {
+        const int soDong = 50000;
+        for (int i = 1; i <= soDong; ++i) {
             d.appendLine("void ham_" + std::to_string(i) + "() { int a[3] = {1, 2, 3}; }");
         }
 
         BracketCheckResult ok = SyntaxChecker::checkDocument(d, true);
         if (!ok.isBalanced || ok.errorType != BracketErrorType::NONE
-            || ok.roundOpenCount != 100 || ok.roundCloseCount != 100
-            || ok.curlyOpenCount != 200 || ok.curlyCloseCount != 200
-            || ok.squareOpenCount != 100 || ok.squareCloseCount != 100) {
+            || ok.roundOpenCount != soDong || ok.roundCloseCount != soDong
+            || ok.curlyOpenCount != 2 * soDong || ok.curlyCloseCount != 2 * soDong
+            || ok.squareOpenCount != soDong || ok.squareCloseCount != soDong) {
             return false;
         }
 
@@ -332,7 +392,8 @@ int main() {
         BracketCheckResult err = SyntaxChecker::checkDocument(d, true);
         return !err.isBalanced
             && err.errorType == BracketErrorType::UNCLOSED_OPENING
-            && err.errorLine == 100;
+            && err.errorLine == soDong
+            && err.errorCol == 10;
     });
 
     csv.close();

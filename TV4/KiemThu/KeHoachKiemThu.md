@@ -73,3 +73,26 @@ Ghi lại:
 
 Không dùng thời gian sinh tệp dữ liệu thay cho thời gian
 thực hiện thuật toán của CodeNote.
+
+## 7. Kiểm thử tự động phần lõi C01–C14
+
+Bộ tự động được lưu tại `TV4/KiemThu/TV4/KiemThu/KiemThuCore.cpp`.
+Đây là bộ riêng với TC01–TC17 trên giao diện Windows.
+
+- C01–C10: quản lý dòng, chỉnh sửa, sao chép, tìm/thay thế và lưu/mở UTF-8.
+- C11: ActionStack, thứ tự LIFO, lấy phần tử đáy, giới hạn k, sao chép và Stack rỗng.
+- C12: áp dụng Action Undo/Redo lên DoublyLinkedList, xóa nhánh Redo, xóa lịch sử khi mở tài liệu và giới hạn k = 3.
+- C13: ngoặc cân bằng/sai/thiếu/dư, bỏ qua chuỗi/chú thích và tọa độ dòng CRLF.
+- C14: kiểm tra 50.000 dòng bằng checkDocument, đếm ngoặc và phát hiện dòng lỗi thêm vào.
+
+Chạy từ thư mục gốc dự án:
+
+```sh
+bash TV4/KiemThu/chay_kiem_thu_core.sh
+```
+
+Kết quả được xuất vào `TV4/KetQua/ket_qua_kiem_thu_core.csv`, kèm log
+và thông tin môi trường. Mỗi dòng CSV là một ca kiểm thử, có thể gồm nhiều
+điều kiện kiểm tra. Mã thoát 0 chỉ khi các ca đều đạt và ghi CSV thành công.
+Bản mở rộng ngày 22/11/2026 đã chạy trên Linux x86_64, GCC 14.2.0:
+14 PASS, 0 FAIL. Không dùng kết quả này để đánh dấu TC01–TC17 là đã đạt.
