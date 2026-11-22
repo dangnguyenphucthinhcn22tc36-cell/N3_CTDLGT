@@ -1,0 +1,242 @@
+% Cac muc cap nhat; thay tung muc tuong ung, khong dan ca tep vao cuoi bao cao.
+
+\section{3.5. Thiết kế lịch sử thao
+tác}\label{tv4-22-3-5-thiux1ebft-kux1ebf-lux1ecbch-sux1eed-thao-tuxe1c}
+
+Mã TV3 của Dương Đình Phúc sử dụng ActionStack và UndoRedoManager. Mỗi
+Action lưu type, startPos, endPos, content, previousContent,
+cursorBefore và cursorAfter. Tọa độ dòng/cột của tầng lõi bắt đầu từ 0.
+Nội dung cũ được giữ lại để khôi phục thao tác xóa hoặc thay thế.
+
+ActionStack dùng danh sách liên kết kép: topNode giữ thao tác mới nhất,
+bottomNode giữ thao tác cũ nhất. UndoRedoManager quản lý hai
+ActionStack, không trực tiếp giữ hoặc chỉnh sửa DoublyLinkedList. Khi
+Undo/Redo, bộ điều phối trả về Action để tầng gọi áp dụng lên tài liệu.
+
+Khi mở tài liệu khác, onDocumentOpened xóa cả hai lịch sử. Trên giao
+diện, cờ \_isApplyingUndoRedo ngăn việc ghi thao tác phục hồi thành
+chỉnh sửa mới. Giới hạn k = 0 là không giới hạn; k \textgreater{} 0 giữ
+tối đa k bản ghi Undo.
+
+
+\section{4.11. Cài đặt lịch sử và kiểm tra ngoặc của
+TV3}\label{tv4-22-4-11-cuxe0i-ux111ux1eb7t-lux1ecbch-sux1eed-vuxe0-kiux1ec3m-tra-ngoux1eb7c-cux1ee7a-tv3}
+
+Phần này được đối chiếu với ActionStack, UndoRedoManager và
+SyntaxChecker của Dương Đình Phúc trong bản mã
+c7d3f205d9d67b14c676e14af8e119794da7236d.
+
+\subsection{4.11.1. ActionStack và giới hạn k
+bước}\label{tv4-22-4-11-actionstack-vuxe0-giux1edbi-hux1ea1n-k-bux1b0ux1edbc}
+
+ActionNode lưu một Action cùng prev và next. push nối nút mới tại đỉnh;
+pop lấy nút mới nhất; popBottom loại bỏ nút cũ nhất. Vì có con trỏ hai
+đầu, cập nhật liên kết cho mỗi thao tác này là O(1), chưa tính sao chép
+chuỗi trong Action. Khi push vượt k, nút ở đáy bị loại bỏ.
+setMaxCapacity giảm giới hạn bằng cách loại các bản ghi cũ dư thừa; giá
+trị âm bị từ chối, giá trị 0 chuyển sang không giới hạn. Hàm hủy, tạo
+sao chép và gán sao chép quản lý các nút riêng để các Stack không cùng
+sở hữu một chuỗi nút.
+
+Ví dụ k = 3: thực hiện riêng lẻ a, b, c, d thì lịch sử còn b, c, d. Ba
+lần Undo đưa tài liệu từ abcd về a; lần Undo thứ tư bị từ chối.
+
+\subsection{4.11.2. Điều phối
+Undo/Redo}\label{tv4-22-4-11-ux111iux1ec1u-phux1ed1i-undoredo}
+
+recordAction kiểm tra tính hợp lệ, đưa Action vào undoStack và xóa
+redoStack. Trích đoạn từ UndoRedoManager.cpp:
+
+\begin{verbatim}
+bool UndoRedoManager::recordAction(const Action& action) {
+    if (!isValidAction(action)) return false;
+    undoStack.push(action);
+    redoStack.clear();
+    return true;
+}
+\end{verbatim}
+
+Undo lấy bản gốc từ undoStack, chuyển bản gốc sang redoStack và trả về
+hành động nghịch đảo. Redo chuyển bản gốc trở lại undoStack rồi trả nó
+cho tầng gọi thực thi. createInverseAction đổi chèn thành xóa và ngược
+lại, đổi tách thành gộp dòng; thao tác thay thế hoán đổi content với
+previousContent. cursorBefore và cursorAfter cũng được hoán đổi.
+
+Ví dụ dán abc: Undo trả DELETE\_TEXT và tầng gọi xóa abc; Redo trả
+INSERT\_TEXT và tầng gọi chèn lại abc. Nếu sau Undo người dùng dán xyz,
+recordAction xóa nhánh Redo cũ. Bộ kiểm thử C12 áp dụng Action trả về
+lên DoublyLinkedList rồi so sánh nội dung, không chỉ kiểm tra số bản
+ghi.
+
+\subsection{4.11.3. Kiểm tra ngoặc bằng
+BracketStack}\label{tv4-22-4-11-kiux1ec3m-tra-ngoux1eb7c-bux1eb1ng-bracketstack}
+
+SyntaxChecker dùng BracketStack liên kết đơn, tách biệt với ActionStack.
+Mỗi BracketItem chứa ký tự ngoặc mở, dòng và cột. Ngoặc mở được push;
+ngoặc đóng khớp đỉnh thì pop. Có ba loại lỗi: dư ngoặc đóng
+(UNMATCHED\_CLOSING), sai cặp (MISMATCHED\_PAIR) và thiếu ngoặc đóng
+(UNCLOSED\_OPENING). Ví dụ \texttt{({[}{]}\{\})} cân bằng,
+\texttt{({[}){]}} sai thứ tự, \texttt{(()} thiếu \texttt{)}.
+
+checkText kiểm tra chuỗi; checkDocument duyệt trực tiếp Node của
+DoublyLinkedList. Khi ignoreStringsAndComments = true, bộ quét bỏ qua
+chuỗi, hằng ký tự và chú thích //, /* \ldots{} */. BracketCheckResult
+chứa trạng thái, loại lỗi, tọa độ, ký tự gặp/kỳ vọng và số ngoặc từng
+loại. Thông báo hiển thị chuyển tọa độ từ 0-based sang 1-based. Nếu kết
+thúc còn ngoặc mở và trước đó chưa ghi lỗi, hàm báo ngoặc còn trên đỉnh
+Stack.
+
+Với N byte và độ sâu ngoặc d, thời gian quét là O(N), bộ nhớ Stack O(d).
+Cột được tính theo byte std::string, chưa phải vị trí ký tự Unicode. Bộ
+quét không thay thế bộ phân tích cú pháp C++ đầy đủ; raw string và nối
+dòng tiền xử lý chưa thuộc phạm vi kiểm thử hiện tại.
+
+
+\section{5.3. Kiểm thử chức
+năng}\label{tv4-22-5-3-kiux1ec3m-thux1eed-chux1ee9c-nux103ng}
+
+\subsection{5.3.1. Kế hoạch kiểm thử toàn ứng
+dụng}\label{tv4-22-5-3-kux1ebf-houx1ea1ch-kiux1ec3m-thux1eed-touxe0n-ux1ee9ng-dux1ee5ng}
+
+TV4/KiemThu/KeHoachKiemThu.md chứa các ca thủ công TC01--TC17 cho bản
+Windows đã tích hợp. Các ca C01--C14 dưới đây là kiểm thử C++ thuần,
+không tự động xác nhận các nút, phím tắt hoặc giao diện Windows đã đạt.
+
+\subsection{5.3.2. Kết quả kiểm thử tự động phần
+lõi}\label{tv4-22-5-3-kux1ebft-quux1ea3-kiux1ec3m-thux1eed-tux1ef1-ux111ux1ed9ng-phux1ea7n-luxf5i}
+
+KiemThuCore.cpp gọi DoublyLinkedList, ActionStack, UndoRedoManager và
+SyntaxChecker. TV4 giữ C01--C10, mở rộng kiểm tra C11--C14 và xuất CSV.
+Bản C01--C10 trước đó đã chạy trên Mac bằng clang++; bản mở rộng ngày
+22/11/2026 được chạy lại trên Linux x86\_64 bằng GCC 14.2.0, C++17, -O2
+-Wall -Wextra. Không gán lần chạy Linux này cho máy Mac.
+
+\begingroup
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{@{}p{0.07\linewidth}p{0.76\linewidth}p{0.12\linewidth}@{}}
+\toprule
+Mã & Nội dung kiểm thử & Kết quả \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+C01 & Thêm, chèn, xóa dòng và liên kết hai chiều & PASS \\
+C02 & Tách dòng rồi gộp lại & PASS \\
+C03 & Chèn ký tự, Delete, Backspace & PASS \\
+C04 & Chèn và xóa đoạn nhiều dòng & PASS \\
+C05 & Sao chép, gán danh sách độc lập & PASS \\
+C06 & Tìm phân biệt/không phân biệt hoa thường ASCII & PASS \\
+C07 & Tìm các kết quả không chồng lấn & PASS \\
+C08 & Thay tất cả và từ khóa không xuất hiện & PASS \\
+C09 & Ranh giới dòng và xóa nút duy nhất & PASS \\
+C10 & Lưu/mở lại văn bản UTF-8 & PASS \\
+C11 & ActionStack: LIFO, lấy đáy, giảm k, sao chép, Stack rỗng & PASS \\
+C12 & Undo/Redo trên tài liệu, xóa Redo, mở tệp mới, k = 3 & PASS \\
+C13 & Ngoặc đúng/sai/thiếu/dư; chuỗi, chú thích và xuống dòng CRLF & PASS \\
+C14 & Duyệt 50.000 dòng qua checkDocument, đếm ngoặc, thêm dòng lỗi & PASS \\
+\end{longtable}
+\endgroup
+
+Tổng số: 14 ca; đạt: 14; không đạt: 0. Mỗi ca gồm một hoặc nhiều điều
+kiện so sánh đầu ra. C14 kiểm tra dòng lỗi thứ 50.001 sau khi thêm một
+dòng lỗi vào tài liệu 50.000 dòng.
+
+CSV, log và môi trường chạy được lưu trong TV4/KetQua:
+ket\_qua\_kiem\_thu\_core.csv, ket\_qua\_kiem\_thu\_core.log và
+moi\_truong\_kiem\_thu\_core.txt. Cách chạy lại từ thư mục gốc dự án:
+
+\begin{verbatim}
+bash TV4/KiemThu/chay_kiem_thu_core.sh
+\end{verbatim}
+
+\subsection{5.3.3. Phạm vi kết
+luận}\label{tv4-22-5-3-phux1ea1m-vi-kux1ebft-luux1eadn}
+
+C01--C14 xác nhận các đầu ra đã kiểm tra của bốn lớp lõi. Bộ này chưa
+chạy giao diện Windows, chưa phủ mọi trường hợp và chưa xác nhận các
+phím tắt, ánh xạ vị trí Unicode hoặc lỗi I/O trên mọi hệ thống. C10 chỉ
+kiểm tra giữ nội dung UTF-8 khi lưu/mở lại. Kết quả 14 ca là kiểm thử
+chức năng; 120 lượt đo tại mục 5.7 vẫn là dữ liệu hiệu năng
+DoublyLinkedList trên Mac và không phải phép đo Undo/Redo hay WinForms.
+
+
+\section{5.4. Các bước chuẩn bị đã xác
+nhận}\label{tv4-22-5-4-cuxe1c-bux1b0ux1edbc-chuux1ea9n-bux1ecb-ux111uxe3-xuxe1c-nhux1eadn}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Nội dung
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Bằng chứng
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Phạm vi kết luận
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Sinh và đếm dữ liệu & Chương trình sinh dữ liệu, wc -l & Có ba tệp
+10.000, 20.000, 50.000 dòng \\
+Biên dịch bốn lớp C++ thuần & Script chay\_kiem\_thu\_core.sh & Các
+mô-đun lõi biên dịch cùng nhau \\
+Kiểm thử lõi mở rộng & CSV, log C01--C14 & 14/14 ca đạt trong môi trường
+đã ghi \\
+Chạy giao diện Windows & Chưa có bộ kết quả đầy đủ & Chưa kết luận
+TC01--TC17 đã đạt \\
+Đo thời gian quản lý văn bản & 120 lượt đo và 12 giá trị trung bình &
+Giữ số liệu Mac ở mục 5.7--5.8 \\
+\end{longtable}
+
+
+\section{6.1. Kết quả hiện có}\label{tv4-22-6-1-kux1ebft-quux1ea3-hiux1ec7n-cuxf3}
+
+Dự án đã có mã quản lý văn bản bằng DoublyLinkedList, lịch sử bằng
+ActionStack và UndoRedoManager, cùng kiểm tra ngoặc bằng SyntaxChecker.
+Phần giải thích tại mục 4.11 đã được đối chiếu trực tiếp với mã TV3.
+
+TV4 đã chuẩn bị dữ liệu mẫu và ba bộ dữ liệu lớn, thu 120 lượt đo với 12
+giá trị trung bình trên Mac. Bộ kiểm thử C++ thuần mở rộng đạt 14/14 ca
+trong lần chạy Linux ngày 22/11/2026; kết quả và môi trường được lưu
+cùng mã kiểm thử. Các bằng chứng này chưa thay thế việc kiểm thử toàn bộ
+ứng dụng Windows đã tích hợp.
+
+
+\section{6.2. Nội dung còn cần hoàn
+thiện}\label{tv4-22-6-2-nux1ed9i-dung-cuxf2n-cux1ea7n-houxe0n-thiux1ec7n}
+
+\begin{itemize}
+\tightlist
+\item
+  Hoàn thiện kết nối nút Kiểm tra ngoặc với SyntaxChecker: trong bản
+  c7d3f205, tsb\_check\_Click vẫn chưa có xử lý.
+\item
+  Chạy TC01--TC17 trên Windows, gồm Undo/Redo, giới hạn k và kiểm tra
+  ngoặc.
+\item
+  Kiểm tra vị trí con trỏ và xử lý văn bản tiếng Việt qua giao diện.
+\item
+  Mở rộng kiểm thử lỗi đọc/ghi, trường hợp biên và mô hình cấp phát lỗi.
+\end{itemize}
+
+Không dùng nhãn thông báo đặt sẵn hoặc kết quả kiểm thử lõi để đánh dấu
+toàn bộ ca giao diện là đạt.
+
+
+\section{6.3. Hướng phát triển}\label{tv4-22-6-3-hux1b0ux1edbng-phuxe1t-triux1ec3n}
+
+\begin{itemize}
+\tightlist
+\item
+  Cải thiện ánh xạ chỉ số byte UTF-8 với vị trí ký tự trên giao diện.
+\item
+  Mở rộng bộ quét cho raw string và nối dòng tiền xử lý C++.
+\item
+  Tối ưu cập nhật và trực quan hóa khi tài liệu lớn.
+\item
+  Mở rộng kiểm thử lịch sử, con trỏ và dữ liệu mã nguồn thực tế.
+\end{itemize}

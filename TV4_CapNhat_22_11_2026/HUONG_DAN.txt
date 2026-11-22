@@ -1,0 +1,78 @@
+GÓI HOÀN THIỆN TV4 — 22/11/2026
+
+1. NỘI DUNG ĐÃ CHUẨN BỊ
+
+- Giữ C01–C10; mở rộng bốn ca C11–C14 đã có trên GitHub.
+- C11: kiểm tra LIFO, lấy đáy, giảm giới hạn k, sao chép độc lập và Stack rỗng.
+- C12: áp dụng Undo/Redo lên tài liệu thật, xóa Redo và kiểm tra k = 3.
+- C13: ngoặc đúng/sai/thiếu/dư, chuỗi/chú thích và tọa độ dòng CRLF.
+- C14: 50.000 dòng qua checkDocument và thêm dòng 50.001 có lỗi.
+- Chạy đạt 14/14 ca trên Linux x86_64, GCC 14.2.0; có CSV, log, môi trường.
+- Cùng 14 ca đã chạy với AddressSanitizer và UndefinedBehaviorSanitizer,
+  không có chẩn đoán lỗi trong lần chạy này.
+- BaoCao_CodeNote.md đã có giải thích ActionStack, UndoRedoManager và
+  SyntaxChecker theo mã của Phúc; cập nhật bảng 14 ca và bỏ ghi chú thiếu mã.
+- Bốn mô-đun sản xuất của TV2/TV3 không bị thay đổi trong gói này.
+
+Mốc mã gốc đối chiếu: c7d3f205d9d67b14c676e14af8e119794da7236d.
+Đây là kết quả phần lõi C++ thuần; chưa chạy WinForms trên Windows.
+120 lượt đo hiệu năng trên Mac được giữ riêng, không thay bằng số liệu Linux.
+
+2. CẬP NHẬT BÁO CÁO OVERLEAF HIỆN CÓ
+
+a. Trong Overleaf, tải ZIP nguồn của dự án hiện tại (Download source).
+   Cần ZIP có main.tex và ảnh; không dùng bản PDF.
+b. Giữ nguyên hai tệp cap_nhat_overleaf.py và cap_nhat_overleaf.json
+   cùng nhau trong thư mục Overleaf của gói này.
+c. Mở Terminal. Gõ: python3 rồi một dấu cách.
+   Kéo cap_nhat_overleaf.py từ Finder vào Terminal.
+   Gõ thêm một dấu cách, kéo ZIP nguồn Overleaf vào rồi nhấn Enter.
+
+   Dạng lệnh:
+   python3 /duong/dan/cap_nhat_overleaf.py /duong/dan/nguon_Overleaf.zip
+
+d. Chương trình tạo ZIP mới có đuôi -capnhat-TV4.zip cạnh ZIP nguồn.
+   Nó thay các mục 3.5, 4.11, 5.3, 5.4, 6.1–6.3 và đoạn mô tả tầng lõi;
+   giữ tệp ảnh và mục giao diện 4.12. Giãn dòng 1.15 được chuyển thành
+   1.05 để chừa chỗ cho nội dung mới. Không ghi đè ZIP gốc.
+e. Giải nén ZIP mới; trong dự án Overleaf đang dùng, Upload main.tex mới
+   và chấp nhận thay main.tex cũ. Chọn Compiler = XeLaTeX rồi Recompile.
+f. Kiểm tra ảnh giao diện, bảng 14 ca và tổng số trang 15–30.
+   Bản nguồn tham chiếu trong phiên này biên dịch được 30 trang.
+   Ảnh đã tải vào dự án của bạn phải có trong ZIP nguồn để được giữ lại.
+g. Xuất PDF, đặt tên BaoCao_CodeNote.pdf và chép vào TV4/BaoCao trong gói.
+
+Nếu tự sửa tay, CapNhat_TV4.tex chứa từng mục thay thế.
+Không dán toàn bộ tệp đó vào cuối báo cáo vì sẽ lặp các mục.
+
+3. ĐƯA CÁC TỆP LÊN GITHUB
+
+a. Mở trang GỐC kho mã, nhánh main:
+   https://github.com/dangnguyenphucthinhcn22tc36-cell/N3_CTDLGT/tree/main
+b. Add file > Upload files.
+c. Kéo nguyên thư mục TV4 của gói vào vùng tải lên.
+   Bắt đầu từ trang GỐC để tránh tạo thêm TV4/TV4 ngoài ý muốn.
+   Đường dẫn KiemThuCore.cpp đang lồng sẵn được giữ theo kho mã hiện tại.
+d. Kiểm tra danh sách tệp. Các tệp cùng đường dẫn sẽ thay bản cũ.
+e. Commit changes với nội dung:
+   TV4: Mo rong kiem thu UndoRedo, ngoac va cap nhat bao cao
+
+Gói này chưa tự đẩy thay đổi vào tài khoản GitHub hay Overleaf của bạn.
+
+4. CHẠY LẠI TRÊN MAC (KHI CẦN KẾT QUẢ TẠI MÁY CỦA BẠN)
+
+Tải hoặc cập nhật mã dự án sau khi đưa các tệp ở mục 3 lên GitHub.
+Tại thư mục gốc có N3_CTDLGT và TV4, chạy:
+
+bash TV4/KiemThu/chay_kiem_thu_core.sh
+
+Script tự chọn clang++ nếu có, biên dịch bốn mô-đun lõi và ghi lại CSV,
+log, môi trường vào TV4/KetQua. Không cần mở giao diện Windows để chạy bộ này.
+Nếu có FAIL, giữ nguyên kết quả để xem lỗi; không sửa CSV thành PASS.
+
+5. BÀN GIAO NỘI DUNG CHO NGƯỜI LÀM PPT
+
+Dùng số liệu mới: 14/14 ca lõi, C11–C14 bao gồm Undo/Redo và kiểm tra ngoặc.
+Giữ số liệu hiệu năng: 120 lượt đo trên Mac.
+Chưa kết luận toàn bộ giao diện Windows đạt kiểm thử.
+Không dùng các bản slide PDF/Markdown cũ còn ghi 10/10 làm bản kết quả cuối.
