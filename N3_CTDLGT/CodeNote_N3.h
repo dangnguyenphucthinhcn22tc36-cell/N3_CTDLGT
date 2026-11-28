@@ -2,7 +2,12 @@
 
 #include "DoublyLinkedList.h"
 #include "UndoRedoManager.h"
+#include "SyntaxChecker.h"
 #include <msclr/marshal_cppstd.h>
+
+#define CN_WM_SETREDRAW 0x000B
+#define CN_EM_GETSCROLLPOS (0x0400 + 221)
+#define CN_EM_SETSCROLLPOS (0x0400 + 222)
 
 namespace N3CTDLGT {
 
@@ -19,12 +24,24 @@ namespace N3CTDLGT {
 	public ref class CodeNote_N3 : public System::Windows::Forms::Form
 	{
 	private:
-        
+		[System::Runtime::InteropServices::StructLayout(System::Runtime::InteropServices::LayoutKind::Sequential)]
+		value struct Win32Point {
+			int x;
+			int y;
+		};
+
+		[System::Runtime::InteropServices::DllImport("user32.dll", CharSet = System::Runtime::InteropServices::CharSet::Auto)]
+		static System::IntPtr SendMessage(System::IntPtr hWnd, int msg, System::IntPtr wParam, System::IntPtr lParam);
+
+		[System::Runtime::InteropServices::DllImport("user32.dll", CharSet = System::Runtime::InteropServices::CharSet::Auto)]
+		static System::IntPtr SendMessage(System::IntPtr hWnd, int msg, System::IntPtr wParam, Win32Point% lParam);
+
 		DoublyLinkedList* coreDoc;
 		UndoRedoManager* undoManager;
 		std::string* lastSyncedText;
 		TextPosition* lastCursorPos;
 		bool _isApplyingUndoRedo;
+		System::Windows::Forms::Timer^ syntaxHighlightTimer;
 
 		std::string ToStdString(System::String^ s) {
 			if (System::String::IsNullOrEmpty(s)) return "";
@@ -112,6 +129,17 @@ namespace N3CTDLGT {
 			// Setup editor style: Dark theme giong VS Dark
 			SetupEditorStyle();
 
+			// Bat che do DoubleBuffered de tranh giat lag toan Form va PictureBox
+			this->DoubleBuffered = true;
+			this->SetStyle(System::Windows::Forms::ControlStyles::OptimizedDoubleBuffer |
+				System::Windows::Forms::ControlStyles::AllPaintingInWmPaint |
+				System::Windows::Forms::ControlStyles::UserPaint, true);
+
+			// Timer debounce cho Syntax Highlighting (120ms): go phim muot ma khong giut lag
+			this->syntaxHighlightTimer = gcnew System::Windows::Forms::Timer();
+			this->syntaxHighlightTimer->Interval = 120;
+			this->syntaxHighlightTimer->Tick += gcnew System::EventHandler(this, &CodeNote_N3::syntaxHighlightTimer_Tick);
+
 			coreDoc = new DoublyLinkedList();
 			coreDoc->appendLine("");
 			undoManager = new UndoRedoManager(0);
@@ -122,6 +150,7 @@ namespace N3CTDLGT {
 			this->richTextBox_code->SelectionChanged += gcnew System::EventHandler(this, &CodeNote_N3::richTextBox_code_SelectionChanged);
 			this->richTextBox_code->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &CodeNote_N3::richTextBox_code_KeyDown);
 			UpdateUndoRedoUI();
+			UpdateSyntaxBracketUI();
 #pragma endregion
 		}
 #pragma region code_thua_thiet_ke_form
@@ -1465,6 +1494,7 @@ private: System::Windows::Forms::ToolStripButton^ tsb_thoat;
                 this->label22->Text = L"Cột: 1";
                 UpdateStatisticsUI();
                 UpdateUndoRedoUI();
+                UpdateSyntaxBracketUI();
                 this->pictureBox1->Invalidate();
             } else {
                 MessageBox::Show(L"Không thể mở tệp này!", L"Lỗi", MessageBoxButtons::OK, MessageBoxIcon::Error);
@@ -1524,15 +1554,156 @@ private: System::Windows::Forms::ToolStripButton^ tsb_thoat;
 #pragma endregion
 
 #pragma region Kiem_tra_ngoac (Phuc)
-    private: System::Void tsb_check_Click(System::Object^ sender, System::EventArgs^ e) {
+    private: System::Void UpdateSyntaxBracketUI() {
+        if (coreDoc == nullptr) return;
+
+        BracketCheckResult res = SyntaxChecker::checkDocument(*coreDoc, true);
+
+        if (res.isBalanced) {
+            this->lb_check_ngoac->Text = L"Ngoặc cân bằng!";
+            this->lb_check_ngoac->ForeColor = System::Drawing::Color::Green;
+
+            // ()
+            if (res.roundOpenCount == 0 && res.roundCloseCount == 0) {
+                this->lb_ngoac_tron->Text = L"Không có";
+                this->lb_ngoac_tron->ForeColor = System::Drawing::Color::Gray;
+            } else {
+                this->lb_ngoac_tron->Text = L"Cân bằng (" + res.roundOpenCount.ToString() + L")";
+                this->lb_ngoac_tron->ForeColor = System::Drawing::Color::Green;
+            }
+
+            // {}
+            if (res.curlyOpenCount == 0 && res.curlyCloseCount == 0) {
+                this->lb_ngoac_nhon->Text = L"Không có";
+                this->lb_ngoac_nhon->ForeColor = System::Drawing::Color::Gray;
+            } else {
+                this->lb_ngoac_nhon->Text = L"Cân bằng (" + res.curlyOpenCount.ToString() + L")";
+                this->lb_ngoac_nhon->ForeColor = System::Drawing::Color::Green;
+            }
+
+            // []
+            if (res.squareOpenCount == 0 && res.squareCloseCount == 0) {
+                this->lb_ngoac_vuong->Text = L"Không có";
+                this->lb_ngoac_vuong->ForeColor = System::Drawing::Color::Gray;
+            } else {
+                this->lb_ngoac_vuong->Text = L"Cân bằng (" + res.squareOpenCount.ToString() + L")";
+                this->lb_ngoac_vuong->ForeColor = System::Drawing::Color::Green;
+            }
+        } else {
+            // Phat hien loi mat can bang
+            this->lb_check_ngoac->Text = L"Mất cân bằng!";
+            this->lb_check_ngoac->ForeColor = System::Drawing::Color::Crimson;
+
+            char errChar = (res.foundChar != '\0') ? res.foundChar : res.expectedChar;
+            bool isRound = (errChar == '(' || errChar == ')');
+            bool isCurly = (errChar == '{' || errChar == '}');
+            bool isSquare = (errChar == '[' || errChar == ']');
+
+            // ()
+            if (isRound) {
+                this->lb_ngoac_tron->Text = L"Lỗi dòng " + (res.errorLine + 1).ToString();
+                this->lb_ngoac_tron->ForeColor = System::Drawing::Color::Crimson;
+            } else {
+                if (res.roundOpenCount == res.roundCloseCount) {
+                    this->lb_ngoac_tron->Text = (res.roundOpenCount == 0) ? L"Không có" : L"Cân bằng (" + res.roundOpenCount.ToString() + L")";
+                    this->lb_ngoac_tron->ForeColor = (res.roundOpenCount == 0) ? System::Drawing::Color::Gray : System::Drawing::Color::Green;
+                } else {
+                    this->lb_ngoac_tron->Text = L"Lệch (" + res.roundOpenCount.ToString() + L"/" + res.roundCloseCount.ToString() + L")";
+                    this->lb_ngoac_tron->ForeColor = System::Drawing::Color::DarkOrange;
+                }
+            }
+
+            // {}
+            if (isCurly) {
+                this->lb_ngoac_nhon->Text = L"Lỗi dòng " + (res.errorLine + 1).ToString();
+                this->lb_ngoac_nhon->ForeColor = System::Drawing::Color::Crimson;
+            } else {
+                if (res.curlyOpenCount == res.curlyCloseCount) {
+                    this->lb_ngoac_nhon->Text = (res.curlyOpenCount == 0) ? L"Không có" : L"Cân bằng (" + res.curlyOpenCount.ToString() + L")";
+                    this->lb_ngoac_nhon->ForeColor = (res.curlyOpenCount == 0) ? System::Drawing::Color::Gray : System::Drawing::Color::Green;
+                } else {
+                    this->lb_ngoac_nhon->Text = L"Lệch (" + res.curlyOpenCount.ToString() + L"/" + res.curlyCloseCount.ToString() + L")";
+                    this->lb_ngoac_nhon->ForeColor = System::Drawing::Color::DarkOrange;
+                }
+            }
+
+            // []
+            if (isSquare) {
+                this->lb_ngoac_vuong->Text = L"Lỗi dòng " + (res.errorLine + 1).ToString();
+                this->lb_ngoac_vuong->ForeColor = System::Drawing::Color::Crimson;
+            } else {
+                if (res.squareOpenCount == res.squareCloseCount) {
+                    this->lb_ngoac_vuong->Text = (res.squareOpenCount == 0) ? L"Không có" : L"Cân bằng (" + res.squareOpenCount.ToString() + L")";
+                    this->lb_ngoac_vuong->ForeColor = (res.squareOpenCount == 0) ? System::Drawing::Color::Gray : System::Drawing::Color::Green;
+                } else {
+                    this->lb_ngoac_vuong->Text = L"Lệch (" + res.squareOpenCount.ToString() + L"/" + res.squareCloseCount.ToString() + L")";
+                    this->lb_ngoac_vuong->ForeColor = System::Drawing::Color::DarkOrange;
+                }
+            }
+        }
     }
+
+    private: System::Void NavigateToBracketError(int line, int col) {
+        if (this->richTextBox_code == nullptr || line < 0) return;
+        try {
+            int charIdx = this->richTextBox_code->GetFirstCharIndexFromLine(line);
+            if (charIdx >= 0) {
+                int targetPos = charIdx + (col >= 0 ? col : 0);
+                if (targetPos > this->richTextBox_code->Text->Length) {
+                    targetPos = this->richTextBox_code->Text->Length;
+                }
+                this->richTextBox_code->Focus();
+                this->richTextBox_code->Select(targetPos, 1);
+                this->richTextBox_code->ScrollToCaret();
+            }
+        } catch (...) {}
+    }
+
+    private: System::Void tsb_check_Click(System::Object^ sender, System::EventArgs^ e) {
+        if (coreDoc == nullptr) return;
+        UpdateSyntaxBracketUI();
+
+        BracketCheckResult res = SyntaxChecker::checkDocument(*coreDoc, true);
+        if (res.isBalanced) {
+            this->lb_check->Text = L"Cú pháp ngoặc: Cân bằng hợp lệ!";
+            MessageBox::Show(
+                L"KẾT QUẢ KIỂM TRA NGOẶC:\n\n"
+                L"✔ Tất cả các cặp ngoặc đều CÂN BẰNG hoàn hảo!\n\n"
+                L"• Ngoặc tròn (): " + res.roundOpenCount.ToString() + L" cặp\n"
+                L"• Ngoặc nhọn {}: " + res.curlyOpenCount.ToString() + L" cặp\n"
+                L"• Ngoặc vuông []: " + res.squareOpenCount.ToString() + L" cặp",
+                L"Kiểm tra ngoặc thành công",
+                MessageBoxButtons::OK,
+                MessageBoxIcon::Information
+            );
+        } else {
+            String^ msg = ToSysString(res.message);
+            this->lb_check->Text = msg;
+
+            NavigateToBracketError(res.errorLine, res.errorCol);
+
+            MessageBox::Show(
+                L"PHÁT HIỆN LỖI NGOẶC:\n\n" + msg + L"\n\n"
+                L"-> Con trỏ soạn thảo đã tự động chuyển đến dòng " + (res.errorLine + 1).ToString() + 
+                L", cột " + (res.errorCol + 1).ToString() + L" để bạn dễ dàng quan sát và sửa lỗi.",
+                L"Lỗi cú pháp ngoặc",
+                MessageBoxButtons::OK,
+                MessageBoxIcon::Warning
+            );
+        }
+    }
+
     private: System::Void lb_check_ngoac_Click(System::Object^ sender, System::EventArgs^ e) {
+        tsb_check_Click(sender, e);
     }
     private: System::Void lb_ngoac_tron_Click(System::Object^ sender, System::EventArgs^ e) {
+        tsb_check_Click(sender, e);
     }
     private: System::Void lb_ngoac_nhon_Click(System::Object^ sender, System::EventArgs^ e) {
+        tsb_check_Click(sender, e);
     }
     private: System::Void lb_ngoac_vuong_Click(System::Object^ sender, System::EventArgs^ e) {
+        tsb_check_Click(sender, e);
     }
 #pragma endregion
 
@@ -1564,25 +1735,39 @@ private: System::Windows::Forms::ToolStripButton^ tsb_thoat;
                 int currentSel = this->richTextBox_code->SelectionStart;
                 int currentLen = this->richTextBox_code->SelectionLength;
 
-                this->richTextBox_code->SelectAll();
-                this->richTextBox_code->SelectionBackColor = Color::White;
-                this->richTextBox_code->SelectionColor = Color::Black;
+                Win32Point searchScrollPt;
+                searchScrollPt.x = 0;
+                searchScrollPt.y = 0;
+                SendMessage(this->richTextBox_code->Handle, CN_EM_GETSCROLLPOS, System::IntPtr::Zero, searchScrollPt);
+                SendMessage(this->richTextBox_code->Handle, CN_WM_SETREDRAW, System::IntPtr::Zero, System::IntPtr::Zero);
 
-                SearchResult* curRes = results;
-                while (curRes != nullptr) {
-                    int charIdx = this->richTextBox_code->GetFirstCharIndexFromLine(curRes->line) + curRes->col;
-                    if (charIdx >= 0) {
-                        this->richTextBox_code->Select(charIdx, curRes->length);
-                        this->richTextBox_code->SelectionBackColor = Color::Yellow;
-                        this->richTextBox_code->SelectionColor = Color::Black;
+                try {
+                    this->richTextBox_code->SelectAll();
+                    this->richTextBox_code->SelectionBackColor = Color::White;
+                    this->richTextBox_code->SelectionColor = Color::Black;
+
+                    SearchResult* curRes = results;
+                    while (curRes != nullptr) {
+                        int charIdx = this->richTextBox_code->GetFirstCharIndexFromLine(curRes->line) + curRes->col;
+                        if (charIdx >= 0) {
+                            this->richTextBox_code->Select(charIdx, curRes->length);
+                            this->richTextBox_code->SelectionBackColor = Color::Yellow;
+                            this->richTextBox_code->SelectionColor = Color::Black;
+                        }
+                        curRes = curRes->next;
                     }
-                    curRes = curRes->next;
+
+                    this->richTextBox_code->Select(currentSel, currentLen);
+                    SendMessage(this->richTextBox_code->Handle, CN_EM_SETSCROLLPOS, System::IntPtr::Zero, searchScrollPt);
+                }
+                finally {
+                    SendMessage(this->richTextBox_code->Handle, CN_WM_SETREDRAW, (System::IntPtr)1, System::IntPtr::Zero);
+                    this->richTextBox_code->Invalidate();
                 }
 
                 DoublyLinkedList::freeSearchResults(results);
 
                 this->lb_check->Text = L"Tìm thấy tất cả " + totalCount.ToString() + L" vị trí chứa '" + this->txt_tukhoa->Text + L"'";
-                this->richTextBox_code->Select(currentSel, currentLen);
             } else {
                 this->lb_check->Text = L"Không tìm thấy từ khóa: '" + this->txt_tukhoa->Text + L"'";
             }
@@ -1807,28 +1992,43 @@ private: System::Windows::Forms::ToolStripButton^ tsb_thoat;
             int targetOffset = PosToLinearOffset(normalized, targetCursor);
 
             _isApplyingUndoRedo = true;
-            this->richTextBox_code->Text = ToSysString(updatedText);
-            int maxLen = this->richTextBox_code->Text->Length;
-            int clampedOffset = (targetOffset < 0) ? 0 : ((targetOffset > maxLen) ? maxLen : targetOffset);
-            this->richTextBox_code->SelectionStart = clampedOffset;
-            this->richTextBox_code->SelectionLength = 0;
+            Win32Point undoScrollPt;
+            undoScrollPt.x = 0;
+            undoScrollPt.y = 0;
+            SendMessage(this->richTextBox_code->Handle, CN_EM_GETSCROLLPOS, System::IntPtr::Zero, undoScrollPt);
+            SendMessage(this->richTextBox_code->Handle, CN_WM_SETREDRAW, System::IntPtr::Zero, System::IntPtr::Zero);
 
-            if (lastSyncedText != nullptr) {
-                *lastSyncedText = normalized;
-            }
-            if (lastCursorPos != nullptr) {
-                *lastCursorPos = targetCursor;
-            }
+            try {
+                this->richTextBox_code->Text = ToSysString(updatedText);
+                int maxLen = this->richTextBox_code->Text->Length;
+                int clampedOffset = (targetOffset < 0) ? 0 : ((targetOffset > maxLen) ? maxLen : targetOffset);
+                this->richTextBox_code->SelectionStart = clampedOffset;
+                this->richTextBox_code->SelectionLength = 0;
 
-            ApplySyntaxHighlighting();
-            this->richTextBox_code->SelectionStart = clampedOffset;
-            this->richTextBox_code->SelectionLength = 0;
-            _isApplyingUndoRedo = false;
+                if (lastSyncedText != nullptr) {
+                    *lastSyncedText = normalized;
+                }
+                if (lastCursorPos != nullptr) {
+                    *lastCursorPos = targetCursor;
+                }
+
+                ApplySyntaxHighlighting();
+
+                this->richTextBox_code->SelectionStart = clampedOffset;
+                this->richTextBox_code->SelectionLength = 0;
+                SendMessage(this->richTextBox_code->Handle, CN_EM_SETSCROLLPOS, System::IntPtr::Zero, undoScrollPt);
+            }
+            finally {
+                SendMessage(this->richTextBox_code->Handle, CN_WM_SETREDRAW, (System::IntPtr)1, System::IntPtr::Zero);
+                this->richTextBox_code->Invalidate();
+                _isApplyingUndoRedo = false;
+            }
 
             this->label21->Text = L"Dòng: " + (targetCursor.line + 1).ToString();
             this->label22->Text = L"Cột: " + (targetCursor.col + 1).ToString();
             UpdateStatisticsUI();
             UpdateUndoRedoUI();
+            UpdateSyntaxBracketUI();
             this->pictureBox1->Invalidate();
             this->lb_check->Text = isUndo ? L"Đã hoàn tác thao tác!" : L"Đã làm lại thao tác!";
             this->richTextBox_code->Focus();
@@ -1926,117 +2126,143 @@ private: System::Windows::Forms::ToolStripButton^ tsb_thoat;
             rtb->SelectionColor = fg;
         }
 
+        private: System::Void syntaxHighlightTimer_Tick(System::Object^ sender, System::EventArgs^ e) {
+            if (this->syntaxHighlightTimer != nullptr) {
+                this->syntaxHighlightTimer->Stop();
+            }
+            ApplySyntaxHighlighting();
+            UpdateSyntaxBracketUI();
+        }
+
         void ApplySyntaxHighlighting() {
-            if (_isHighlighting) return;
+            if (_isHighlighting || this->richTextBox_code == nullptr) return;
+            if (!this->richTextBox_code->IsHandleCreated) return;
             _isHighlighting = true;
 
             RichTextBox^ rtb = this->richTextBox_code;
+
+            // 1. Luu vi tri con tro va toa do cuon (pixel scroll position)
             int selStart = rtb->SelectionStart;
+            int selLen = rtb->SelectionLength;
+            Win32Point scrollPt;
+            scrollPt.x = 0;
+            scrollPt.y = 0;
+            SendMessage(rtb->Handle, CN_EM_GETSCROLLPOS, System::IntPtr::Zero, scrollPt);
 
-            rtb->SuspendLayout();
+            // 2. KHOA VE (WM_SETREDRAW = 0) - Tuyet doi khong de Windows RichEdit ve giat tren man hinh
+            SendMessage(rtb->Handle, CN_WM_SETREDRAW, System::IntPtr::Zero, System::IntPtr::Zero);
 
-            // Reset ve mau mac dinh (nen den, chu trang)
-            rtb->SelectAll();
-            rtb->SelectionBackColor = System::Drawing::Color::FromArgb(30, 30, 30);
-            rtb->SelectionColor = System::Drawing::Color::FromArgb(220, 220, 220);
+            try {
+                String^ text = rtb->Text;
+                int len = text->Length;
+                if (len == 0) return;
 
-            String^ text = rtb->Text;
-            int len = text->Length;
+                // Reset ve mau mac dinh (nen den, chu xam sang)
+                rtb->SelectAll();
+                rtb->SelectionBackColor = System::Drawing::Color::FromArgb(30, 30, 30);
+                rtb->SelectionColor = System::Drawing::Color::FromArgb(220, 220, 220);
 
-            // 1. Tu khoa C++ - mau xanh duong
-            System::Drawing::Color kwColor = System::Drawing::Color::FromArgb(86, 156, 214);
-            array<String^>^ keywords = {
-                L"int", L"float", L"double", L"char", L"bool", L"void",
-                L"return", L"if", L"else", L"for", L"while", L"do",
-                L"switch", L"case", L"break", L"continue", L"default",
-                L"class", L"struct", L"new", L"delete", L"nullptr",
-                L"true", L"false", L"const", L"static", L"public",
-                L"private", L"protected", L"namespace", L"using",
-                L"typedef", L"enum", L"template", L"auto", L"long",
-                L"short", L"unsigned", L"signed", L"try", L"catch",
-                L"throw", L"virtual", L"override", L"string"
-            };
-            for each (String^ kw in keywords) {
-                int pos = 0;
-                while ((pos = text->IndexOf(kw, pos, System::StringComparison::Ordinal)) >= 0) {
-                    bool leftOk  = (pos == 0 || (!Char::IsLetterOrDigit(text[pos - 1]) && text[pos - 1] != L'_'));
-                    bool rightOk = (pos + kw->Length >= len || (!Char::IsLetterOrDigit(text[pos + kw->Length]) && text[pos + kw->Length] != L'_'));
-                    if (leftOk && rightOk)
-                        ColorRange(rtb, pos, kw->Length, kwColor);
-                    pos += kw->Length;
-                }
-            }
-
-            // 2. Chuoi string - mau cam
-            System::Drawing::Color strColor = System::Drawing::Color::FromArgb(206, 145, 120);
-            int i = 0;
-            while (i < len) {
-                if (text[i] == L'"') {
-                    int end = i + 1;
-                    while (end < len && text[end] != L'"') {
-                        if (text[end] == L'\\') end++;
-                        end++;
-                    }
-                    ColorRange(rtb, i, Math::Min(end - i + 1, len - i), strColor);
-                    i = end + 1;
-                } else { i++; }
-            }
-
-            // 3. Comment // - mau xanh la
-            System::Drawing::Color cmtColor = System::Drawing::Color::FromArgb(106, 153, 85);
-            i = 0;
-            while (i < len - 1) {
-                if (text[i] == L'/' && text[i+1] == L'/') {
-                    int end = text->IndexOf(L'\n', i);
-                    if (end < 0) end = len;
-                    ColorRange(rtb, i, end - i, cmtColor);
-                    i = end + 1;
-                } else { i++; }
-            }
-
-            // 4. Comment /* */ - mau xanh la
-            i = 0;
-            while (i < len - 1) {
-                if (text[i] == L'/' && text[i+1] == L'*') {
-                    int end = text->IndexOf(L"*/", i + 2);
-                    if (end < 0) end = len - 2;
-                    ColorRange(rtb, i, end - i + 2, cmtColor);
-                    i = end + 2;
-                } else { i++; }
-            }
-
-            // 5. Preprocessor #include #define - mau tim
-            System::Drawing::Color ppColor = System::Drawing::Color::FromArgb(155, 155, 255);
-            i = 0;
-            while (i < len) {
-                if (text[i] == L'#') {
-                    int end = text->IndexOf(L'\n', i);
-                    if (end < 0) end = len;
-                    ColorRange(rtb, i, end - i, ppColor);
-                    i = end + 1;
-                } else { i++; }
-            }
-
-            // 6. So - mau vang xanh nhat
-            System::Drawing::Color numColor = System::Drawing::Color::FromArgb(181, 206, 168);
-            i = 0;
-            while (i < len) {
-                if (Char::IsDigit(text[i])) {
-                    bool leftNum = (i == 0 || (!Char::IsLetterOrDigit(text[i-1]) && text[i-1] != L'_'));
-                    if (leftNum) {
-                        int end = i;
-                        while (end < len && (Char::IsDigit(text[end]) || text[end] == L'.')) end++;
-                        ColorRange(rtb, i, end - i, numColor);
-                        i = end;
-                        continue;
+                // 1. Tu khoa C++ - mau xanh duong
+                System::Drawing::Color kwColor = System::Drawing::Color::FromArgb(86, 156, 214);
+                array<String^>^ keywords = {
+                    L"int", L"float", L"double", L"char", L"bool", L"void",
+                    L"return", L"if", L"else", L"for", L"while", L"do",
+                    L"switch", L"case", L"break", L"continue", L"default",
+                    L"class", L"struct", L"new", L"delete", L"nullptr",
+                    L"true", L"false", L"const", L"static", L"public",
+                    L"private", L"protected", L"namespace", L"using",
+                    L"typedef", L"enum", L"template", L"auto", L"long",
+                    L"short", L"unsigned", L"signed", L"try", L"catch",
+                    L"throw", L"virtual", L"override", L"string"
+                };
+                for each (String^ kw in keywords) {
+                    int pos = 0;
+                    while ((pos = text->IndexOf(kw, pos, System::StringComparison::Ordinal)) >= 0) {
+                        bool leftOk  = (pos == 0 || (!Char::IsLetterOrDigit(text[pos - 1]) && text[pos - 1] != L'_'));
+                        bool rightOk = (pos + kw->Length >= len || (!Char::IsLetterOrDigit(text[pos + kw->Length]) && text[pos + kw->Length] != L'_'));
+                        if (leftOk && rightOk)
+                            ColorRange(rtb, pos, kw->Length, kwColor);
+                        pos += kw->Length;
                     }
                 }
-                i++;
-            }
 
-            rtb->Select(selStart, 0);
-            rtb->ResumeLayout();
-            _isHighlighting = false;
+                // 2. Chuoi string - mau cam
+                System::Drawing::Color strColor = System::Drawing::Color::FromArgb(206, 145, 120);
+                int i = 0;
+                while (i < len) {
+                    if (text[i] == L'"') {
+                        int end = i + 1;
+                        while (end < len && text[end] != L'"') {
+                            if (text[end] == L'\\') end++;
+                            end++;
+                        }
+                        ColorRange(rtb, i, Math::Min(end - i + 1, len - i), strColor);
+                        i = end + 1;
+                    } else { i++; }
+                }
+
+                // 3. Comment // - mau xanh la
+                System::Drawing::Color cmtColor = System::Drawing::Color::FromArgb(106, 153, 85);
+                i = 0;
+                while (i < len - 1) {
+                    if (text[i] == L'/' && text[i+1] == L'/') {
+                        int end = text->IndexOf(L'\n', i);
+                        if (end < 0) end = len;
+                        ColorRange(rtb, i, end - i, cmtColor);
+                        i = end + 1;
+                    } else { i++; }
+                }
+
+                // 4. Comment /* */ - mau xanh la
+                i = 0;
+                while (i < len - 1) {
+                    if (text[i] == L'/' && text[i+1] == L'*') {
+                        int end = text->IndexOf(L"*/", i + 2);
+                        if (end < 0) end = len - 2;
+                        ColorRange(rtb, i, end - i + 2, cmtColor);
+                        i = end + 2;
+                    } else { i++; }
+                }
+
+                // 5. Preprocessor #include #define - mau tim
+                System::Drawing::Color ppColor = System::Drawing::Color::FromArgb(155, 155, 255);
+                i = 0;
+                while (i < len) {
+                    if (text[i] == L'#') {
+                        int end = text->IndexOf(L'\n', i);
+                        if (end < 0) end = len;
+                        ColorRange(rtb, i, end - i, ppColor);
+                        i = end + 1;
+                    } else { i++; }
+                }
+
+                // 6. So - mau vang xanh nhat
+                System::Drawing::Color numColor = System::Drawing::Color::FromArgb(181, 206, 168);
+                i = 0;
+                while (i < len) {
+                    if (Char::IsDigit(text[i])) {
+                        bool leftNum = (i == 0 || (!Char::IsLetterOrDigit(text[i-1]) && text[i-1] != L'_'));
+                        if (leftNum) {
+                            int end = i;
+                            while (end < len && (Char::IsDigit(text[end]) || text[end] == L'.')) end++;
+                            ColorRange(rtb, i, end - i, numColor);
+                            i = end;
+                            continue;
+                        }
+                    }
+                    i++;
+                }
+            }
+            finally {
+                // 3. Khoi phuc lai chinh xac vi tri con tro va toa do cuon
+                rtb->Select(selStart, selLen);
+                SendMessage(rtb->Handle, CN_EM_SETSCROLLPOS, System::IntPtr::Zero, scrollPt);
+
+                // 4. MO KHOA VE (WM_SETREDRAW = 1) va ve lai 1 lan duy nhat
+                SendMessage(rtb->Handle, CN_WM_SETREDRAW, (System::IntPtr)1, System::IntPtr::Zero);
+                rtb->Invalidate();
+                _isHighlighting = false;
+            }
         }
 
     private: System::Void richTextBox_code_TextChanged(System::Object^ sender, System::EventArgs^ e) {
@@ -2061,8 +2287,13 @@ private: System::Windows::Forms::ToolStripButton^ tsb_thoat;
         UpdateUndoRedoUI();
         this->pictureBox1->Invalidate();
 
-        // Syntax highlight kieu C++ Dark Theme
-        ApplySyntaxHighlighting();
+        // Su dung timer debounce: go phim muot ma tuc thoi, khong bi giut lag
+        if (this->syntaxHighlightTimer != nullptr) {
+            this->syntaxHighlightTimer->Stop();
+            this->syntaxHighlightTimer->Start();
+        } else {
+            ApplySyntaxHighlighting();
+        }
     }
 
     private: System::Void richTextBox_code_SelectionChanged(System::Object^ sender, System::EventArgs^ e) {
